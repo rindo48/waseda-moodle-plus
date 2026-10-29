@@ -179,6 +179,29 @@ html.wmp-dark #page-footer a:not([class]):focus {
     background-color: rgba(143, 180, 255, 0.16) !important;
     box-shadow: 0 -0.25rem rgba(143, 180, 255, 0.16), 0 0.25rem var(--wmpd-link) !important;
 }
+/* アクティビティのページの見出し（Waseda のテーマが灰色の帯を付けている） */
+html.wmp-dark .path-mod #page-content h2,
+html.wmp-dark .path-mod #page-content .h2 {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+}
+/* オープンフォーラム（hsuforum。アナウンスメントなど） */
+html.wmp-dark .hsuforum-thread,
+html.wmp-dark .hsuforum-post {
+    background-color: var(--wmpd-surface) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark #page-mod-hsuforum-discuss .hsuforum-thread-title h4 {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark .hsuforum-post::before {
+    background-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .hsuforum-unreadcount {
+    color: #1b1d21 !important;
+}
 html.wmp-dark .userinitials {
     background-color: var(--wmpd-surface-2) !important;
     color: var(--wmpd-text) !important;

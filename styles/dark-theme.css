@@ -216,6 +216,16 @@ html.wmp-dark .hsuforum-post::before {
 html.wmp-dark .hsuforum-unreadcount {
     color: #1b1d21 !important;
 }
+/* 読み込み中の幕（Moodle は白の半透明なので、暗い背景に重なると濁った灰色になる） */
+html.wmp-dark .overlay-icon-container,
+html.wmp-dark #page-overlay {
+    background-color: rgba(18, 19, 22, 0.6) !important;
+}
+html.wmp-dark .ajax-contact-button .loading-icon,
+html.wmp-dark .form-autocomplete-downarrow .loading-icon,
+html.wmp-dark .path-mod-assign [data-region="overlay"] {
+    background-color: var(--wmpd-surface) !important;
+}
 html.wmp-dark .userinitials {
     background-color: var(--wmpd-surface-2) !important;
     color: var(--wmpd-text) !important;

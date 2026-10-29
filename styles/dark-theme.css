@@ -54,6 +54,10 @@ html.wmp-dark .breadcrumb-item,
 html.wmp-dark .breadcrumb-item.active {
     color: var(--wmpd-text) !important;
 }
+/* コース名の前の角帽アイコン（Waseda のテーマが h1::before に #333 で描いている） */
+html.wmp-dark .page-header-headings h1::before {
+    color: var(--wmpd-text-2) !important;
+}
 html.wmp-dark .text-muted,
 html.wmp-dark .dimmed_text,
 html.wmp-dark .small.text-muted,

@@ -21,12 +21,17 @@ const handlers = {
     getSessionKey: () => getSessionKey(),
     /** 自動ログインページ用: ブラウザ側で最後のリダイレクトを行うので、ここでは SAML の手前まで進める */
     autoLogin: () => loginToMoodle({ skipCheck: true, skipFinalRedirect: true }),
-    /** 設定画面の「ログインを試す」用 */
+    /**
+     * 設定画面の「ログインを試す」用
+     * @returns {Promise<"ok" | "failed" | "alreadyLoggedIn">}
+     */
     testLogin: async () => {
         await getLoginInfo();
+        // ログイン済みだと ID・パスワードを使わずに通ってしまうので、試せないことを伝える
+        if (await fetchSessionKeyFromPage()) return "alreadyLoggedIn";
         const key = await loginToMoodle({ skipCheck: true });
         if (key) await setSessionKeyCache(key);
-        return Boolean(key);
+        return key ? "ok" : "failed";
     },
     getLoginStatus: async () => {
         const { [LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(LOGIN_INFO_KEY);

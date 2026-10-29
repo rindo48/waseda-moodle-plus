@@ -142,8 +142,13 @@
                             onclick: async () => {
                                 status.textContent = "ログインを試しています…";
                                 try {
-                                    const ok = await WMP.send("testLogin");
-                                    status.textContent = ok ? "ログインに成功しました ✓" : "ログインできませんでした";
+                                    const result = await WMP.send("testLogin");
+                                    status.textContent = {
+                                        ok: "ログインに成功しました ✓",
+                                        failed: "ログインできませんでした",
+                                        alreadyLoggedIn:
+                                            "Moodle にはすでにログインしています。ID・パスワードを確かめるには、Moodle からログアウトしてから試してください。",
+                                    }[result];
                                 } catch (e) {
                                     status.textContent = `失敗: ${e.message}`;
                                 }

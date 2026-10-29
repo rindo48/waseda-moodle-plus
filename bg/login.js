@@ -129,7 +129,12 @@ async function doLogin({ skipCheck = false, skipFinalRedirect = false } = {}) {
     await getLoginInfo(); // ログイン情報が無ければここで LoginRequiredError
 
     const { spForm } = await walkSSO(SAML_LOGIN_URL, MOODLE_ACS_URL);
-    if (!spForm) throw new Error("Moodle のログインフォームが見つかりませんでした（ログイン手順が変わった可能性があります）");
+    if (!spForm) {
+        // ログイン済みだと、SAML のログイン URL はフォームを出さずに Moodle のトップへ戻る
+        const key = await fetchSessionKeyFromPage();
+        if (key) return key;
+        throw new Error("Moodle のログインフォームが見つかりませんでした（ログイン手順が変わった可能性があります）");
+    }
 
     await postForm(MOODLE_ACS_URL, spForm.hidden, { redirect: "manual" });
     if (!skipFinalRedirect) {

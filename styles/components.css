@@ -711,6 +711,27 @@ html.wmp-dark .wmp-scope,
 
 /* ===== Moodle 上の小物 ===== */
 
+.wmp-dark-toggle-wrap {
+    display: flex;
+    align-items: center;
+}
+.wmp-dark-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0 !important;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+.wmp-dark-toggle:hover {
+    background: rgba(127, 127, 127, 0.15);
+}
+
 .wmp-word-counter {
     margin-top: 2px;
     color: #8b8d98;

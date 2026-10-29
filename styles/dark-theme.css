@@ -161,6 +161,24 @@ html.wmp-dark .availabilityinfo {
     color: var(--wmpd-text-2) !important;
     border-color: var(--wmpd-border) !important;
 }
+/* 通知・メッセージの一覧の未読の項目 */
+html.wmp-dark .content-item-container.unread {
+    background-color: var(--wmpd-surface-2) !important;
+}
+/* カレンダーのマス目にカーソルを合わせたとき */
+html.wmp-dark .maincalendar .calendarmonth .clickable:hover {
+    background-color: var(--wmpd-surface-2) !important;
+}
+/* 押したあとのリンク（フォーカス）の強調 */
+html.wmp-dark .aalink:focus,
+html.wmp-dark .aalink.focus,
+html.wmp-dark a.autolink:focus,
+html.wmp-dark a.autolink.focus,
+html.wmp-dark #page-footer a:not([class]):focus {
+    color: var(--wmpd-link) !important;
+    background-color: rgba(143, 180, 255, 0.16) !important;
+    box-shadow: 0 -0.25rem rgba(143, 180, 255, 0.16), 0 0.25rem var(--wmpd-link) !important;
+}
 html.wmp-dark .userinitials {
     background-color: var(--wmpd-surface-2) !important;
     color: var(--wmpd-text) !important;
@@ -352,10 +370,14 @@ html.wmp-dark .bg-secondary {
 html.wmp-dark img:not([src*=".svg"]):not(.icon):not(.userpicture) {
     filter: brightness(0.9);
 }
-/* 黒い線画アイコンを見えるようにする */
-html.wmp-dark .icon:not(.activityicon),
+/* 黒い線画アイコン（画像）を見えるようにする。
+   フォントのアイコン（ベル・メッセージなど）は文字色が明るくなっているので反転しない */
+html.wmp-dark img.icon:not(.activityicon),
 html.wmp-dark .navbar-brand img[src*=".svg"] {
     filter: invert(0.85);
+}
+html.wmp-dark [class*="calendar_event_"] > .icon {
+    color: var(--wmpd-link) !important;
 }
 html.wmp-dark .activityiconcontainer {
     filter: brightness(0.92);

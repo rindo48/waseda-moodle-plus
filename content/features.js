@@ -295,7 +295,45 @@
         window.postMessage({ wmpAssignmentFilename: { template, args: { course, assignment } } }, location.origin);
     }
 
+    // ===== ヘッダーのダークモード切り替えボタン =====
+    const MOON =
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    const SUN =
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+
+    function darkModeToggle(settings) {
+        const nav = document.getElementById("usernavigation");
+        if (!nav || document.getElementById("wmp-dark-toggle")) return;
+
+        const button = el("button", { id: "wmp-dark-toggle", type: "button", class: "nav-link wmp-dark-toggle" });
+        const isDark = () => document.documentElement.classList.contains("wmp-dark");
+        const update = () => {
+            const dark = isDark();
+            // 今がダークなら太陽（押すとライト）、ライトなら月（押すとダーク）を出す
+            button.innerHTML = dark ? SUN : MOON;
+            const label = dark ? "ライトモードに切り替える" : "ダークモードに切り替える";
+            button.title = settings.darkMode === "auto" ? `${label}（今はシステムの設定に合わせています）` : label;
+            button.setAttribute("aria-label", label);
+            button.setAttribute("aria-pressed", String(dark));
+        };
+        button.addEventListener("click", () => {
+            // 反映はバックグラウンドが開いているすべてのタブに行う
+            WMP.setSettings({ darkMode: isDark() ? "off" : "on" });
+        });
+
+        nav.prepend(el("div", { class: "wmp-dark-toggle-wrap" }, button));
+        new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+        WMP.onSettingsChanged((next) => {
+            settings = next;
+            if (!next.darkModeToggleInHeader) button.parentElement?.remove();
+            update();
+        });
+        update();
+    }
+
     WMP.initFeatures = function initFeatures(settings) {
+        if (settings.darkModeToggleInHeader) darkModeToggle(settings);
+
         const sessionKey = WMP.findSessionKey();
         if (sessionKey) WMP.send("setSessionKey", { sessionKey }).catch(() => {});
 

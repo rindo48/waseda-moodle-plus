@@ -5,7 +5,7 @@ import "./lib/syllabus-info.js";
 import { clearCaches, getCourses, getSessionKey, getTimeline, setSessionKeyCache, touchSession } from "./bg/moodle.js";
 import { loginToMoodle, fetchSessionKeyFromPage, getLoginInfo } from "./bg/login.js";
 import { collectSyllabusInformation, getCollectProgress } from "./bg/syllabus.js";
-import { syncFeatures } from "./bg/features.js";
+import { applyDarkModeToOpenTabs, syncFeatures } from "./bg/features.js";
 import { BADGE_ALARM, handleNotificationClick, updateBadge } from "./bg/badge.js";
 import { createLauncherMenus, handleLauncherClick, prepareLaunch } from "./bg/launcher.js";
 
@@ -90,6 +90,7 @@ const BADGE_KEYS = [
 
 onSettingsChanged((_settings, changedKeys) => {
     syncFeatures();
+    if (changedKeys.includes("darkMode") || changedKeys.includes("darkModeMethod")) applyDarkModeToOpenTabs();
     if (changedKeys.some((k) => BADGE_KEYS.includes(k))) updateBadge();
 });
 

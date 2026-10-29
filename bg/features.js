@@ -88,6 +88,39 @@ function contentScripts(settings) {
     return scripts;
 }
 
+const DARK_CSS = { theme: "styles/dark-theme.css", invert: "styles/dark-invert.css" };
+
+/**
+ * 開いている Moodle のタブにダークモードの設定をその場で反映する。
+ * 登録済みのコンテンツスクリプトは次に開いたページから効くので、今のページには CSS を直接差し込む。
+ */
+export async function applyDarkModeToOpenTabs() {
+    const settings = await getSettings();
+    const tabs = await chrome.tabs.query({ url: MOODLE });
+    await Promise.all(
+        tabs.map(async (tab) => {
+            const target = { tabId: tab.id, allFrames: true };
+            try {
+                await chrome.scripting.removeCSS({ target, files: Object.values(DARK_CSS) });
+                if (settings.darkMode !== "off") {
+                    await chrome.scripting.insertCSS({ target, files: [DARK_CSS[settings.darkModeMethod] ?? DARK_CSS.theme] });
+                }
+                await chrome.scripting.executeScript({
+                    target,
+                    args: [settings.darkMode],
+                    func: (mode) => {
+                        const on = mode === "on" || (mode === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
+                        document.documentElement.classList.toggle("wmp-dark", on);
+                    },
+                });
+            } catch (e) {
+                // 読み込み中や破棄されたタブには反映できないが、次に開いたときに効くので無視する
+                console.debug("failed to apply dark mode", tab.id, e);
+            }
+        })
+    );
+}
+
 let syncing = Promise.resolve();
 
 /** 設定を読み直して、ルールとスクリプトを反映する。連続で呼ばれても順番に処理する */

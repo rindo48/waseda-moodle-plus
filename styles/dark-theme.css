@@ -226,6 +226,43 @@ html.wmp-dark .form-autocomplete-downarrow .loading-icon,
 html.wmp-dark .path-mod-assign [data-region="overlay"] {
     background-color: var(--wmpd-surface) !important;
 }
+/* ログイン画面 */
+html.wmp-dark .pagelayout-login #page {
+    background: var(--wmpd-bg) !important;
+}
+html.wmp-dark .login-container {
+    background-color: var(--wmpd-surface) !important;
+    color: var(--wmpd-text) !important;
+    border: 1px solid var(--wmpd-border) !important;
+    box-shadow: none !important;
+}
+/* ロゴ画像は黒い文字なので、明るいパネルのまま残す */
+html.wmp-dark .login-container .login-logo {
+    background-color: #e6e8eb !important;
+    border: 0 !important;
+    border-radius: 8px;
+}
+html.wmp-dark .login-container .login-identityproviders,
+html.wmp-dark .login-container .login-identityproviders .login-identityprovider-btn,
+html.wmp-dark .login-container .login-divider,
+html.wmp-dark .login-container .login-form {
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .login-container .divider {
+    background-color: var(--wmpd-border) !important;
+}
+/* 「早稲田大学ユーザはこちらからログイン」（font タグで濃い赤が指定されている） */
+html.wmp-dark .login-container .login-identityproviders font {
+    color: #ff8f8f !important;
+}
+html.wmp-dark .path-login #loginbtn {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text-2) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .path-login #loginbtn:hover {
+    background-color: #30343b !important;
+}
 html.wmp-dark .userinitials {
     background-color: var(--wmpd-surface-2) !important;
     color: var(--wmpd-text) !important;
@@ -257,7 +294,9 @@ html.wmp-dark .table td,
 html.wmp-dark hr,
 html.wmp-dark .border,
 html.wmp-dark .border-top,
-html.wmp-dark .border-bottom {
+html.wmp-dark .border-bottom,
+html.wmp-dark .border-start,
+html.wmp-dark .border-end {
     border-color: var(--wmpd-border) !important;
 }
 

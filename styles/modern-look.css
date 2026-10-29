@@ -45,9 +45,10 @@ html.wmp-dark .block.card {
     letter-spacing: 0.01em;
 }
 
-/* 活動の行にホバーの手がかりを付ける */
+/* 活動の行にホバーの手がかりを付ける。
+   Moodle は行に 1rem の角丸を付けていて、行が低いと左端が半円になりアイコンを丸く囲んで見えるので、角は丸めない */
 .activity-item {
-    border-radius: 10px;
+    border-radius: 0 !important;
     transition: background-color 0.15s;
 }
 .activity-item:hover {

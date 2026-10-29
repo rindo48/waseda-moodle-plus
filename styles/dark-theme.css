@@ -10,6 +10,14 @@ html.wmp-dark {
     --wmpd-text-2: #a9aeb6;
     --wmpd-link: #8fb4ff;
     --wmpd-accent: #e5707e;
+    /* Bootstrap の色の変数も暗くしておく（個別に上書きしていない部品が白くならないように） */
+    --bs-body-bg: var(--wmpd-bg);
+    --bs-body-color: var(--wmpd-text);
+    --bs-secondary-bg: var(--wmpd-surface-2);
+    --bs-tertiary-bg: var(--wmpd-surface);
+    --bs-secondary-color: var(--wmpd-text-2);
+    --bs-emphasis-color: #fff;
+    --bs-border-color: var(--wmpd-border);
     color-scheme: dark;
     background: var(--wmpd-bg) !important;
 }
@@ -249,6 +257,7 @@ html.wmp-dark .list-group-item-action {
 }
 html.wmp-dark .moremenu .nav-link.active,
 html.wmp-dark .moremenu .nav-link:hover,
+html.wmp-dark .moremenu .nav-link:focus,
 html.wmp-dark .courseindex .courseindex-item.pageitem,
 html.wmp-dark .list-group-item-action:hover,
 html.wmp-dark .courseindex .courseindex-item:hover {

@@ -226,6 +226,22 @@ html.wmp-dark .form-autocomplete-downarrow .loading-icon,
 html.wmp-dark .path-mod-assign [data-region="overlay"] {
     background-color: var(--wmpd-surface) !important;
 }
+/* 読み込み中の仮表示（マイコースなど）。明るい灰色で点滅するアニメーションを暗い色に差し替える */
+@keyframes wmp-dark-pulse {
+    0% {
+        background-color: var(--wmpd-surface-2);
+    }
+    50% {
+        background-color: #30343b;
+    }
+    100% {
+        background-color: var(--wmpd-surface-2);
+    }
+}
+html.wmp-dark .bg-pulse-grey {
+    animation-name: wmp-dark-pulse !important;
+    background-color: var(--wmpd-surface-2);
+}
 /* ログイン画面 */
 html.wmp-dark .pagelayout-login #page {
     background: var(--wmpd-bg) !important;

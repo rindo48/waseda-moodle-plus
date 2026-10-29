@@ -489,6 +489,12 @@ html.wmp-dark [class*="calendar_event_"] > .icon {
 html.wmp-dark .activityiconcontainer {
     filter: brightness(0.92);
 }
+/* 白い背景が焼き込まれたアイコン画像（動画教材の millvi など）。反転して白い四角が浮かないようにする */
+html.wmp-dark img.activityicon[src*="/millvi/"],
+html.wmp-dark .modicon_millvi img {
+    filter: invert(0.9) hue-rotate(180deg) !important;
+    border-radius: 6px;
+}
 
 /* スクロールバー */
 html.wmp-dark ::-webkit-scrollbar {

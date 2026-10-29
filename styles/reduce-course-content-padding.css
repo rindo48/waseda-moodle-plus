@@ -1,0 +1,136 @@
+.activity-item:not(.activityinline) {
+    border: none !important;
+}
+
+.format-topcoll .section li.activity {
+    margin-bottom: 0 !important;
+}
+
+.activity-item {
+    padding: 0 !important;
+}
+
+.activitytitle .text-uppercase.small {
+    color: gray !important;
+    margin-left: 8px !important;
+    white-space: nowrap !important;
+}
+
+.activityiconcontainer.activityiconcontainer {
+    width: 32px !important;
+    height: 32px !important;
+    align-self: center !important;
+    margin-right: 8px !important;
+}
+
+.description .course-description-item:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 40px !important;
+}
+
+p {
+    margin-bottom: 0 !important;
+}
+
+.format-topcoll .ct-activity-mod-feedback,
+.format-topcoll .ct-activity-meta-container {
+    padding: 0 !important;
+}
+
+@media (min-width: 768px) {
+    .activity-item .afterlink {
+        align-self: center !important;
+        display: inline !important;
+        flex-grow: 1 !important;
+    }
+
+    .activity-item > .activity-basis > div {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+
+    .activity-item:not(:has(.afterlink)) > .activity-basis > div > .activity-instance {
+        flex-grow: 1 !important;
+    }
+
+    .activity-item > .activity-basis > div > .activity-info {
+        margin-top: 0 !important;
+        align-self: center !important;
+    }
+
+    .automatic-completion-conditions {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+    }
+
+    .sectionbody {
+        padding-left: 32px !important;
+    }
+
+    .content {
+        margin-left: 0 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .content {
+        margin: 0 !important;
+    }
+}
+
+.activity-item .media-body {
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: row-reverse !important;
+    justify-content: flex-start !important;
+}
+
+body:not(.theme_snap) li.modtype_hsuforum .afterlink {
+    margin: 0 !important;
+}
+
+.tertiary-navigation {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.tertiary-navigation .navitem {
+    margin-bottom: 0 !important;
+}
+
+.row {
+    margin: 0 !important;
+}
+
+.activity-item:not(.activityinline) {
+    padding: 0 !important;
+}
+
+.description .course-description-item {
+    background-color: unset !important;
+}
+
+.ct-activity-mod-feedback {
+    margin-left: 40px !important;
+}
+
+.toggle {
+    border-radius: 0 !important;
+}
+
+.toggle:hover,
+.toggle:focus {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.format-topcoll .course-content ul.topics,
+#section-0 {
+    background-color: unset !important;
+}
+
+#section-0 > .left.side {
+    width: 0 !important;
+}

@@ -1,0 +1,720 @@
+/* Waseda Moodle Plus の部品（ポップアップ・設定画面・Moodle 上の時間割など）の共通スタイル。
+   Moodle のページに混ざっても壊れないよう、すべて .wmp- で始まるクラスにしている。 */
+
+.wmp-scope {
+    --wmp-bg: #ffffff;
+    --wmp-surface: #f6f7f9;
+    --wmp-surface-2: #eef0f3;
+    --wmp-border: #e2e5ea;
+    --wmp-text: #1c2024;
+    --wmp-text-2: #60646c;
+    --wmp-text-3: #8b8d98;
+    --wmp-accent: #8c1d2b; /* 早稲田えんじ */
+    --wmp-accent-soft: #f9e8ea;
+    --wmp-accent-text: #ffffff;
+    --wmp-danger: #e5484d;
+    --wmp-warn: #f76b15;
+    --wmp-ok: #30a46c;
+    --wmp-radius: 10px;
+    --wmp-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+    --wmp-font: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
+    color: var(--wmp-text);
+    font-family: var(--wmp-font);
+    color-scheme: light;
+}
+
+html.wmp-dark .wmp-scope,
+[data-wmp-theme="dark"] .wmp-scope,
+.wmp-scope[data-wmp-theme="dark"] {
+    --wmp-bg: #18191b;
+    --wmp-surface: #212225;
+    --wmp-surface-2: #2b2d31;
+    --wmp-border: #363a3f;
+    --wmp-text: #edeef0;
+    --wmp-text-2: #b0b4ba;
+    --wmp-text-3: #8b8d98;
+    --wmp-accent: #e5707e;
+    --wmp-accent-soft: #3b1d22;
+    --wmp-accent-text: #18191b;
+    --wmp-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+}
+
+.wmp-scope *,
+.wmp-scope *::before,
+.wmp-scope *::after {
+    box-sizing: border-box;
+}
+
+/* ===== ボタン・入力 ===== */
+
+.wmp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--wmp-border);
+    border-radius: 8px;
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    font: 500 13px/1 var(--wmp-font);
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none !important;
+}
+.wmp-btn:hover {
+    background: var(--wmp-surface);
+}
+.wmp-btn:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+.wmp-btn.is-primary {
+    background: var(--wmp-accent);
+    border-color: var(--wmp-accent);
+    color: var(--wmp-accent-text);
+}
+.wmp-btn.is-primary:hover {
+    filter: brightness(1.08);
+}
+.wmp-btn.is-danger {
+    color: var(--wmp-danger);
+}
+.wmp-btn.is-small {
+    height: 26px;
+    padding: 0 8px;
+    font-size: 12px;
+}
+
+.wmp-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--wmp-text-2);
+    font: 16px/1 var(--wmp-font);
+    cursor: pointer;
+}
+.wmp-icon-btn:hover {
+    background: var(--wmp-surface-2);
+    color: var(--wmp-text);
+}
+.wmp-icon-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.wmp-input,
+.wmp-select,
+.wmp-textarea {
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--wmp-border);
+    border-radius: 8px;
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    font: 13px var(--wmp-font);
+}
+.wmp-textarea {
+    height: auto;
+    min-height: 72px;
+    padding: 8px 10px;
+    resize: vertical;
+    width: 100%;
+}
+.wmp-input:focus,
+.wmp-select:focus,
+.wmp-textarea:focus {
+    outline: 2px solid color-mix(in srgb, var(--wmp-accent) 45%, transparent);
+    outline-offset: 0;
+    border-color: var(--wmp-accent);
+}
+
+.wmp-segmented {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--wmp-surface-2);
+}
+.wmp-segmented button {
+    height: 26px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--wmp-text-2);
+    font: 500 12px/1 var(--wmp-font);
+    cursor: pointer;
+}
+.wmp-segmented button.is-active {
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    box-shadow: var(--wmp-shadow);
+}
+
+/* ===== カード ===== */
+
+.wmp-card {
+    border: 1px solid var(--wmp-border);
+    border-radius: var(--wmp-radius);
+    background: var(--wmp-bg);
+    box-shadow: var(--wmp-shadow);
+}
+.wmp-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--wmp-border);
+}
+.wmp-card-title {
+    margin: 0 auto 0 0 !important;
+    font: 600 16px/1.3 var(--wmp-font) !important;
+    color: var(--wmp-text) !important;
+}
+.wmp-card-body {
+    padding: 12px 16px;
+}
+
+.wmp-muted {
+    color: var(--wmp-text-2);
+    font-size: 12px;
+}
+
+.wmp-empty {
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--wmp-text-2);
+    font-size: 13px;
+}
+.wmp-empty-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 8px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--wmp-ok) 15%, transparent);
+    color: var(--wmp-ok);
+    font-size: 18px;
+}
+
+.wmp-error {
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--wmp-danger) 12%, transparent);
+    color: var(--wmp-text);
+    font-size: 13px;
+}
+
+.wmp-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--wmp-border);
+    border-top-color: var(--wmp-accent);
+    border-radius: 50%;
+    animation: wmp-spin 0.8s linear infinite;
+}
+@keyframes wmp-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== 課題一覧 ===== */
+
+.wmp-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.wmp-tl-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 6px !important;
+    color: var(--wmp-text-2) !important;
+    font: 600 12px/1.4 var(--wmp-font) !important;
+    letter-spacing: 0.02em;
+}
+.wmp-tl-date.is-overdue {
+    color: var(--wmp-danger) !important;
+}
+.wmp-tl-count {
+    padding: 1px 6px;
+    border-radius: 99px;
+    background: var(--wmp-surface-2);
+    font-size: 11px;
+}
+.wmp-tl-item {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding: 8px 8px 8px 12px;
+    border: 1px solid var(--wmp-border);
+    border-radius: 9px;
+    background: var(--wmp-bg);
+    overflow: hidden;
+}
+.wmp-tl-item::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--wmp-course-color, var(--wmp-accent));
+}
+.wmp-tl-item:hover {
+    background: var(--wmp-surface);
+}
+.wmp-tl-main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    color: inherit !important;
+    text-decoration: none !important;
+}
+.wmp-tl-kind {
+    color: var(--wmp-text-3);
+    font-size: 11px;
+}
+.wmp-tl-title {
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.wmp-tl-course {
+    overflow: hidden;
+    color: var(--wmp-text-2);
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.wmp-tl-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+    flex-shrink: 0;
+    font-size: 12px;
+}
+.wmp-tl-time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+.wmp-tl-remaining {
+    padding: 1px 7px;
+    border-radius: 99px;
+    background: var(--wmp-surface-2);
+    color: var(--wmp-text-2);
+    font-size: 11px;
+    white-space: nowrap;
+}
+.wmp-tl-item.is-urgent .wmp-tl-remaining,
+.wmp-tl-item.is-overdue .wmp-tl-remaining {
+    background: color-mix(in srgb, var(--wmp-danger) 15%, transparent);
+    color: var(--wmp-danger);
+    font-weight: 600;
+}
+.wmp-tl-item.is-soon .wmp-tl-remaining {
+    background: color-mix(in srgb, var(--wmp-warn) 15%, transparent);
+    color: var(--wmp-warn);
+}
+.wmp-tl-action {
+    color: var(--wmp-accent) !important;
+    font-size: 11px;
+}
+.wmp-tl-hide {
+    align-self: flex-start;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    opacity: 0;
+}
+.wmp-tl-item:hover .wmp-tl-hide,
+.wmp-tl-hide:focus-visible {
+    opacity: 1;
+}
+
+/* ===== ダイアログ ===== */
+
+.wmp-dialog {
+    width: min(560px, calc(100vw - 32px));
+    max-height: calc(100vh - 48px);
+    padding: 0;
+    border: 1px solid var(--wmp-border);
+    border-radius: 14px;
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+.wmp-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+}
+.wmp-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--wmp-border);
+}
+.wmp-dialog-header h2 {
+    flex: 1;
+    margin: 0 !important;
+    font: 600 16px/1.3 var(--wmp-font) !important;
+    color: var(--wmp-text) !important;
+}
+.wmp-dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 18px;
+    overflow: auto;
+}
+.wmp-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--wmp-border);
+}
+.wmp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+}
+.wmp-field > span {
+    color: var(--wmp-text-2);
+    font-weight: 600;
+    font-size: 12px;
+}
+.wmp-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.wmp-swatch {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.wmp-swatch.is-active {
+    border-color: var(--wmp-text);
+    box-shadow: inset 0 0 0 2px var(--wmp-bg);
+}
+
+/* ===== トースト ===== */
+
+.wmp-toast {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 2147483646;
+    max-width: 360px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #1c2024;
+    color: #fff;
+    font: 13px/1.5 var(--wmp-font);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== ダッシュボード ===== */
+
+.wmp-dash {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+@media (min-width: 1400px) {
+    .wmp-dash:has(.wmp-dash-timeline):has(.wmp-tt-card) {
+        grid-template-columns: minmax(0, 1fr) 340px;
+        align-items: start;
+    }
+}
+.wmp-dash a {
+    color: inherit;
+}
+.wmp-dash-more {
+    margin-top: 4px;
+}
+.wmp-tt-message {
+    margin-bottom: 8px;
+}
+
+.wmp-tt-grid {
+    display: grid;
+    grid-auto-rows: minmax(64px, auto);
+    gap: 4px;
+}
+.wmp-tt-corner {
+    grid-row: 1;
+    grid-column: 1;
+}
+.wmp-tt-day {
+    display: grid;
+    place-items: center;
+    height: 28px;
+    min-height: 0;
+    border-radius: 6px;
+    color: var(--wmp-text-2);
+    font-weight: 600;
+}
+.wmp-tt-grid > .wmp-tt-day,
+.wmp-tt-grid > .wmp-tt-corner {
+    align-self: end;
+}
+.wmp-tt-grid {
+    grid-template-rows: 28px;
+}
+.wmp-tt-day.is-today {
+    background: var(--wmp-accent);
+    color: var(--wmp-accent-text);
+}
+.wmp-tt-period {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border-radius: 6px;
+    color: var(--wmp-text-2);
+    text-align: center;
+}
+.wmp-tt-period strong {
+    font-size: 14px;
+    color: var(--wmp-text);
+}
+.wmp-tt-period small {
+    font-size: 10px;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-tt-period.is-now {
+    background: var(--wmp-accent-soft);
+}
+.wmp-tt-period.is-now strong {
+    color: var(--wmp-accent);
+}
+.wmp-tt-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding: 2px;
+    border-radius: 8px;
+    background: var(--wmp-surface);
+}
+.wmp-tt-cell.is-today {
+    background: color-mix(in srgb, var(--wmp-accent) 5%, var(--wmp-surface));
+}
+.wmp-tt-cell.is-now {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: -1px;
+}
+.wmp-tt-course {
+    position: relative;
+    flex: 1;
+    display: flex;
+    min-height: 56px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--wmp-course-color) 16%, var(--wmp-bg));
+    border-left: 4px solid var(--wmp-course-color);
+}
+.wmp-tt-course.is-hidden {
+    opacity: 0.45;
+}
+.wmp-tt-course:hover {
+    background: color-mix(in srgb, var(--wmp-course-color) 26%, var(--wmp-bg));
+}
+.wmp-tt-course-link {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    padding: 6px 24px 6px 8px;
+    color: var(--wmp-text) !important;
+    text-decoration: none !important;
+}
+.wmp-tt-course-name {
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+.wmp-tt-room {
+    color: var(--wmp-text-2);
+    font-size: 11px;
+}
+.wmp-tt-tag {
+    align-self: flex-start;
+    padding: 0 5px;
+    border-radius: 4px;
+    background: var(--wmp-surface-2);
+    color: var(--wmp-text-2);
+    font-size: 10px;
+}
+.wmp-tt-badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 99px;
+    background: var(--wmp-danger);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+}
+.wmp-tt-course > .wmp-tt-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}
+.wmp-tt-note {
+    position: absolute;
+    right: 6px;
+    bottom: 4px;
+    color: var(--wmp-text-3);
+    font-size: 11px;
+}
+.wmp-tt-edit {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 22px;
+    height: 22px;
+    opacity: 0;
+    background: var(--wmp-bg);
+}
+.wmp-tt-course:hover .wmp-tt-edit,
+.wmp-tt-edit:focus-visible {
+    opacity: 1;
+}
+
+.wmp-tt-unscheduled {
+    margin-top: 16px;
+}
+.wmp-tt-unscheduled h3 {
+    margin: 0 0 2px !important;
+    font: 600 13px/1.4 var(--wmp-font) !important;
+    color: var(--wmp-text) !important;
+}
+.wmp-tt-unscheduled p {
+    margin: 0 0 8px !important;
+}
+.wmp-tt-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.wmp-tt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    padding: 2px 2px 2px 10px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--wmp-course-color) 14%, var(--wmp-bg));
+    border: 1px solid color-mix(in srgb, var(--wmp-course-color) 40%, transparent);
+}
+.wmp-tt-chip a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--wmp-text) !important;
+    font-size: 12px;
+    text-decoration: none !important;
+}
+.wmp-tt-chip .wmp-icon-btn {
+    width: 22px;
+    height: 22px;
+}
+
+.wmp-slot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+}
+.wmp-slot-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+.wmp-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+    .wmp-tt-period small {
+        display: none;
+    }
+    .wmp-tt-course-link {
+        padding: 4px;
+    }
+    .wmp-tt-grid {
+        grid-template-columns: 24px repeat(var(--wmp-days, 5), minmax(0, 1fr)) !important;
+    }
+}
+
+/* ===== Moodle 上の小物 ===== */
+
+.wmp-word-counter {
+    margin-top: 2px;
+    color: #8b8d98;
+    font-size: 12px;
+    text-align: right;
+}
+.wmp-word-counter span {
+    cursor: pointer;
+    user-select: none;
+}
+.wmp-syllabus-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border: 1px solid var(--wmp-border);
+    border-radius: 10px;
+    background: var(--wmp-surface);
+    font-size: 13px;
+}
+[aria-busy="true"] {
+    cursor: progress !important;
+    opacity: 0.7;
+}

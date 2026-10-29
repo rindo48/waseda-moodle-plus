@@ -1,0 +1,224 @@
+html,
+body {
+    margin: 0;
+}
+body {
+    min-height: 100vh;
+    background: var(--wmp-surface);
+    font-size: 14px;
+}
+.op-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: var(--wmp-bg);
+    border-bottom: 1px solid var(--wmp-border);
+}
+.op-header img {
+    border-radius: 7px;
+}
+.op-header h1 {
+    margin: 0;
+    font-size: 17px;
+}
+.op-saved {
+    margin-left: auto;
+    color: var(--wmp-ok);
+    font-size: 12px;
+    transition: opacity 0.3s;
+}
+.op-layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 760px);
+    gap: 24px;
+    justify-content: center;
+    padding: 24px 16px 64px;
+}
+.op-nav {
+    position: sticky;
+    top: 76px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.op-nav a {
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--wmp-text-2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+.op-nav a:hover {
+    background: var(--wmp-surface-2);
+    color: var(--wmp-text);
+}
+.op-nav a.is-active {
+    background: var(--wmp-accent-soft);
+    color: var(--wmp-accent);
+}
+.op-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.op-section {
+    scroll-margin-top: 80px;
+}
+.op-section > h2 {
+    margin: 0;
+    font-size: 15px;
+}
+.op-section .wmp-card-body {
+    padding: 0;
+}
+.op-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-top: 1px solid var(--wmp-border);
+}
+.op-item:first-child {
+    border-top: none;
+}
+.op-item.is-block {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+.op-item-text {
+    flex: 1;
+    min-width: 0;
+}
+.op-item-title {
+    font-weight: 600;
+    font-size: 14px;
+}
+.op-item-desc {
+    margin-top: 3px;
+    color: var(--wmp-text-2);
+    font-size: 12.5px;
+    line-height: 1.6;
+}
+.op-item-desc code {
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: var(--wmp-surface-2);
+    font-size: 12px;
+}
+.op-item.is-disabled {
+    opacity: 0.5;
+}
+.op-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.op-row .wmp-input {
+    flex: 1;
+    min-width: 180px;
+}
+.op-note {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--wmp-warn) 12%, transparent);
+    font-size: 12.5px;
+    line-height: 1.7;
+}
+.op-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.op-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 4px 3px 10px;
+    border-radius: 99px;
+    background: var(--wmp-surface-2);
+    font-size: 12px;
+}
+.op-tag .wmp-icon-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
+}
+
+/* トグルスイッチ */
+.op-switch {
+    position: relative;
+    flex-shrink: 0;
+    width: 40px;
+    height: 24px;
+}
+.op-switch input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.op-switch span {
+    position: absolute;
+    inset: 0;
+    border-radius: 99px;
+    background: var(--wmp-border);
+    transition: background 0.15s;
+    pointer-events: none;
+}
+.op-switch span::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s;
+}
+.op-switch input:checked + span {
+    background: var(--wmp-accent);
+}
+.op-switch input:checked + span::after {
+    transform: translateX(16px);
+}
+.op-switch input:focus-visible + span {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: 2px;
+}
+
+.op-welcome {
+    padding: 16px 18px;
+    border-radius: var(--wmp-radius);
+    background: var(--wmp-accent-soft);
+    line-height: 1.7;
+}
+.op-welcome h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+@media (max-width: 800px) {
+    .op-layout {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 16px;
+    }
+    .op-nav {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .op-item {
+        flex-wrap: wrap;
+    }
+}

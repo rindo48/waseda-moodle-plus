@@ -1,0 +1,303 @@
+/* Waseda Moodle 用ダークテーマ（Moodle 4.x / Boost 系テーマ向け）。
+   html.wmp-dark が付いているときだけ効く。 */
+
+html.wmp-dark {
+    --wmpd-bg: #121316;
+    --wmpd-surface: #1b1d21;
+    --wmpd-surface-2: #24272c;
+    --wmpd-border: #343840;
+    --wmpd-text: #e6e8eb;
+    --wmpd-text-2: #a9aeb6;
+    --wmpd-link: #8fb4ff;
+    --wmpd-accent: #e5707e;
+    color-scheme: dark;
+    background: var(--wmpd-bg) !important;
+}
+
+html.wmp-dark body,
+html.wmp-dark #page,
+html.wmp-dark #page-wrapper,
+html.wmp-dark #page.drawers,
+html.wmp-dark .main-inner,
+html.wmp-dark #topofscroll,
+html.wmp-dark #region-main,
+html.wmp-dark #region-main-box,
+html.wmp-dark .pagelayout-standard #page.drawers .main-inner,
+html.wmp-dark .course-content,
+html.wmp-dark .format-topcoll .course-content ul.topics,
+html.wmp-dark #section-0 {
+    background-color: var(--wmpd-bg) !important;
+    color: var(--wmpd-text) !important;
+}
+
+/* 文字色 */
+html.wmp-dark body,
+html.wmp-dark h1, html.wmp-dark h2, html.wmp-dark h3, html.wmp-dark h4, html.wmp-dark h5, html.wmp-dark h6,
+html.wmp-dark .h1, html.wmp-dark .h2, html.wmp-dark .h3, html.wmp-dark .h4, html.wmp-dark .h5,
+html.wmp-dark .text-dark,
+html.wmp-dark .text-body,
+html.wmp-dark label,
+html.wmp-dark legend,
+html.wmp-dark .sectionname,
+html.wmp-dark .instancename,
+html.wmp-dark .activityname,
+html.wmp-dark .page-header-headings,
+html.wmp-dark .breadcrumb-item,
+html.wmp-dark .breadcrumb-item.active {
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark .text-muted,
+html.wmp-dark .dimmed_text,
+html.wmp-dark .small.text-muted,
+html.wmp-dark .activity-dates,
+html.wmp-dark .description,
+html.wmp-dark .form-text,
+html.wmp-dark .breadcrumb-item + .breadcrumb-item::before {
+    color: var(--wmpd-text-2) !important;
+}
+html.wmp-dark a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.wmp-btn):not([class*="wmp-"]) {
+    color: var(--wmpd-link);
+}
+html.wmp-dark .aalink,
+html.wmp-dark .activityname a,
+html.wmp-dark .coursename a {
+    color: var(--wmpd-link) !important;
+}
+
+/* 面（カード・ブロック・ドロワー） */
+html.wmp-dark .bg-white,
+html.wmp-dark .bg-light,
+html.wmp-dark .card,
+html.wmp-dark .card-header,
+html.wmp-dark .card-footer,
+html.wmp-dark .block,
+html.wmp-dark .drawer,
+html.wmp-dark .drawer-left,
+html.wmp-dark .drawer-right,
+html.wmp-dark .courseindex,
+html.wmp-dark .navbar,
+html.wmp-dark .navbar.fixed-top,
+html.wmp-dark .navbar-light,
+html.wmp-dark .primary-navigation,
+html.wmp-dark .secondary-navigation,
+html.wmp-dark .moremenu,
+html.wmp-dark .tertiary-navigation,
+html.wmp-dark #page-header,
+html.wmp-dark .activity-item,
+html.wmp-dark .activity-header,
+html.wmp-dark .course-section,
+html.wmp-dark .section,
+html.wmp-dark .sectionbody,
+html.wmp-dark li.activity,
+html.wmp-dark .toggle,
+html.wmp-dark .format-topcoll .toggle,
+html.wmp-dark .format-topcoll .ctopics.section,
+html.wmp-dark .modal-content,
+html.wmp-dark .popover,
+html.wmp-dark .popover-body,
+html.wmp-dark .popover-region-container,
+html.wmp-dark .footer-popover,
+html.wmp-dark #page-footer,
+html.wmp-dark .bg-gray,
+html.wmp-dark .list-group-item,
+html.wmp-dark .message-app,
+html.wmp-dark .message-app .panel-header-container,
+html.wmp-dark .message-app .footer-container,
+html.wmp-dark .forumpost,
+html.wmp-dark .forum-post-container,
+html.wmp-dark .que .formulation,
+html.wmp-dark .que .info,
+html.wmp-dark .que .outcome,
+html.wmp-dark .que .comment,
+html.wmp-dark .que .history,
+html.wmp-dark #mod_quiz_navblock,
+html.wmp-dark .submissionstatustable,
+html.wmp-dark .generaltable,
+html.wmp-dark .generaltable th,
+html.wmp-dark .generaltable td,
+html.wmp-dark .filemanager-container,
+html.wmp-dark .filepicker-filelist,
+html.wmp-dark .fp-content,
+html.wmp-dark .moodle-dialogue-base .moodle-dialogue-wrap,
+html.wmp-dark .moodle-dialogue-hd,
+html.wmp-dark .moodle-dialogue-bd,
+html.wmp-dark .moodle-dialogue-ft,
+html.wmp-dark .editor_atto_toolbar,
+html.wmp-dark .editor_atto_content_wrap,
+html.wmp-dark .editor_atto_content,
+html.wmp-dark .tox .tox-toolbar,
+html.wmp-dark .tox .tox-toolbar__primary,
+html.wmp-dark .tox .tox-menubar,
+html.wmp-dark .tox .tox-statusbar,
+html.wmp-dark .tox .tox-edit-area__iframe {
+    background-color: var(--wmpd-surface) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .que .formulation {
+    background-color: #1f2a33 !important;
+}
+html.wmp-dark .que .outcome,
+html.wmp-dark .que .comment {
+    background-color: #2d2a1d !important;
+}
+
+html.wmp-dark .table,
+html.wmp-dark table {
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark .table-striped tbody tr:nth-of-type(odd),
+html.wmp-dark .generaltable tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+html.wmp-dark .table-hover tbody tr:hover,
+html.wmp-dark .generaltable tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark .table th,
+html.wmp-dark .table td,
+html.wmp-dark hr,
+html.wmp-dark .border,
+html.wmp-dark .border-top,
+html.wmp-dark .border-bottom {
+    border-color: var(--wmpd-border) !important;
+}
+
+/* ナビゲーション */
+html.wmp-dark .nav-link,
+html.wmp-dark .navbar .nav-link,
+html.wmp-dark .navbar-light .navbar-nav .nav-link,
+html.wmp-dark .moremenu .nav-link,
+html.wmp-dark .courseindex .courseindex-link,
+html.wmp-dark .courseindex .courseindex-section-title a,
+html.wmp-dark .list-group-item-action {
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark .moremenu .nav-link.active,
+html.wmp-dark .moremenu .nav-link:hover,
+html.wmp-dark .courseindex .courseindex-item.pageitem,
+html.wmp-dark .list-group-item-action:hover,
+html.wmp-dark .courseindex .courseindex-item:hover {
+    background-color: var(--wmpd-surface-2) !important;
+}
+html.wmp-dark .moremenu .nav-link.active {
+    border-bottom-color: var(--wmpd-accent) !important;
+}
+html.wmp-dark .dropdown-menu {
+    background-color: var(--wmpd-surface-2) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .dropdown-item {
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark .dropdown-item:hover,
+html.wmp-dark .dropdown-item:focus {
+    background-color: #30343b !important;
+}
+html.wmp-dark .dropdown-divider {
+    border-color: var(--wmpd-border) !important;
+}
+
+/* フォーム */
+html.wmp-dark .form-control,
+html.wmp-dark .custom-select,
+html.wmp-dark .form-select,
+html.wmp-dark input[type="text"],
+html.wmp-dark input[type="search"],
+html.wmp-dark input[type="number"],
+html.wmp-dark input[type="email"],
+html.wmp-dark input[type="password"],
+html.wmp-dark input[type="url"],
+html.wmp-dark textarea,
+html.wmp-dark select {
+    background-color: #15171a !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .form-control:disabled,
+html.wmp-dark .form-control[readonly] {
+    background-color: var(--wmpd-surface-2) !important;
+}
+html.wmp-dark ::placeholder {
+    color: #6f747c !important;
+}
+html.wmp-dark .input-group-text {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+
+/* ボタン */
+html.wmp-dark .btn-secondary,
+html.wmp-dark .btn-light,
+html.wmp-dark .btn-outline-secondary,
+html.wmp-dark .btn-icon,
+html.wmp-dark .btn-link.btn-icon {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .btn-secondary:hover,
+html.wmp-dark .btn-light:hover,
+html.wmp-dark .btn-icon:hover {
+    background-color: #30343b !important;
+}
+html.wmp-dark .btn-link {
+    color: var(--wmpd-link) !important;
+}
+
+/* お知らせ・バッジ */
+html.wmp-dark .alert-info {
+    background-color: #16283d !important;
+    color: #cfe2ff !important;
+    border-color: #1f3b5a !important;
+}
+html.wmp-dark .alert-warning {
+    background-color: #33290f !important;
+    color: #ffe8a3 !important;
+    border-color: #4a3b12 !important;
+}
+html.wmp-dark .alert-success {
+    background-color: #12301f !important;
+    color: #bdf0d2 !important;
+    border-color: #1c4a30 !important;
+}
+html.wmp-dark .alert-danger {
+    background-color: #3a1618 !important;
+    color: #ffc9cc !important;
+    border-color: #5a2226 !important;
+}
+html.wmp-dark .badge-light,
+html.wmp-dark .badge-secondary,
+html.wmp-dark .bg-secondary {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+}
+
+/* 画像の白背景が眩しくならないように少しだけ暗くする */
+html.wmp-dark img:not([src*=".svg"]):not(.icon):not(.userpicture) {
+    filter: brightness(0.9);
+}
+/* 黒い線画アイコンを見えるようにする */
+html.wmp-dark .icon:not(.activityicon),
+html.wmp-dark .navbar-brand img[src*=".svg"] {
+    filter: invert(0.85);
+}
+html.wmp-dark .activityiconcontainer {
+    filter: brightness(0.92);
+}
+
+/* スクロールバー */
+html.wmp-dark ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+html.wmp-dark ::-webkit-scrollbar-track {
+    background: var(--wmpd-bg);
+}
+html.wmp-dark ::-webkit-scrollbar-thumb {
+    background: #3a3e45;
+    border: 3px solid var(--wmpd-bg);
+    border-radius: 8px;
+}

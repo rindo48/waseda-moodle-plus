@@ -1,0 +1,137 @@
+{
+    "manifest_version": 3,
+    "name": "Waseda Moodle Plus",
+    "short_name": "WMP",
+    "version": "1.0.0",
+    "description": "Waseda Moodle を使いやすくする拡張機能（時間割・課題一覧・自動ログイン・ダークモードなど）",
+    "minimum_chrome_version": "116",
+    "incognito": "not_allowed",
+    "icons": {
+        "16": "icons/icon-16.png",
+        "48": "icons/icon-48.png",
+        "128": "icons/icon-128.png"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_title": "Waseda Moodle Plus",
+        "default_popup": "popup/popup.html",
+        "default_icon": {
+            "16": "icons/icon-16.png",
+            "48": "icons/icon-48.png",
+            "128": "icons/icon-128.png"
+        }
+    },
+    "options_page": "options/options.html",
+    "permissions": [
+        "storage",
+        "alarms",
+        "contextMenus",
+        "scripting",
+        "offscreen",
+        "notifications",
+        "declarativeNetRequestWithHostAccess"
+    ],
+    "host_permissions": [
+        "*://*.waseda.jp/*",
+        "https://login.microsoftonline.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://wsdmoodle.waseda.jp/*"
+            ],
+            "js": [
+                "lib/defaults.js",
+                "lib/util.js",
+                "lib/timeline-view.js",
+                "content/features.js",
+                "content/dashboard.js",
+                "content/main.js"
+            ],
+            "css": [
+                "styles/components.css"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "matches": [
+                "https://www.wsl.waseda.jp/syllabus/JAA104.php*"
+            ],
+            "js": [
+                "lib/defaults.js",
+                "lib/util.js",
+                "lib/syllabus-info.js",
+                "content/syllabus-page.js"
+            ],
+            "css": [
+                "styles/components.css"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "matches": [
+                "https://login.microsoftonline.com/b3865172-9887-4b3a-89ff-95a35b92f4c3/*"
+            ],
+            "js": [
+                "lib/defaults.js",
+                "content/login-checkbox.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "auto-login",
+                "enabled": false,
+                "path": "rules/auto-login.json"
+            },
+            {
+                "id": "block-tracking",
+                "enabled": false,
+                "path": "rules/block-tracking.json"
+            },
+            {
+                "id": "faster-back-and-forward",
+                "enabled": false,
+                "path": "rules/faster-back-and-forward.json"
+            },
+            {
+                "id": "fix-portal-link",
+                "enabled": false,
+                "path": "rules/fix-portal-link.json"
+            },
+            {
+                "id": "remove-loading-video",
+                "enabled": false,
+                "path": "rules/remove-loading-video.json"
+            },
+            {
+                "id": "view-in-browser",
+                "enabled": false,
+                "path": "rules/view-in-browser.json"
+            }
+        ]
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "pages/auto-login.html"
+            ],
+            "matches": [
+                "https://wsdmoodle.waseda.jp/*"
+            ]
+        },
+        {
+            "resources": [
+                "res/dummy-video.mp4"
+            ],
+            "matches": [
+                "*://*.waseda.jp/*"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+/* 小テストの残り時間を画面の右下に大きく固定表示する */
+#quiz-timer,
+#quiz-timer-wrapper #quiz-timer {
+    position: fixed !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 10px 16px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    background: rgba(20, 20, 24, 0.82) !important;
+    color: #fff !important;
+    font-size: x-large !important;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+    pointer-events: none !important;
+}
+#quiz-timer.timeleft1, #quiz-timer.timeleft2, #quiz-timer.timeleft3,
+#quiz-timer.timeleft4, #quiz-timer.timeleft5, #quiz-timer.timeleft6 {
+    background: rgba(229, 72, 77, 0.92) !important;
+}
+.show-drawer-right #quiz-timer {
+    right: 331px !important;
+}

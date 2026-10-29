@@ -1,0 +1,26 @@
+/* ダークモード（色反転方式）。専用テーマで色が崩れるページ向けの代替手段。
+   ページ全体の色を反転し、画像・動画だけ元に戻す。 */
+
+html.wmp-dark {
+    background: #fff !important;
+    filter: invert(0.9) hue-rotate(180deg);
+    color-scheme: light;
+}
+html.wmp-dark img,
+html.wmp-dark video,
+html.wmp-dark picture,
+html.wmp-dark canvas,
+html.wmp-dark iframe,
+html.wmp-dark embed,
+html.wmp-dark object,
+html.wmp-dark svg image,
+html.wmp-dark .courseimage,
+html.wmp-dark [style*="background-image"],
+html.wmp-dark .wmp-scope {
+    filter: invert(1) hue-rotate(180deg);
+}
+/* 拡張機能の部品は反転を戻したうえで、自前のダーク配色を使う */
+html.wmp-dark .wmp-scope img,
+html.wmp-dark .wmp-scope [style*="background-image"] {
+    filter: none;
+}

@@ -800,3 +800,21 @@ img#logoimage {
     width: auto;
     height: 26px;
 }
+
+/* ===== 右のブロックドロワの開閉 =====
+   Waseda のテーマはダッシュボードとコースのページで、ブロックドロワを開閉の状態に関係なく常に表示し、
+   開くボタンも隠しているため、「ブロックドロワを閉じる」を押しても何も起きない。
+   Moodle 本来の開閉状態（.show / .show-drawer-right）に従わせる */
+.pagelayout-mydashboard .drawer.drawer-right:not(.show),
+.pagelayout-course .drawer.drawer-right:not(.show) {
+    right: -325px !important;
+    visibility: hidden !important;
+}
+.pagelayout-mydashboard #page.drawers:not(.show-drawer-right),
+.pagelayout-course #page.drawers:not(.show-drawer-right) {
+    margin-right: 0 !important;
+}
+.pagelayout-mydashboard .drawer-toggles .drawer-right-toggle .btn,
+.pagelayout-course .drawer-toggles .drawer-right-toggle .btn {
+    display: inline-block !important;
+}

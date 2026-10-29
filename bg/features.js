@@ -24,7 +24,7 @@ function contentScripts(settings) {
     add(settings.darkMode !== "off", {
         id: "dark-mode",
         matches: [MOODLE],
-        js: [settings.darkMode === "on" ? "content/dark-mode-on.js" : "content/dark-mode-auto.js"],
+        js: [settings.darkMode === "on" ? "content/dark-mode-on.js" : "content/dark-mode-auto.js", "content/dark-mode-inline-colors.js"],
         css: [settings.darkModeMethod === "invert" ? "styles/dark-invert.css" : "styles/dark-theme.css"],
         runAt: "document_start",
         allFrames: true,
@@ -113,6 +113,9 @@ export async function applyDarkModeToOpenTabs() {
                         document.documentElement.classList.toggle("wmp-dark", on);
                     },
                 });
+                if (settings.darkMode !== "off") {
+                    await chrome.scripting.executeScript({ target, files: ["content/dark-mode-inline-colors.js"] });
+                }
             } catch (e) {
                 // 読み込み中や破棄されたタブには反映できないが、次に開いたときに効くので無視する
                 console.debug("failed to apply dark mode", tab.id, e);

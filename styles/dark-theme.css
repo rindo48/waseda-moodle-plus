@@ -555,19 +555,15 @@ html.wmp-dark .completion-dialog .text-success {
     color: var(--wmpd-success-text) !important;
 }
 
-/* 課題の提出画面にある「レポート・論文等の提出に関する注意」の枠（早稲田がインラインで薄い桃色の背景を付けている） */
-html.wmp-dark [style*="background:#F8E0E6" i],
-html.wmp-dark [style*="background: #F8E0E6" i],
-html.wmp-dark [style*="rgb(248, 224, 230)" i] {
-    background: rgba(229, 112, 126, 0.12) !important;
-    border-color: rgba(229, 112, 126, 0.35) !important;
-    color: var(--wmpd-text) !important;
+/* 先生が本文に直接付けた色（content/dark-mode-inline-colors.js が明るい背景・暗い文字を見つけて、暗い画面向けの色を変数に入れる）。
+   課題提出画面の「レポート・論文等の提出に関する注意」の桃色の枠もこれで暗くなる */
+html.wmp-dark .wmp-dark-bg {
+    background-color: var(--wmp-dark-bg) !important;
+    border-color: var(--wmpd-border) !important;
+    color: var(--wmpd-text);
 }
-/* 枠の中に暗い文字色が直接書かれていても読めるようにする（リンクの色は残す） */
-html.wmp-dark [style*="background:#F8E0E6" i] :not(a),
-html.wmp-dark [style*="background: #F8E0E6" i] :not(a),
-html.wmp-dark [style*="rgb(248, 224, 230)" i] :not(a) {
-    color: var(--wmpd-text) !important;
+html.wmp-dark .wmp-dark-fg {
+    color: var(--wmp-dark-fg) !important;
 }
 
 /* ファイルピッカーのアイコン表示: サムネイルの白枠とファイル名の白背景 */

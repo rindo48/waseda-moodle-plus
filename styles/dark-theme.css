@@ -583,3 +583,97 @@ html.wmp-dark .fp-filename {
 html.wmp-dark .fp-thumbnail img:not(.realpreview) {
     filter: invert(0.85) hue-rotate(180deg) !important;
 }
+
+/* TinyMCE（オンラインテキストなどのエディタ）。Google ドキュメントのダークモードのように、
+   ツールバーは一段明るい面、ボタンは背景なしでアイコンだけ明るく、本文は暗い面に明るい文字にする。
+   本文は iframe の中なので content/dark-mode-editor.js が別に色を入れる */
+html.wmp-dark .tox.tox-tinymce {
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .tox .tox-editor-header,
+html.wmp-dark .tox .tox-toolbar-overlord,
+html.wmp-dark .tox .tox-toolbar,
+html.wmp-dark .tox .tox-toolbar__primary,
+html.wmp-dark .tox .tox-toolbar__overflow,
+html.wmp-dark .tox .tox-menubar {
+    background: var(--wmpd-surface-2) !important;
+    box-shadow: none !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .tox .tox-tbtn,
+html.wmp-dark .tox .tox-mbtn,
+html.wmp-dark .tox .tox-split-button {
+    background: transparent !important;
+    color: var(--wmpd-text) !important;
+    border-color: transparent !important;
+}
+html.wmp-dark .tox .tox-tbtn svg,
+html.wmp-dark .tox .tox-split-button svg {
+    fill: var(--wmpd-text) !important;
+}
+/* Moodle のプラグインのボタン（ビデオ録画など）はアイコンが svg の中の画像なので、fill が効かず反転で明るくする */
+html.wmp-dark .tox svg[data-buttonsource="moodle"] image {
+    filter: invert(0.9);
+}
+html.wmp-dark .tox .tox-tbtn:hover,
+html.wmp-dark .tox .tox-mbtn:hover,
+html.wmp-dark .tox .tox-mbtn--active,
+html.wmp-dark .tox .tox-split-button:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+/* 太字などが有効になっているボタン */
+html.wmp-dark .tox .tox-tbtn--enabled,
+html.wmp-dark .tox .tox-tbtn--enabled:hover {
+    background: rgba(143, 180, 255, 0.2) !important;
+}
+html.wmp-dark .tox .tox-tbtn--disabled svg,
+html.wmp-dark .tox .tox-tbtn[aria-disabled="true"] svg {
+    fill: var(--wmpd-text-2) !important;
+    opacity: 0.5;
+}
+html.wmp-dark .tox .tox-statusbar,
+html.wmp-dark .tox .tox-statusbar a,
+html.wmp-dark .tox .tox-statusbar__path-item,
+html.wmp-dark .tox .tox-statusbar__wordcount,
+html.wmp-dark .tox .tox-statusbar__path-divider {
+    color: var(--wmpd-text-2) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .tox .tox-statusbar__resize-handle svg {
+    fill: var(--wmpd-text-2) !important;
+}
+/* メニュー・ダイアログ（「挿入」「表」などを押したとき） */
+html.wmp-dark .tox .tox-menu,
+html.wmp-dark .tox .tox-collection,
+html.wmp-dark .tox .tox-dialog,
+html.wmp-dark .tox .tox-dialog__header,
+html.wmp-dark .tox .tox-dialog__body,
+html.wmp-dark .tox .tox-dialog__footer {
+    background: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .tox .tox-collection__item,
+html.wmp-dark .tox .tox-dialog *:not(svg):not(path) {
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark .tox .tox-collection__item svg,
+html.wmp-dark .tox .tox-dialog svg {
+    fill: var(--wmpd-text) !important;
+}
+html.wmp-dark .tox .tox-collection__item--active {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+html.wmp-dark .tox .tox-textfield,
+html.wmp-dark .tox .tox-textarea,
+html.wmp-dark .tox .tox-listboxfield .tox-listbox--select,
+html.wmp-dark .tox .tox-selectfield select {
+    background: var(--wmpd-bg) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .tox .tox-button--secondary {
+    background: var(--wmpd-surface) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}

@@ -24,7 +24,7 @@ function contentScripts(settings) {
     add(settings.darkMode !== "off", {
         id: "dark-mode",
         matches: [MOODLE],
-        js: [settings.darkMode === "on" ? "content/dark-mode-on.js" : "content/dark-mode-auto.js", "content/dark-mode-inline-colors.js"],
+        js: [settings.darkMode === "on" ? "content/dark-mode-on.js" : "content/dark-mode-auto.js", "content/dark-mode-inline-colors.js", "content/dark-mode-editor.js"],
         css: [settings.darkModeMethod === "invert" ? "styles/dark-invert.css" : "styles/dark-theme.css"],
         runAt: "document_start",
         allFrames: true,
@@ -114,7 +114,7 @@ export async function applyDarkModeToOpenTabs() {
                     },
                 });
                 if (settings.darkMode !== "off") {
-                    await chrome.scripting.executeScript({ target, files: ["content/dark-mode-inline-colors.js"] });
+                    await chrome.scripting.executeScript({ target, files: ["content/dark-mode-inline-colors.js", "content/dark-mode-editor.js"] });
                 }
             } catch (e) {
                 // 読み込み中や破棄されたタブには反映できないが、次に開いたときに効くので無視する

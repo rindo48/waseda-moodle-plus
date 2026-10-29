@@ -772,3 +772,16 @@ html.wmp-dark .modicon_millvi img {
     content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='%23f0883e'%3E%3Crect x='1' y='4.5' width='6.5' height='2.5' rx='1'/%3E%3Crect x='9' y='4.5' width='6.5' height='2.5' rx='1'/%3E%3Crect x='17' y='4.5' width='6.5' height='2.5' rx='1'/%3E%3Crect x='25' y='4.5' width='6' height='2.5' rx='1'/%3E%3Crect x='1' y='8.5' width='6.5' height='3.5' rx='1'/%3E%3Crect x='9' y='8.5' width='6.5' height='3.5' rx='1'/%3E%3Crect x='17' y='8.5' width='6.5' height='3.5' rx='1'/%3E%3Crect x='25' y='8.5' width='6' height='3.5' rx='1'/%3E%3C/g%3E%3Cpath d='M4.5 28V20.5a5.5 3.25 0 0 1 11 0V28M15.5 20.5a5.5 3.25 0 0 1 11 0V28' fill='none' stroke='%238b7bff' stroke-width='6.5'/%3E%3Crect x='1.25' y='14' width='6.5' height='7' fill='%238b7bff'/%3E%3C/svg%3E");
     filter: none !important;
 }
+
+/* ===== 学習ツール（local_learningtools）の不具合の手当て ===== */
+/* 「学習ツール」のアイコンは存在しない画像（core の i/learningtools）を指していて表示されないので、描いたアイコンに差し替える。
+   ダークモードでは img.icon の反転で明るい色になる */
+img.icon[src*="/core/"][src$="/i/learningtools"] {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23495057' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 1.75h7.5a1 1 0 0 1 1 1v3.5'/%3E%3Cpath d='M11.5 12.5v.75a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2.75a1 1 0 0 1 1-1'/%3E%3Cpath d='M4.5 5h4.5M4.5 7.75h3'/%3E%3Cpath d='M13.6 6.9l1 1-4.6 4.6-1.6.6.6-1.6z'/%3E%3C/svg%3E");
+}
+/* 絞り込み欄の区切り線が幅 24px の四角になっているので、細い線に戻す */
+body[id^="page-local-learningtools"] .navitem-divider {
+    width: 1px !important;
+    min-width: 1px;
+    padding: 0 !important;
+}

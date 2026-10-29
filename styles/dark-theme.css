@@ -246,6 +246,10 @@ html.wmp-dark .bg-pulse-grey {
     animation-name: wmp-dark-pulse !important;
     background-color: var(--wmpd-surface-2);
 }
+/* メニューの区切り線（学習ツールの絞り込み欄など） */
+html.wmp-dark .navitem-divider {
+    background-color: var(--wmpd-border) !important;
+}
 /* ログイン画面 */
 html.wmp-dark .pagelayout-login #page {
     background: var(--wmpd-bg) !important;

@@ -134,6 +134,38 @@ html.wmp-dark .tox .tox-edit-area__iframe {
     color: var(--wmpd-text) !important;
     border-color: var(--wmpd-border) !important;
 }
+/* ブロックの見出し（Waseda のテーマが灰色の帯を付けている。例: Web manual・管理） */
+html.wmp-dark .block .card-title {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+}
+/* コースのタブ（コース・活動・学習ツール）の右側に残る白い帯 */
+html.wmp-dark .moremenu .nav-tabs,
+html.wmp-dark .more-nav {
+    background-color: transparent !important;
+    border-color: var(--wmpd-border) !important;
+}
+/* Collapsed Topics 形式の「全て展開する」と解説の行 */
+html.wmp-dark .course-content ul.ctopics li#toggle-all,
+html.wmp-dark .course-content ul.ctopics li#topcoll-display-instructions {
+    background-color: transparent !important;
+}
+html.wmp-dark .course-content ul.ctopics li#toggle-all .content,
+html.wmp-dark .course-content ul.ctopics li#topcoll-display-instructions .content {
+    background-color: var(--wmpd-surface) !important;
+    color: var(--wmpd-text) !important;
+}
+/* 活動の利用制限（「次の条件に一致しない限り利用できません」） */
+html.wmp-dark .availabilityinfo {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text-2) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .userinitials {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+}
+
 html.wmp-dark .que .formulation {
     background-color: #1f2a33 !important;
 }
@@ -245,6 +277,47 @@ html.wmp-dark .btn-icon:hover {
 }
 html.wmp-dark .btn-link {
     color: var(--wmpd-link) !important;
+}
+/* ドロワーの開閉ボタン・検索ボタン */
+html.wmp-dark .drawer-toggler .btn,
+html.wmp-dark .btn-submit {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+/* 完了ボタン（「完了」「完了マークする」「ToDo」）などの淡い色のボタン */
+html.wmp-dark .btn-subtle-body,
+html.wmp-dark .btn-subtle-secondary {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .btn-subtle-success {
+    background-color: #183823 !important;
+    color: #a6e3b8 !important;
+    border-color: #24502f !important;
+}
+html.wmp-dark .btn-subtle-warning {
+    background-color: #33290f !important;
+    color: #ffe8a3 !important;
+    border-color: #4a3b12 !important;
+}
+html.wmp-dark .btn-subtle-danger {
+    background-color: #3a1618 !important;
+    color: #ffc9cc !important;
+    border-color: #5a2226 !important;
+}
+html.wmp-dark .btn-subtle-info,
+html.wmp-dark .btn-subtle-primary {
+    background-color: #16283d !important;
+    color: #cfe2ff !important;
+    border-color: #1f3b5a !important;
+}
+html.wmp-dark .btn-subtle-body:hover,
+html.wmp-dark .btn-subtle-secondary:hover,
+html.wmp-dark .btn-submit:hover,
+html.wmp-dark .drawer-toggler .btn:hover {
+    background-color: #30343b !important;
 }
 
 /* お知らせ・バッジ */

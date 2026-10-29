@@ -87,10 +87,8 @@ html.wmp-dark .navbar,
 html.wmp-dark .navbar.fixed-top,
 html.wmp-dark .navbar-light,
 html.wmp-dark .primary-navigation,
-html.wmp-dark .secondary-navigation,
 html.wmp-dark .moremenu,
 html.wmp-dark .tertiary-navigation,
-html.wmp-dark #page-header,
 html.wmp-dark .activity-item,
 html.wmp-dark .activity-header,
 html.wmp-dark .course-section,
@@ -146,6 +144,14 @@ html.wmp-dark .tox .tox-edit-area__iframe {
 html.wmp-dark .block .card-title {
     background-color: var(--wmpd-surface-2) !important;
     color: var(--wmpd-text) !important;
+}
+/* ページ上部（パンくず・コース名・タブ）は幅の違う箱が重なっているので、
+   色を付けるとずれて見える。背景を透明にしてページになじませ、選択中のタブは下線だけで示す */
+html.wmp-dark #page-header,
+html.wmp-dark .secondary-navigation,
+html.wmp-dark .secondary-navigation .moremenu,
+html.wmp-dark .secondary-navigation .moremenu .nav-link.active {
+    background-color: transparent !important;
 }
 /* コースのタブ（コース・活動・学習ツール）の右側に残る白い帯 */
 html.wmp-dark .moremenu .nav-tabs,

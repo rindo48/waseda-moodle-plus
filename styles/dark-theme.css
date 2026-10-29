@@ -10,6 +10,10 @@ html.wmp-dark {
     --wmpd-text-2: #a9aeb6;
     --wmpd-link: #8fb4ff;
     --wmpd-accent: #e5707e;
+    /* 完了・成功を表す緑（完了ボタン・完了バッジ・成功メッセージで共通） */
+    --wmpd-success-bg: #183823;
+    --wmpd-success-text: #a6e3b8;
+    --wmpd-success-border: #24502f;
     /* Bootstrap の色の変数も暗くしておく（個別に上書きしていない部品が白くならないように） */
     --bs-body-bg: var(--wmpd-bg);
     --bs-body-color: var(--wmpd-text);
@@ -442,9 +446,9 @@ html.wmp-dark .btn-subtle-secondary {
     border-color: var(--wmpd-border) !important;
 }
 html.wmp-dark .btn-subtle-success {
-    background-color: #183823 !important;
-    color: #a6e3b8 !important;
-    border-color: #24502f !important;
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+    border-color: var(--wmpd-success-border) !important;
 }
 html.wmp-dark .btn-subtle-warning {
     background-color: #33290f !important;
@@ -481,9 +485,9 @@ html.wmp-dark .alert-warning {
     border-color: #4a3b12 !important;
 }
 html.wmp-dark .alert-success {
-    background-color: #12301f !important;
-    color: #bdf0d2 !important;
-    border-color: #1c4a30 !important;
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+    border-color: var(--wmpd-success-border) !important;
 }
 html.wmp-dark .alert-danger {
     background-color: #3a1618 !important;
@@ -535,14 +539,12 @@ html.wmp-dark img[src*="/mod_label/intro/wml."] {
 }
 
 /* 活動ページ上部の完了条件の丸いバッジ（完了: 閲覧 など）。ボタンの「完了」と同じ緑にそろえて、文字を読めるようにする */
-html.wmp-dark .automatic-completion-conditions .badge.bg-success,
-html.wmp-dark .automatic-completion-conditions .badge.alert-success {
-    background-color: #183823 !important;
-    color: #a6e3b8 !important;
-    border: 1px solid #24502f !important;
+html.wmp-dark .automatic-completion-conditions .badge.bg-success {
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+    border: 1px solid var(--wmpd-success-border) !important;
 }
-html.wmp-dark .automatic-completion-conditions .badge.bg-success *,
-html.wmp-dark .automatic-completion-conditions .badge.alert-success * {
+html.wmp-dark .automatic-completion-conditions .badge.bg-success * {
     color: inherit !important;
 }
 /* 完了条件のドロップダウンの中の文字（濃い灰色・濃い緑のままで読めない） */
@@ -550,30 +552,38 @@ html.wmp-dark .completion-dialog {
     color: var(--wmpd-text) !important;
 }
 html.wmp-dark .completion-dialog .text-success {
-    color: #7ee2a0 !important;
+    color: var(--wmpd-success-text) !important;
 }
 
 /* 課題の提出画面にある「レポート・論文等の提出に関する注意」の枠（早稲田がインラインで薄い桃色の背景を付けている） */
-html.wmp-dark .fitem [style*="#F8E0E6" i] {
+html.wmp-dark [style*="background:#F8E0E6" i],
+html.wmp-dark [style*="background: #F8E0E6" i],
+html.wmp-dark [style*="rgb(248, 224, 230)" i] {
     background: rgba(229, 112, 126, 0.12) !important;
     border-color: rgba(229, 112, 126, 0.35) !important;
+    color: var(--wmpd-text) !important;
+}
+/* 枠の中に暗い文字色が直接書かれていても読めるようにする（リンクの色は残す） */
+html.wmp-dark [style*="background:#F8E0E6" i] :not(a),
+html.wmp-dark [style*="background: #F8E0E6" i] :not(a),
+html.wmp-dark [style*="rgb(248, 224, 230)" i] :not(a) {
+    color: var(--wmpd-text) !important;
 }
 
 /* ファイルピッカーのアイコン表示: サムネイルの白枠とファイル名の白背景 */
-html.wmp-dark .fp-iconview .fp-thumbnail,
-html.wmp-dark .fp-file .fp-thumbnail {
+html.wmp-dark .fp-thumbnail {
     border-color: var(--wmpd-border) !important;
     background-color: transparent !important;
 }
 html.wmp-dark .fp-thumbnail img {
     border-color: var(--wmpd-border) !important;
 }
-html.wmp-dark .fp-filename,
-html.wmp-dark .fp-iconview .fp-file .fp-filename {
-    background-color: transparent !important;
+/* 長いファイル名はホバーで隣のファイルの上まで広がるので、透明にせず背景を敷く */
+html.wmp-dark .fp-filename {
+    background-color: var(--wmpd-surface) !important;
 }
-/* ファイルの種類のアイコン（PDF など。濃い灰色の線画）は明るくする */
-html.wmp-dark .fp-thumbnail img[src*="/f/"],
-html.wmp-dark .fp-file img[src*="/f/"] {
-    filter: invert(0.85) !important;
+/* ファイルの種類のアイコン（PDF など。濃い灰色の線画）は明るくする。
+   画像ファイルの実際のプレビュー（.realpreview）は反転しない。hue-rotate で反転した色合いを元に戻す */
+html.wmp-dark .fp-thumbnail img:not(.realpreview) {
+    filter: invert(0.85) hue-rotate(180deg) !important;
 }

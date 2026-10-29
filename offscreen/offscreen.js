@@ -47,7 +47,7 @@ const parsers = {
             const cells = rows[i].getElementsByTagName("td");
             const key = cells[2]
                 ?.getElementsByTagName("a")[0]
-                ?.getAttribute("onclick")
+                ?.getAttribute("data-wmp-onclick")
                 ?.match(/post_submit\('JAA104DtlSubCon', '(.*)'\)/)?.[1];
             if (!key) continue;
             results.push({
@@ -92,7 +92,14 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     try {
         const parser = parsers[message.op];
         if (!parser) throw new Error(`unknown op: ${message.op}`);
-        const doc = new DOMParser().parseFromString(message.html, "text/html");
+        // onclick などのインラインイベントハンドラは、解析するだけで拡張機能の CSP 違反として
+        // エラーに記録されるので、data-wmp-on* に名前を変えてから解析する
+        const html = message.html.replace(/<[a-z](?:[^>"']|"[^"]*"|'[^']*')*>/gi, (tag) =>
+            tag.replace(/("[^"]*"|'[^']*')|(\s)on([a-z]+\s*=)/gi, (m, quoted, space, rest) =>
+                quoted ? quoted : `${space}data-wmp-on${rest}`
+            )
+        );
+        const doc = new DOMParser().parseFromString(html, "text/html");
         sendResponse({ ok: true, result: parser(doc) });
     } catch (e) {
         sendResponse({ ok: false, error: String(e?.message ?? e) });

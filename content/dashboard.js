@@ -349,6 +349,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
     }
 
     async function collectSyllabus(year) {
+        if (!WMP.confirmSyllabusOverwrite(settings, year)) return;
         collecting = true;
         collectMessage = "シラバスを検索しています…";
         renderTimetable();
@@ -664,6 +665,17 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
     loadCourses();
     loadTimeline();
 
-    // 「今」の表示を1分ごとに更新
-    setInterval(renderTimetable, 60 * 1000);
+    // 「今」の表示を更新する。描き直すと開いているメニューが閉じてしまうので、日付か時限が変わったときだけにする
+    const nowKey = () => {
+        const now = new Date();
+        const { current, next } = WMP.currentPeriod(now);
+        return `${now.toDateString()} ${current} ${next}`;
+    };
+    let lastNowKey = nowKey();
+    setInterval(() => {
+        const key = nowKey();
+        if (key === lastNowKey) return;
+        lastNowKey = key;
+        renderTimetable();
+    }, 60 * 1000);
 };

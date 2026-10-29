@@ -10,17 +10,22 @@
         setTimeout(() => t.remove(), ms);
     }
 
-    async function touch(sessionKey) {
+    /**
+     * セッションを延長する。
+     * @returns {Promise<boolean | null>} true: 有効, false: 切れている, null: 通信エラーや時間切れで確認できなかった
+     */
+    async function touch(sessionKey, timeoutMs = 5000) {
         try {
             const res = await fetch(`/lib/ajax/service.php?sesskey=${encodeURIComponent(sessionKey)}&info=core_session_touch`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify([{ index: 0, methodname: "core_session_touch", args: {} }]),
+                signal: AbortSignal.timeout(timeoutMs),
             });
             const json = await res.json();
             return Array.isArray(json) && !json[0]?.error;
         } catch {
-            return false;
+            return null;
         }
     }
 
@@ -28,7 +33,7 @@
     function autoSessionExtension(sessionKey) {
         const INTERVAL = 30 * 60 * 1000;
         const timer = setInterval(async () => {
-            if (!(await touch(sessionKey))) clearInterval(timer);
+            if ((await touch(sessionKey, 30 * 1000)) === false) clearInterval(timer);
         }, INTERVAL);
     }
 
@@ -50,42 +55,55 @@
                 event.preventDefault();
                 event.stopImmediatePropagation();
 
-                const original = button.value || button.textContent;
                 button.setAttribute("aria-busy", "true");
-                const ok = await touch(sessionKey);
+                const status = await touch(sessionKey);
                 button.removeAttribute("aria-busy");
-                if (ok) {
+                const submit = () => {
                     allow = true;
                     button.click();
                     allow = false;
-                } else {
-                    showSessionExpiredDialog(original);
-                }
+                };
+                if (status === true) submit();
+                else showSessionExpiredDialog(status === null, submit);
             },
             true
         );
     }
 
-    function showSessionExpiredDialog() {
+    /** @param {boolean} unknown - 通信エラーなどで確認できなかった, @param {() => void} submit - そのまま送信する */
+    function showSessionExpiredDialog(unknown, submit) {
         const dialog = el(
             "dialog",
             { class: "wmp-dialog wmp-scope" },
-            el("div", { class: "wmp-dialog-header" }, el("h2", {}, "セッションが切れています")),
+            el("div", { class: "wmp-dialog-header" }, el("h2", {}, unknown ? "セッションを確認できませんでした" : "セッションが切れています")),
             el(
                 "div",
                 { class: "wmp-dialog-body" },
                 el(
                     "p",
                     { style: { margin: "0", lineHeight: "1.7" } },
-                    "このまま送信すると、入力内容が失われる可能性があります。",
+                    unknown
+                        ? "Moodle との通信に時間がかかっているか、通信エラーが起きています。ログインが切れている場合、送信すると入力内容が失われる可能性があります。"
+                        : "このまま送信すると、入力内容が失われる可能性があります。",
                     el("br"),
-                    "入力した文章はコピーして控えておき、別のタブで Moodle にログインし直してから、このページを再読み込みしてください。"
+                    "心配な場合は、入力した文章をコピーして控えておき、別のタブで Moodle にログインし直してから、このページを再読み込みしてください。"
                 )
             ),
             el(
                 "div",
                 { class: "wmp-dialog-footer" },
                 el("button", { class: "wmp-btn", onclick: () => dialog.close() }, "閉じる"),
+                el(
+                    "button",
+                    {
+                        class: "wmp-btn",
+                        onclick: () => {
+                            dialog.close();
+                            submit();
+                        },
+                    },
+                    "このまま送信する"
+                ),
                 el(
                     "a",
                     { class: "wmp-btn is-primary", href: "/login/index.php", target: "_blank", onclick: () => dialog.close() },

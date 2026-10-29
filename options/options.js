@@ -174,6 +174,7 @@
         const status = el("span", { class: "wmp-muted" });
         const yearInput = el("input", { class: "wmp-input", type: "number", value: WMP.getSchoolYear(), style: { width: "96px", minWidth: "0", flex: "none" } });
         const run = async (onlyMissing) => {
+            if (!onlyMissing && !WMP.confirmSyllabusOverwrite(settings, Number(yearInput.value) || undefined)) return;
             try {
                 await WMP.send("collectSyllabus", { year: Number(yearInput.value) || undefined, onlyMissing });
                 for (;;) {

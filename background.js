@@ -57,10 +57,14 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
 });
 
+// アラームはブラウザの再起動で消えることがあるので、Service Worker が起動するたびに確認する
+chrome.alarms.get(BADGE_ALARM).then((alarm) => {
+    if (!alarm) chrome.alarms.create(BADGE_ALARM, { periodInMinutes: 30 });
+});
+
 chrome.runtime.onInstalled.addListener(async (details) => {
     await createLauncherMenus();
     await syncFeatures();
-    chrome.alarms.create(BADGE_ALARM, { periodInMinutes: 30 });
     updateBadge();
     if (details.reason === "install") {
         chrome.tabs.create({ url: chrome.runtime.getURL("options/options.html?welcome=1") });

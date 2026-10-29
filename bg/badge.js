@@ -52,11 +52,12 @@ async function notifyUpcoming(settings, events) {
         (e) => isPending(e) && e.timesort * 1000 > now && e.timesort * 1000 <= threshold && !notified.includes(e.id)
     );
     for (const e of targets) {
-        const remaining = Math.round((e.timesort * 1000 - now) / (60 * 60 * 1000));
+        const minutes = Math.round((e.timesort * 1000 - now) / (60 * 1000));
+        const remaining = minutes < 60 ? `${Math.max(minutes, 1)}分` : `${Math.round(minutes / 60)}時間`;
         chrome.notifications.create(`event-${e.id}`, {
             type: "basic",
             iconUrl: chrome.runtime.getURL("icons/icon-128.png"),
-            title: `締切まであと約${remaining}時間`,
+            title: `締切まであと約${remaining}`,
             message: `${e.activityname ?? e.name}\n${e.course?.fullname ?? ""}`,
             priority: 1,
         });

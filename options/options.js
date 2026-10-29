@@ -65,7 +65,7 @@
                     el(
                         "select",
                         { class: "wmp-select", "aria-label": item.title, onchange: (e) => save({ [item.key]: e.target.value }) },
-                        item.options.map(([v, label]) => el("option", { value: v, selected: settings[item.key] === v }, label))
+                        item.options.map(([v, label]) => el("option", { value: v, selected: String(settings[item.key]) === String(v) }, label))
                     )
                 );
             case "number":
@@ -444,6 +444,17 @@
                 custom(syllabusItem),
                 toggle("showSaturday", "土曜日を表示", "", { dependsOn: "courseOverviewEnabled" }),
                 toggle("showSunday", "日曜日を表示", "", { dependsOn: "courseOverviewEnabled" }),
+                select(
+                    "timetableMaxPeriod",
+                    "表示する時限",
+                    "これより後の時限に科目がある場合は、その時限まで自動で表示します。",
+                    [
+                        ["5", "5限まで"],
+                        ["6", "6限まで"],
+                        ["7", "7限まで"],
+                    ],
+                    { dependsOn: "courseOverviewEnabled" }
+                ),
                 toggle("showPeriodTimes", "時限の時刻を表示", "", { dependsOn: "courseOverviewEnabled" }),
                 toggle("showClassroom", "教室を表示", "", { dependsOn: "courseOverviewEnabled" }),
                 toggle("showAssignmentCountOnTimetable", "科目ごとの課題数を表示", "締切前の課題がある科目に赤い数字を表示します。", { dependsOn: "courseOverviewEnabled" }),

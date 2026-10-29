@@ -172,7 +172,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
     function renderGrid(visibleCourses, year, quarter) {
         // 曜日 → 時限 → その時限から始まる科目
         const byDay = {};
-        let maxPeriod = 5;
+        let maxPeriod = Number(settings.timetableMaxPeriod) || 5;
         const usedDays = new Set();
         const onDemand = [];
         for (const course of visibleCourses) {

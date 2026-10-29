@@ -489,13 +489,6 @@ html.wmp-dark [class*="calendar_event_"] > .icon {
 html.wmp-dark .activityiconcontainer {
     filter: brightness(0.92);
 }
-/* 動画教材（millvi）のアイコンは白い背景が焼き込まれた画像なので、
-   背景を透明にして描き直した SVG に差し替える（上: オレンジのブロック2段、下: 青紫の m） */
-html.wmp-dark img.activityicon[src*="/millvi/"],
-html.wmp-dark .modicon_millvi img {
-    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='%23f0883e'%3E%3Crect x='1' y='4.5' width='6.5' height='2.5' rx='1'/%3E%3Crect x='9' y='4.5' width='6.5' height='2.5' rx='1'/%3E%3Crect x='17' y='4.5' width='6.5' height='2.5' rx='1'/%3E%3Crect x='25' y='4.5' width='6' height='2.5' rx='1'/%3E%3Crect x='1' y='8.5' width='6.5' height='3.5' rx='1'/%3E%3Crect x='9' y='8.5' width='6.5' height='3.5' rx='1'/%3E%3Crect x='17' y='8.5' width='6.5' height='3.5' rx='1'/%3E%3Crect x='25' y='8.5' width='6' height='3.5' rx='1'/%3E%3C/g%3E%3Cmask id='m'%3E%3Crect width='32' height='32' fill='%23fff'/%3E%3Crect x='8.5' y='18' width='3.5' height='12' rx='1.75' fill='%23000'/%3E%3Crect x='19.5' y='18' width='3.5' height='12' rx='1.75' fill='%23000'/%3E%3C/mask%3E%3Crect x='1' y='14' width='30' height='14' rx='3.5' fill='%238b7bff' mask='url(%23m)'/%3E%3C/svg%3E");
-    filter: none !important;
-}
 
 /* スクロールバー */
 html.wmp-dark ::-webkit-scrollbar {

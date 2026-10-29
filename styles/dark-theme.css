@@ -359,6 +359,12 @@ html.wmp-dark .courseindex .courseindex-item:hover {
 html.wmp-dark .moremenu .nav-link.active {
     border-bottom-color: var(--wmpd-accent) !important;
 }
+/* 上のヘッダーの選択中のページは、ライトモードの桃色に合わせてアクセント色で染める（ホバーと区別するため） */
+html.wmp-dark .navbar .moremenu .nav-link.active,
+html.wmp-dark .navbar .moremenu .nav-link.active:hover,
+html.wmp-dark .navbar .moremenu .nav-link.active:focus {
+    background-color: rgba(229, 112, 126, 0.24) !important;
+}
 html.wmp-dark .dropdown-menu {
     background-color: var(--wmpd-surface-2) !important;
     border-color: var(--wmpd-border) !important;

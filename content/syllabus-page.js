@@ -46,7 +46,11 @@
     );
     const status = el("span", { class: "wmp-muted" });
     const slotText = parsed.slots
-        .map((s) => `${WMP.DAY_LABELS[s.day]}${s.from}${s.to !== s.from ? `-${s.to}` : ""}限${s.classroom ? `（${s.classroom}）` : ""}`)
+        .map((s) =>
+            s.day === "on_demand"
+                ? "オンデマンド"
+                : `${WMP.DAY_LABELS[s.day]}${s.from}${s.to !== s.from ? `-${s.to}` : ""}限${s.classroom ? `（${s.classroom}）` : ""}`
+        )
         .join("、");
 
     box.append(

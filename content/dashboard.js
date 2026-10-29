@@ -174,8 +174,13 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
         const byDay = {};
         let maxPeriod = 5;
         const usedDays = new Set();
+        const onDemand = [];
         for (const course of visibleCourses) {
             for (const slot of slotsFor(course.id, year, quarter)) {
+                if (slot.day === "on_demand") {
+                    onDemand.push({ course, slot });
+                    continue;
+                }
                 byDay[slot.day] ??= {};
                 (byDay[slot.day][slot.from] ??= []).push({ course, slot });
                 maxPeriod = Math.max(maxPeriod, slot.to);
@@ -248,6 +253,25 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
             }
         });
 
+        // 曜日・時限が未設定でも、授業の形式がオンデマンドならこの欄に出す
+        for (const course of visibleCourses) {
+            if (isUnscheduled(course, year) && settings.courseDeliveryMethods[course.id] === "on_demand") {
+                onDemand.push({ course, slot: { day: "on_demand", classroom: "" } });
+            }
+        }
+
+        const odRow = String(maxPeriod + 2);
+        grid.append(
+            el("div", { class: "wmp-tt-period wmp-tt-od-label", style: { gridColumn: "1", gridRow: odRow } }, "オンデマンド"),
+            el(
+                "div",
+                { class: "wmp-tt-cell wmp-tt-od-cell", style: { gridColumn: `2 / span ${days.length}`, gridRow: odRow } },
+                onDemand.length > 0
+                    ? onDemand.map(({ course, slot }) => renderCourseBlock(course, slot))
+                    : el("span", { class: "wmp-muted wmp-tt-od-empty" }, "オンデマンドの科目はありません")
+            )
+        );
+
         return grid;
     }
 
@@ -268,7 +292,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 { class: "wmp-tt-course-link", href: course.url, title: `${WMP.courseName(settings, course)}${note ? `\n\nメモ: ${note}` : ""}` },
                 el("span", { class: "wmp-tt-course-name" }, WMP.courseName(settings, course)),
                 settings.showClassroom && slot.classroom ? el("span", { class: "wmp-tt-room" }, slot.classroom) : null,
-                method === "on_demand" ? el("span", { class: "wmp-tt-tag" }, "オンデマンド") : null,
+                method === "on_demand" && slot.day !== "on_demand" ? el("span", { class: "wmp-tt-tag" }, "オンデマンド") : null,
                 method === "realtime_streaming" ? el("span", { class: "wmp-tt-tag" }, "リアルタイム配信") : null
             ),
             count > 0 ? el("span", { class: "wmp-tt-badge", title: `未提出の課題など ${count}件` }, String(count)) : null,
@@ -289,12 +313,15 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
         );
     }
 
+    /** その年度の時間割に1つも枠がない科目（別のクォーターに入っている科目は含まない） */
+    function isUnscheduled(course, year) {
+        return course.year === year && !(settings.timetable[course.id] ?? []).some((s) => s.year === year);
+    }
+
     function renderUnscheduled(visibleCourses, year, quarter) {
-        const list = visibleCourses.filter((c) => {
-            const yearSlots = (settings.timetable[c.id] ?? []).filter((s) => s.year === year);
-            if (yearSlots.length > 0) return false; // 別のクォーターに入っている
-            return c.year === year;
-        });
+        const list = visibleCourses.filter(
+            (c) => isUnscheduled(c, year) && settings.courseDeliveryMethods[c.id] !== "on_demand"
+        );
         if (list.length === 0) return el("div");
         return el(
             "div",
@@ -303,7 +330,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
             el(
                 "p",
                 { class: "wmp-muted" },
-                "オンデマンド科目などです。「シラバスから取得」を押すか、⋯ から曜日・時限を設定すると時間割に表示されます。"
+                "「シラバスから取得」を押すか、⋯ から曜日・時限（またはオンデマンド）を設定すると時間割に表示されます。"
             ),
             el(
                 "div",
@@ -373,21 +400,35 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                         }),
                         selectEl(Object.entries(WMP.TERMS), slot.term, (v) => (slot.term = v), "学期"),
                         selectEl(
-                            ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((d) => [d, WMP.DAY_LABELS[d]]),
+                            [
+                                ...["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((d) => [d, WMP.DAY_LABELS[d]]),
+                                ["on_demand", "オンデマンド"],
+                            ],
                             slot.day,
-                            (v) => (slot.day = v),
+                            (v) => {
+                                slot.day = v;
+                                if (v !== "on_demand") {
+                                    slot.from ??= 1;
+                                    slot.to ??= slot.from;
+                                }
+                                renderSlots();
+                            },
                             "曜日"
                         ),
-                        selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, `${n}限`]), slot.from, (v) => (slot.from = Number(v)), "開始時限"),
-                        el("span", { class: "wmp-muted" }, "〜"),
-                        selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, `${n}限`]), slot.to, (v) => (slot.to = Number(v)), "終了時限"),
-                        el("input", {
-                            class: "wmp-input",
-                            placeholder: "教室",
-                            value: slot.classroom ?? "",
-                            style: { width: "96px" },
-                            oninput: (e) => (slot.classroom = e.target.value),
-                        }),
+                        ...(slot.day === "on_demand"
+                            ? []
+                            : [
+                                  selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, `${n}限`]), slot.from, (v) => (slot.from = Number(v)), "開始時限"),
+                                  el("span", { class: "wmp-muted" }, "〜"),
+                                  selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, `${n}限`]), slot.to, (v) => (slot.to = Number(v)), "終了時限"),
+                                  el("input", {
+                                      class: "wmp-input",
+                                      placeholder: "教室",
+                                      value: slot.classroom ?? "",
+                                      style: { width: "96px" },
+                                      oninput: (e) => (slot.classroom = e.target.value),
+                                  }),
+                              ]),
                         el(
                             "button",
                             {
@@ -565,8 +606,12 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
             return copy;
         };
         const slots = draft.slots
-            .filter((x) => x.year && x.term && x.day && x.from)
-            .map((x) => ({ ...x, to: Math.max(x.to, x.from) }));
+            .filter((x) => x.year && x.term && x.day && (x.day === "on_demand" || x.from))
+            .map((x) =>
+                x.day === "on_demand"
+                    ? { year: x.year, term: x.term, day: x.day, classroom: "" }
+                    : { ...x, to: Math.max(x.to, x.from) }
+            );
         await WMP.setSettings({
             courseNameOverrides: setOrDelete(s.courseNameOverrides, draft.name.trim()),
             courseColors: setOrDelete(s.courseColors, draft.color),

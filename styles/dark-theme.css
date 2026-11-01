@@ -677,3 +677,127 @@ html.wmp-dark .tox .tox-button--secondary {
     color: var(--wmpd-text) !important;
     border-color: var(--wmpd-border) !important;
 }
+
+/* ===== 選択中・ホバー中・ドラッグ中などの「状態」で Moodle が白っぽい背景を付ける部品 =====
+   普段は暗いのに、操作したときだけ白くなって文字が読めなくなるもの。
+   Moodle の CSS から、状態を表すセレクタで明るい背景を付けているルールを洗い出して、学生が触るものを上書きしている */
+
+/* 提出済みファイルの一覧（ツリー表示）: 押したファイル名が水色の背景になる */
+html.wmp-dark .ygtvlabel,
+html.wmp-dark .ygtvlabel:link,
+html.wmp-dark .ygtvlabel:visited,
+html.wmp-dark .ygtvlabel:hover {
+    background-color: transparent !important;
+}
+html.wmp-dark .ygtvfocus,
+html.wmp-dark .ygtvfocus .ygtvlabel,
+html.wmp-dark .ygtvfocus .ygtvlabel:link,
+html.wmp-dark .ygtvfocus .ygtvlabel:visited,
+html.wmp-dark .ygtvfocus .ygtvlabel:hover {
+    background-color: rgba(143, 180, 255, 0.18) !important;
+}
+
+/* ファイル欄にファイルをドラッグしたときの「ここにドロップする」の枠 */
+html.wmp-dark .filepicker-filelist .dndupload-target,
+html.wmp-dark .filemanager-container .dndupload-target {
+    background-color: var(--wmpd-surface) !important;
+    border-color: var(--wmpd-link) !important;
+    color: var(--wmpd-text-2) !important;
+}
+html.wmp-dark .filepicker-filelist.dndupload-over .dndupload-target,
+html.wmp-dark .filemanager-container.dndupload-over .dndupload-target {
+    background-color: #1d2533 !important;
+}
+html.wmp-dark .dndupload-target .dndupload-arrow {
+    filter: invert(0.85);
+}
+
+/* ファイルピッカー: ファイルにカーソルを合わせたとき・ファイルの詳細画面・左のリポジトリ一覧の選択中 */
+html.wmp-dark .fp-iconview .fp-thumbnail:hover,
+html.wmp-dark .file-picker .fp-list .fp-repo.active,
+html.wmp-dark .filemanager.fp-select .fp-reflist .fp-value {
+    background-color: var(--wmpd-surface-2) !important;
+}
+html.wmp-dark .fp-select .fp-thumbnail {
+    background-color: transparent !important;
+}
+html.wmp-dark .file-picker .ygtvfocus,
+html.wmp-dark .filemanager .ygtvfocus {
+    background-color: rgba(143, 180, 255, 0.18) !important;
+}
+
+/* 小テストのドラッグ＆ドロップ問題の選択肢（白い札に明るい文字になってしまう） */
+html.wmp-dark .que .draghome,
+html.wmp-dark .que .drag,
+html.wmp-dark .ddmatch li.draghome,
+html.wmp-dark .que.ddmarker .marker span.markertext {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .que .drop.active,
+html.wmp-dark .que .dropzone.active {
+    background-color: rgba(143, 180, 255, 0.18) !important;
+}
+
+/* ルーブリック・チェックリストの評価結果（課題のフィードバックで見える） */
+html.wmp-dark .gradingform_rubric .criterion .level.checked,
+html.wmp-dark .gradingform_checklist .group .items .item.checked {
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+}
+html.wmp-dark .gradingform_rubric .criterion .level.currentchecked,
+html.wmp-dark .gradingform_checklist .group .items .item.currentchecked {
+    background-color: rgba(229, 112, 126, 0.16) !important;
+}
+html.wmp-dark .gradingform_rubric.evaluate .criterion .levels .level:hover {
+    background-color: var(--wmpd-surface-2) !important;
+}
+
+/* そのほかの選択中・ホバー中 */
+html.wmp-dark td.selected,
+html.wmp-dark .collapse-list .collapse-list-item:hover,
+html.wmp-dark .collapse-list .collapse-list-item:focus {
+    background-color: rgba(143, 180, 255, 0.14) !important;
+}
+html.wmp-dark .courseindex .courseindex-item.active,
+html.wmp-dark .courseindex .courseindex-item.dragging,
+html.wmp-dark .courseindex .courseindex-section.dragging,
+html.wmp-dark .hsuforum-toggle:hover,
+html.wmp-dark .hsuforum-toggle:focus,
+html.wmp-dark .dataTables_paginate .current,
+html.wmp-dark .emoji-auto-complete .emoji-button.active,
+html.wmp-dark a.badge-light:hover,
+html.wmp-dark a.badge-light:focus,
+html.wmp-dark .path-mod-assign td.submissionreopened,
+html.wmp-dark .path-mod-assign div.submissionreopened {
+    background-color: var(--wmpd-surface-2) !important;
+}
+html.wmp-dark .simplesearchform .collapse.show,
+html.wmp-dark .simplesearchform .collapsing {
+    background-color: var(--wmpd-surface) !important;
+}
+html.wmp-dark .statusbox.active {
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+}
+/* Tab キーで出てくる「メインコンテンツへスキップする」、ホバーで出る説明 */
+html.wmp-dark .visually-hidden-focusable:active,
+html.wmp-dark .visually-hidden-focusable:focus,
+html.wmp-dark .hover-tooltip-container .hover-tooltip {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark .custom-select:disabled,
+html.wmp-dark .form-select:disabled,
+html.wmp-dark .form-control:disabled {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text-2) !important;
+}
+
+/* 文字を選択したときの色。Chrome の標準は明るい水色で、明るい文字のまま乗るので読めない */
+html.wmp-dark ::selection {
+    background-color: rgba(143, 180, 255, 0.38);
+    color: #fff;
+}

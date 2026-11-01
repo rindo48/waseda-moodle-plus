@@ -9,7 +9,7 @@ import { applyDarkModeToOpenTabs, syncFeatures } from "./bg/features.js";
 import { BADGE_ALARM, handleNotificationClick, updateBadge } from "./bg/badge.js";
 import { createLauncherMenus, handleLauncherClick, prepareLaunch } from "./bg/launcher.js";
 
-const { onSettingsChanged, LOGIN_INFO_KEY } = globalThis.WMP;
+const { onSettingsChanged, LOGIN_INFO_KEY, MOODLE_ORIGIN } = globalThis.WMP;
 
 const handlers = {
     getTimeline: (p) => getTimeline(p ?? {}),
@@ -21,6 +21,13 @@ const handlers = {
     getSessionKey: () => getSessionKey(),
     /** 自動ログインページ用: ブラウザ側で最後のリダイレクトを行うので、ここでは SAML の手前まで進める */
     autoLogin: () => loginToMoodle({ skipCheck: true, skipFinalRedirect: true }),
+    /** 自動ログインページ用: このタブがログイン画面に飛ばされる直前に開こうとしていた URL（無ければ null） */
+    takeReturnUrl: async (_payload, sender) => {
+        const key = `${RETURN_URL_KEY}:${sender.tab?.id}`;
+        const { [key]: saved } = await chrome.storage.session.get(key);
+        await chrome.storage.session.remove(key);
+        return saved && Date.now() - saved.at < RETURN_URL_TTL_MS ? saved.url : null;
+    },
     /**
      * 設定画面の「ログインを試す」用
      * @returns {Promise<"ok" | "failed" | "alreadyLoggedIn">}
@@ -51,16 +58,29 @@ const handlers = {
     prepareLaunch: ({ target }) => prepareLaunch(target),
 };
 
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message?.target === "offscreen") return false; // オフスクリーン宛てのメッセージは無視
     const handler = handlers[message?.type];
     if (!handler) return false;
     Promise.resolve()
-        .then(() => handler(message.payload))
+        .then(() => handler(message.payload, sender))
         .then((result) => sendResponse({ ok: true, result }))
         .catch((e) => sendResponse({ ok: false, error: String(e?.message ?? e), name: e?.name }));
     return true;
 });
+
+// ログインが切れたページを開くと Moodle はログイン画面へリダイレクトする（そこを自動ログインページに差し替えている）。
+// ログイン後にそのページへ戻れるよう、リダイレクト元の URL をタブごとに覚えておく
+const RETURN_URL_KEY = "wmpReturnUrl";
+const RETURN_URL_TTL_MS = 5 * 60 * 1000;
+chrome.webRequest.onBeforeRedirect.addListener(
+    (details) => {
+        if (details.tabId < 0 || !details.redirectUrl.startsWith(`${MOODLE_ORIGIN}/login/index.php`)) return;
+        if (/^\/(login|auth)\//.test(new URL(details.url).pathname)) return;
+        chrome.storage.session.set({ [`${RETURN_URL_KEY}:${details.tabId}`]: { url: details.url, at: Date.now() } });
+    },
+    { urls: [`${MOODLE_ORIGIN}/*`], types: ["main_frame"] }
+);
 
 // アラームはブラウザの再起動で消えることがあるので、Service Worker が起動するたびに確認する
 chrome.alarms.get(BADGE_ALARM).then((alarm) => {

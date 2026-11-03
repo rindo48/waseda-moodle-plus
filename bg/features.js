@@ -155,7 +155,8 @@ async function doSync() {
                 priority: 1,
                 condition: {
                     urlFilter: "|https://wsdmoodle.waseda.jp/lib/ajax/service.php*",
-                    initiatorDomains: [chrome.runtime.id],
+                    // Chrome では拡張機能の ID、Firefox ではブラウザごとのランダムな UUID になる
+                    initiatorDomains: [new URL(chrome.runtime.getURL("")).hostname],
                     resourceTypes: ["xmlhttprequest", "other"],
                 },
                 action: {

@@ -554,6 +554,14 @@
     const nav = document.getElementById("nav");
     const main = document.getElementById("main");
 
+    // Firefox ではサイトへのアクセス許可がインストール時に出ないことがあるので、無ければ許可を求める
+    const HOST_ACCESS = { origins: chrome.runtime.getManifest().host_permissions };
+    let hasHostAccess = await chrome.permissions.contains(HOST_ACCESS);
+    chrome.permissions.onAdded.addListener(async () => {
+        hasHostAccess = await chrome.permissions.contains(HOST_ACCESS);
+        render();
+    });
+
     function render() {
         const scroll = window.scrollY;
         const welcome = new URLSearchParams(location.search).has("welcome")
@@ -568,8 +576,25 @@
                   )
               )
             : null;
+        const hostAccess = hasHostAccess
+            ? null
+            : el(
+                  "div",
+                  { class: "op-welcome" },
+                  el("h2", {}, "サイトへのアクセスを許可してください"),
+                  el("div", {}, "Waseda Moodle などのページを読み書きする許可が無いため、ほとんどの機能が動きません。"),
+                  el(
+                      "div",
+                      { class: "row" },
+                      el(
+                          "button",
+                          { class: "wmp-btn is-primary", onclick: () => chrome.permissions.request(HOST_ACCESS) },
+                          "アクセスを許可"
+                      )
+                  )
+              );
         main.replaceChildren(
-            ...[welcome].filter(Boolean),
+            ...[hostAccess, welcome].filter(Boolean),
             ...SECTIONS.map((section) =>
                 el(
                     "section",

@@ -1,16 +1,33 @@
 # Waseda Moodle Plus
 
-Waseda Moodle を使いやすくする Chrome 拡張機能です。
-[Better Waseda Moodle](https://github.com/mkihr-ojisan/better-waseda-moodle)（MIT License）を参考に作り直しました。ビルドは不要で、このフォルダをそのまま Chrome に読み込めます。
+Waseda Moodle を使いやすくするブラウザ拡張機能です（Chrome・Edge などの Chromium 系ブラウザと Firefox に対応）。
+[Better Waseda Moodle](https://github.com/mkihr-ojisan/better-waseda-moodle)（MIT License）を参考に作り直しました。ビルドは不要で、このフォルダをそのままブラウザに読み込めます。
 
-## インストール
+## ダウンロード
 
-1. Chrome で `chrome://extensions` を開く
-2. 右上の「デベロッパーモード」をオンにする
-3. 「パッケージ化されていない拡張機能を読み込む」を押し、この `waseda-moodle-plus` フォルダを選ぶ
+このページの緑の「Code」ボタン →「Download ZIP」でダウンロードし、展開します（`waseda-moodle-plus-main` フォルダができます）。
+展開したフォルダは、拡張機能を使っている間は消さずに置いておいてください。
+
+## インストール（Chrome・Edge・Brave など）
+
+1. `chrome://extensions`（Edge は `edge://extensions`）を開く
+2. 「デベロッパーモード」をオンにする
+3. 「パッケージ化されていない拡張機能を読み込む」を押し、展開したフォルダ（`manifest.json` があるフォルダ）を選ぶ
 4. 設定画面が開くので、必要な機能をオン・オフする
 
-ファイルを編集したら、`chrome://extensions` でこの拡張機能の再読み込みボタン（↻）を押してください。
+ファイルを編集・更新したら、`chrome://extensions` でこの拡張機能の再読み込みボタン（↻）を押してください。
+
+## インストール（Firefox 128 以降）
+
+1. `about:debugging#/runtime/this-firefox` を開く
+2. 「一時的なアドオンを読み込む」を押し、展開したフォルダの `manifest.json` を選ぶ
+3. 設定画面が開くので、必要な機能をオン・オフする（「サイトへのアクセスを許可してください」と出たら許可する）
+
+この方法は Firefox を再起動すると外れます。ずっと使うには、Mozilla の署名を受けた `.xpi` ファイルを使ってください。
+
+## 設定・データの保存場所
+
+設定はブラウザの中にだけ保存され、別のパソコンやブラウザとは同期されません。設定画面の書き出し・読み込みで移せます（ログイン情報は含まれないので、移した先で入れ直してください）。
 
 ## 機能
 

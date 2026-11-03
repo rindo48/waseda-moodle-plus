@@ -19,8 +19,11 @@ const handlers = {
     },
     touchSession: ({ sessionKey }) => touchSession(sessionKey),
     getSessionKey: () => getSessionKey(),
-    /** 自動ログインページ用: ブラウザ側で最後のリダイレクトを行うので、ここでは SAML の手前まで進める */
-    autoLogin: () => loginToMoodle({ skipCheck: true, skipFinalRedirect: true }),
+    /**
+     * 自動ログインページ用: 通常はブラウザ側で最後のリダイレクトを行うので、ここでは SAML の手前まで進める。
+     * complete のときは最後まで済ませる（戻り先のページを直接開くため）
+     */
+    autoLogin: (p) => loginToMoodle({ skipCheck: true, skipFinalRedirect: !p?.complete }),
     /** 自動ログインページ用: このタブがログイン画面に飛ばされる直前に開こうとしていた URL（無ければ null） */
     takeReturnUrl: async (_payload, sender) => {
         const key = `${RETURN_URL_KEY}:${sender.tab?.id}`;

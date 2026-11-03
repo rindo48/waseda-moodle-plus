@@ -30,15 +30,17 @@
     }
 
     try {
-        const [, returnUrl] = await Promise.all([WMP.send("autoLogin"), WMP.send("takeReturnUrl")]);
-        // ログイン画面に飛ばされる前に開こうとしていたページがあり、もうログインできていれば直接そこへ戻る
-        // （ログイン済みだと SAML のログイン URL は wants を無視してトップページへ戻してしまうため）
-        if (returnUrl && (await WMP.send("getLoginStatus")).loggedIn) {
+        const returnUrl = await WMP.send("takeReturnUrl");
+        if (returnUrl) {
+            // ログイン画面に飛ばされる前に開こうとしていたページがあれば、ログインを最後まで済ませてから直接開く
+            // （SAML のログイン URL の wants は、裏で先に通したログイン手順の戻り先（トップページ）に負けて効かないため）
+            await WMP.send("autoLogin", { complete: true });
             location.replace(returnUrl);
             return;
         }
-        // ブラウザ側で SAML のログインを完了させると、Moodle が wants のページに戻してくれる
-        location.replace(WMP.samlLoginUrl(returnUrl ?? undefined));
+        // ブラウザ側で SAML のログインを完了させると、Moodle のトップページに戻る
+        await WMP.send("autoLogin");
+        location.replace(WMP.SAML_LOGIN_URL);
     } catch (e) {
         showManual(e.message);
     }

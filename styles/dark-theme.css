@@ -183,9 +183,22 @@ html.wmp-dark .availabilityinfo {
     color: var(--wmpd-text-2) !important;
     border-color: var(--wmpd-border) !important;
 }
-/* 通知・メッセージの一覧の未読の項目 */
+/* 通知・メッセージの一覧。未読は青みの背景・左の線・太い明るい文字、既読は控えめな文字色にして見分けやすくする */
 html.wmp-dark .content-item-container.unread {
-    background-color: var(--wmpd-surface-2) !important;
+    background-color: rgba(143, 180, 255, 0.14) !important;
+    box-shadow: inset 3px 0 0 var(--wmpd-link);
+}
+html.wmp-dark .content-item-container.unread .notification-message,
+html.wmp-dark .popover-region-messages .content-item-container.unread .content-item-body {
+    color: #fff !important;
+    font-weight: 700 !important;
+}
+html.wmp-dark .content-item-container:not(.unread) .notification-message,
+html.wmp-dark .content-item-container:not(.unread) .timestamp {
+    color: var(--wmpd-text-2) !important;
+}
+html.wmp-dark .content-item-container.unread:hover {
+    background-color: rgba(143, 180, 255, 0.24) !important;
 }
 /* カレンダーのマス目にカーソルを合わせたとき */
 html.wmp-dark .maincalendar .calendarmonth .clickable:hover {

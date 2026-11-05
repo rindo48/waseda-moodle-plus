@@ -909,3 +909,9 @@ html.wmp-dark :is(.activity-information, [data-region="activity-information"], .
     background-color: var(--wmpd-surface-2) !important;
     color: var(--wmpd-text) !important;
 }
+
+/* Moodle 4.4 以降の回の中身の枠（.section-item）。線が白いまま残るので、ダークテーマの線の色にする */
+html.wmp-dark .course-content .section-item {
+    border-color: var(--wmpd-border) !important;
+    background-color: transparent !important;
+}

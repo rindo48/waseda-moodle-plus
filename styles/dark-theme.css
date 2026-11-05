@@ -915,3 +915,13 @@ html.wmp-dark .course-content .section-item {
     border-color: var(--wmpd-border) !important;
     background-color: transparent !important;
 }
+
+/* 本文の中の横線（先生・大学が入れた <hr>）。枠線と同じ色だと背景に溶けて見えないので、一段明るくする。
+   Bootstrap は横線を半透明にもしているので、透明度も戻す */
+html.wmp-dark #page-content hr {
+    border: 0 !important;
+    border-top: 1px solid #5a606a !important;
+    background: none !important;
+    color: #5a606a !important;
+    opacity: 1 !important;
+}

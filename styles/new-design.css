@@ -1932,3 +1932,20 @@ html.wmp-new #page-site-index .course-content li.activity {
     border: 0 !important;
     box-shadow: none !important;
 }
+/* content/new-site-home.js が見つけた、角が丸い入れ子の枠 */
+html.wmp-new #page-site-index .wmp-frame-off {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Moodle 4.4 以降は回の中身を .section-item（線と角丸の枠）で包む。新デザインは回そのものを紙にしているので、
+   内側の枠は外す（ホームでもコースページでも二重の枠になる） */
+html.wmp-new .course-content .section-item {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+html.wmp-new #page-site-index .course-content .section-item {
+    padding: 0 !important;
+}

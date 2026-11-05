@@ -1917,3 +1917,18 @@ html.wmp-new :is(#page-calendar-view, #page-my-courses) #region-main-box,
 html.wmp-new :is(#page-calendar-view, #page-my-courses) #region-main {
     max-width: none !important;
 }
+
+/* サイトのホーム: 本文の紙の中に、回の枠・活動の枠と枠が重なって見えるので、中の枠は外す */
+html.wmp-new #page-site-index .course-content li.section,
+html.wmp-new #page-site-index .course-content li.section.main,
+html.wmp-new #page-site-index .course-content li.section.course-section {
+    padding: 0 !important;
+    border: 0 !important;
+    background-color: transparent !important;
+}
+html.wmp-new #page-site-index .course-content .activity-item,
+html.wmp-new #page-site-index .course-content .sitetopic,
+html.wmp-new #page-site-index .course-content li.activity {
+    border: 0 !important;
+    box-shadow: none !important;
+}

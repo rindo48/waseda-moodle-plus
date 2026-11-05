@@ -925,3 +925,11 @@ html.wmp-dark #page-content hr {
     color: #5a606a !important;
     opacity: 1 !important;
 }
+
+/* 画面が狭いときに Moodle がタブをしまう「≡」ボタン。暗い色のままだと見えないので明るくする */
+html.wmp-dark .navbar [data-toggler="drawers"],
+html.wmp-dark .navbar .drawertoggle,
+html.wmp-dark .navbar [data-toggler="drawers"] .icon,
+html.wmp-dark .navbar .drawertoggle .icon {
+    color: var(--wmpd-text) !important;
+}

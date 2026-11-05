@@ -190,7 +190,8 @@ html.wmp-new .wmp-design-toggle {
 .wmp-rail-panel {
     display: none !important;
 }
-@media (min-width: 992px) {
+/* 幅が 600px 以上なら左のメニューを出す（狭いと Moodle はタブを「≡」の中にしまうので、ここで出さないとタブが見えにくい） */
+@media (min-width: 600px) {
     /* 上のタブは左のメニューに移したので隠す */
     html.wmp-new.wmp-has-rail.wmp-rail-ready .navbar .primary-navigation {
         display: none !important;
@@ -1961,4 +1962,30 @@ html.wmp-new #page-site-index #section-0 {
 /* 中身の無い見出し（content/new-site-home.js が見つける）は場所を取らないようにする */
 html.wmp-new #page-site-index .wmp-empty-head {
     display: none !important;
+}
+
+/* 600〜991px では、左のメニューはいつもアイコンだけの細い形にする */
+@media (min-width: 600px) and (max-width: 991.98px) {
+    html.wmp-new {
+        --wmpn-rail-w: 60px;
+    }
+    html.wmp-new .wmp-rail .wmp-rail-label,
+    html.wmp-new .wmp-rail .wmp-rail-heading,
+    html.wmp-new .wmp-rail .wmp-rail-collapse {
+        display: none;
+    }
+    html.wmp-new .wmp-rail .wmp-rail-item,
+    html.wmp-new .wmp-rail .wmp-rail-course {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    html.wmp-new .wmp-rail .wmp-rail-count {
+        position: absolute;
+        top: 3px;
+        right: 6px;
+        min-width: 16px;
+        padding: 2px 3px;
+        font-size: 10px;
+    }
 }

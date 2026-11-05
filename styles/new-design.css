@@ -155,21 +155,29 @@ html.wmp-new .navbar .moremenu .nav-link.active {
     font: 600 11px/1.2 var(--wmp-font) !important;
     box-shadow: none !important;
 }
-@media (max-width: 991.98px) {
-    .wmp-search-trigger-wrap {
-        flex: none;
-        margin: 0 4px;
-    }
-    .wmp-search-trigger {
-        width: 40px;
-        padding: 0;
-        justify-content: center;
-        border-color: transparent;
-        background: none;
-    }
-    .wmp-search-trigger-text,
+/* 入口は画面の幅で一気にアイコンにせず、入口そのものの幅に合わせて段階的に縮める:
+   全部 → 「Ctrl K」を隠す → 文字を省略 → 虫めがねだけ */
+.wmp-search-trigger-wrap {
+    container-type: inline-size;
+    min-width: 40px;
+}
+@container (max-width: 300px) {
     .wmp-search-trigger-key {
         display: none;
+    }
+}
+@container (max-width: 130px) {
+    .wmp-search-trigger {
+        justify-content: center;
+        padding: 0;
+    }
+    .wmp-search-trigger-text {
+        display: none;
+    }
+}
+@media (max-width: 991.98px) {
+    .wmp-search-trigger-wrap {
+        margin: 0 8px;
     }
 }
 
@@ -1866,7 +1874,7 @@ html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
         gap: 0;
     }
 }
-@media (max-width: 767.98px) {
+@media (max-width: 991.98px) {
     .wmp-home-track {
         display: flex;
         flex-direction: column;
@@ -1884,8 +1892,11 @@ html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
         display: block;
     }
     .wmp-home-week-strip {
-        grid-auto-columns: 132px;
-        overflow-x: auto;
+        grid-auto-flow: row;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    .wmp-home-week-col {
+        min-height: 96px;
     }
     .wmp-cal-cell {
         min-height: 64px;
@@ -2035,4 +2046,30 @@ html.wmp-new #page-site-index .wmp-empty-head {
         left: 0;
         width: min(400px, 100vw);
     }
+}
+
+/* ===== 広い・狭いの切り替えを 992px の1回にそろえる ===== */
+/* Moodle はロゴを 768px 未満で隠すが、新デザインではいつも出す */
+html.wmp-new .navbar .navbar-brand {
+    display: flex !important;
+    flex: none;
+}
+/* Moodle は本文の上の余白を 576px 未満で 24px → 8px にするので、992px で切り替える */
+html.wmp-new #page.drawers .main-inner,
+html.wmp-new #topofscroll {
+    margin-top: 24px !important;
+}
+@media (max-width: 991.98px) {
+    html.wmp-new #page.drawers .main-inner,
+    html.wmp-new #topofscroll {
+        margin-top: 8px !important;
+    }
+}
+/* 新デザインの部品が画面より広くなって、ページ全体が横にスクロールしないようにする */
+.wmp-home,
+.wmp-home-day,
+.wmp-home-week,
+.wmp-dash {
+    min-width: 0;
+    max-width: 100%;
 }

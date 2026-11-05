@@ -167,10 +167,7 @@ html.wmp-new .navbar .moremenu .nav-link.active {
     }
 }
 @container (max-width: 130px) {
-    .wmp-search-trigger {
-        justify-content: center;
-        padding: 0;
-    }
+    /* 虫めがねだけになっても、枠の左に置く（文字があるときと同じ位置） */
     .wmp-search-trigger-text {
         display: none;
     }
@@ -2019,7 +2016,9 @@ html.wmp-new #page-site-index .wmp-empty-head {
         place-items: center;
         width: 40px;
         height: 40px;
-        margin-right: 6px;
+        /* Moodle のヘッダーは中身を上にそろえるので、ボタンだけ縦の真ん中に置く */
+        align-self: center;
+        margin: 0 6px 0 0;
         padding: 0;
         border: 0;
         border-radius: var(--wmpn-r-ctl);

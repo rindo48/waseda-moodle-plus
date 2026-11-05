@@ -1054,3 +1054,33 @@ img#logoimage {
 :root[data-wmp-design="new"] .wmp-tt-course {
     border-left-width: 5px;
 }
+
+/* ===== アクセシビリティのボタン（右下の人のボタン = local_accessibility） ===== */
+/* 右下の列のいちばん下に置き、ふだんは薄く、カーソルが近づいたら（キーボードで選んだときも）はっきり出す。
+   大きさは同じ列のほかのボタン（48px）にそろえる。
+   近づいたことを拾うため、入れ物に透明な余白（20px）を付けて、その分だけ外側にずらす */
+#local-accessibility-buttoncontainer.local-accessibility-buttoncontainer {
+    right: calc(26px - 20px);
+    bottom: calc(12px - 20px);
+    z-index: 1030;
+    padding: 20px;
+    opacity: 0.3;
+    transition: opacity 0.15s ease-out;
+}
+#local-accessibility-buttoncontainer.local-accessibility-buttoncontainer:hover,
+#local-accessibility-buttoncontainer.local-accessibility-buttoncontainer:focus-within {
+    opacity: 1;
+}
+#page.drawers.show-drawer-right #local-accessibility-buttoncontainer.local-accessibility-buttoncontainer {
+    right: calc(315px + 26px - 20px);
+}
+#local-accessibility-buttoncontainer button.btn {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    line-height: 1;
+}
+/* 「?」のボタンは、空いたアクセシビリティのボタンの場所（その上）へ移す */
+.btn-footer-popover {
+    bottom: calc(12px + 48px + 12px) !important;
+}

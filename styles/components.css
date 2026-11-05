@@ -741,6 +741,17 @@ html.wmp-dark .wmp-scope,
 .wmp-dark-toggle:hover {
     background: rgba(127, 127, 127, 0.15);
 }
+/* 旧デザイン・新デザインの切り替えボタン（新デザインでは new-design.css で色だけ変える） */
+.wmp-design-toggle {
+    width: auto !important;
+    gap: 4px;
+    padding: 0 10px !important;
+    font: 700 12px/1 var(--wmpn-font, sans-serif);
+}
+/* Moodle の .nav-link の太さに負けないよう、文字そのものに太字を指定する */
+.wmp-design-toggle .wmp-design-toggle-text {
+    font-weight: 700 !important;
+}
 
 .wmp-word-counter {
     margin-top: 2px;

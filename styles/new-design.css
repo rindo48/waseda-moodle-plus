@@ -178,19 +178,9 @@ html.wmp-new .navbar .moremenu .nav-link.active {
     }
 }
 
-/* 旧デザイン・新デザインの切り替えボタン */
-.wmp-design-toggle {
-    width: auto !important;
-    gap: 4px;
-    padding: 0 10px !important;
-    font: 700 12px/1 var(--wmpn-font, sans-serif);
-}
+/* 旧デザイン・新デザインの切り替えボタン（形と太さは components.css。旧デザインでも使うため） */
 html.wmp-new .wmp-design-toggle {
     color: var(--wmpn-enji-ink);
-}
-/* Moodle の .nav-link の太さに負けないよう、文字そのものに太字を指定する */
-.wmp-design-toggle .wmp-design-toggle-text {
-    font-weight: 700 !important;
 }
 
 /* ===== 左のメニュー（content/new-shell.js） ===== */

@@ -90,6 +90,10 @@ function removeNestedFrames(main) {
             const rounded = parseFloat(cs.borderTopLeftRadius) >= 4;
             if (bordered && rounded && el.offsetWidth > 200) el.classList.add("wmp-frame-off");
         }
+        // 回の見出しが空（名前の無いトップページの回）なら、見出しの場所ごと隠す
+        for (const head of main.querySelectorAll(".course-section-header, .section-title, .sectionname, .section_title")) {
+            if (!head.textContent.trim() && !head.querySelector("img, svg, input, button, a[href]")) head.classList.add("wmp-empty-head");
+        }
     };
     apply();
     // 本文の一部は後から読み込まれるので、少し待ってもう一度見る

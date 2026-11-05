@@ -1949,3 +1949,16 @@ html.wmp-new .course-content .section-item {
 html.wmp-new #page-site-index .course-content .section-item {
     padding: 0 !important;
 }
+
+/* サイトのホーム: ダークテーマは本文の入れ物をページの地と同じ暗い色で塗るので、紙の中で黒い四角に見える。透明にする */
+html.wmp-new #page-site-index .course-content,
+html.wmp-new #page-site-index .course-content ul,
+html.wmp-new #page-site-index .course-content .section-item,
+html.wmp-new #page-site-index .course-content .course-section-header,
+html.wmp-new #page-site-index #section-0 {
+    background-color: transparent !important;
+}
+/* 中身の無い見出し（content/new-site-home.js が見つける）は場所を取らないようにする */
+html.wmp-new #page-site-index .wmp-empty-head {
+    display: none !important;
+}

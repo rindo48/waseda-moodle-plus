@@ -188,6 +188,10 @@ html.wmp-new .navbar .moremenu .nav-link.active {
 html.wmp-new .wmp-design-toggle {
     color: var(--wmpn-enji-ink);
 }
+/* Moodle の .nav-link の太さに負けないよう、文字そのものに太字を指定する */
+.wmp-design-toggle .wmp-design-toggle-text {
+    font-weight: 700 !important;
+}
 
 /* ===== 左のメニュー（content/new-shell.js） ===== */
 

@@ -1891,9 +1891,10 @@ html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
     .wmp-home-class-period {
         display: block;
     }
+    /* 締切の7日間は、幅によらず 4列＋3列 に固定する（5＋2 のような中途半端な折り返しにしない） */
     .wmp-home-week-strip {
         grid-auto-flow: row;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
     .wmp-home-week-col {
         min-height: 96px;
@@ -1911,6 +1912,31 @@ html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
     }
     .wmp-notice-date {
         width: auto;
+    }
+}
+/* 締切の枠が 4列 で 1列 110px を切るほど狭いときは、1日1行の縦のリストにする
+   （日付 | 締切 | 件数）。左のメニューの開閉でも枠の幅は変わるので、画面ではなく枠の幅で決める */
+.wmp-home-week {
+    container-type: inline-size;
+}
+@container (max-width: 480px) {
+    .wmp-home-week-strip {
+        grid-auto-flow: row;
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .wmp-home-week-col {
+        display: grid;
+        grid-template-columns: 64px minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 0 10px;
+        min-height: 0;
+        padding: 10px;
+    }
+    .wmp-home-week-items:empty {
+        display: none;
+    }
+    .wmp-home-week-count {
+        grid-column: 3;
     }
 }
 /* 科目名が折り返しても、頭文字の四角と色の印は1行目にそろえる */

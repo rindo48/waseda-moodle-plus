@@ -58,6 +58,12 @@
                 "lib/timeline-view.js",
                 "content/features.js",
                 "content/dashboard.js",
+                "content/new-shell.js",
+                "content/new-home.js",
+                "content/new-site-home.js",
+                "content/new-mycourses.js",
+                "content/new-calendar.js",
+                "content/new-course.js",
                 "content/main.js"
             ],
             "css": [

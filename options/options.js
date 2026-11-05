@@ -144,7 +144,7 @@
                                 try {
                                     const result = await WMP.send("testLogin");
                                     status.textContent = {
-                                        ok: "ログインに成功しました ✓",
+                                        ok: "ログインに成功しました",
                                         failed: "ログインできませんでした",
                                         alreadyLoggedIn:
                                             "Moodle にはすでにログインしています。ID・パスワードを確かめるには、Moodle からログアウトしてから試してください。",
@@ -231,7 +231,7 @@
                       "div",
                       { class: "op-list" },
                       settings[key].map((v) =>
-                          el("span", { class: "op-tag" }, labelOf(v), el("button", { class: "wmp-icon-btn", title: "再表示", onclick: () => removeFrom(key, v) }, "×"))
+                          el("span", { class: "op-tag" }, labelOf(v), el("button", { class: "wmp-icon-btn", title: "再表示", "aria-label": "再表示", onclick: () => removeFrom(key, v) }, WMP.icon("close", { size: 14 })))
                       )
                   );
 
@@ -258,7 +258,7 @@
                     "div",
                     { class: "op-item-text" },
                     el("div", { class: "op-item-title" }, "非表示にした項目"),
-                    el("div", { class: "op-item-desc" }, "課題一覧で × を押して隠した項目や、表示しない科目・種類です。")
+                    el("div", { class: "op-item-desc" }, "課題一覧の「非表示にする」ボタンで隠した項目や、表示しない科目・種類です。")
                 ),
                 el(
                     "div",
@@ -309,7 +309,7 @@
                 el("div", {
                     class: "op-item-desc",
                     innerHTML:
-                        "<code>{filename}</code> 元のファイル名、<code>{extension}</code> 拡張子（.pdf など）、<code>{course}</code> 科目名、<code>{assignment}</code> 課題名。科目ごとの形式はダッシュボードの時間割の ⋯ から設定できます。",
+                        "<code>{filename}</code> 元のファイル名、<code>{extension}</code> 拡張子（.pdf など）、<code>{course}</code> 科目名、<code>{assignment}</code> 課題名。科目ごとの形式はダッシュボードの時間割で科目の設定ボタンから設定できます。",
                 })
             ),
             el("input", {
@@ -401,6 +401,20 @@
             id: "appearance",
             title: "外観・ダークモード",
             items: [
+                select(
+                    "design",
+                    "デザイン",
+                    "「新デザイン」では、上のタブを左の縦メニューに移し、今学期の科目と締切をどのページからも開けるようにします。ダッシュボード・マイコース・カレンダー・ホーム・コースページの表示も作り替えます（各ページの「Moodle の表示」で元に戻せます）。Ctrl+K で科目・締切・ページをまとめて探せます。切り替えは次にページを開いたときから反映されます。",
+                    [
+                        ["classic", "旧デザイン（今までの見た目）"],
+                        ["new", "新デザイン"],
+                    ]
+                ),
+                toggle(
+                    "designToggleInHeader",
+                    "ヘッダーにデザインの切り替えボタンを表示",
+                    "Moodle の上部ヘッダーに、旧デザインと新デザインを切り替えるボタンを表示します。押すとページを読み込み直します。"
+                ),
                 select("darkMode", "Moodle のダークモード", "Moodle のページを暗い配色で表示します。", [
                     ["off", "オフ"],
                     ["on", "常にオン"],
@@ -425,7 +439,7 @@
                     "ヘッダーに切り替えボタンを表示",
                     "Moodle の上部ヘッダー（通知アイコンの左）に、ダークモードをオン・オフするボタンを表示します。"
                 ),
-                toggle("modernLook", "見た目を整える", "角丸・余白・フォントなど、Moodle の見た目を少しだけ読みやすくします。"),
+                toggle("modernLook", "見た目を整える（旧デザイン）", "角丸・余白・フォントなど、Moodle の見た目を少しだけ読みやすくします。新デザインではこの内容が含まれているので、この設定は使われません。"),
             ],
         },
         {

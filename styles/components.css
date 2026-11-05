@@ -45,6 +45,16 @@ html.wmp-dark .wmp-scope,
 .wmp-scope *::after {
     box-sizing: border-box;
 }
+/* スクロールバーの色を画面の配色に合わせる（指定しないと、ダークモードでも白いバーが出ることがある） */
+.wmp-scope,
+.wmp-scope * {
+    scrollbar-color: color-mix(in srgb, var(--wmp-text-3) 55%, transparent) transparent;
+}
+/* .wmp-btn などの display より hidden 属性を優先する */
+.wmp-scope[hidden],
+.wmp-scope [hidden] {
+    display: none !important;
+}
 
 /* ===== ボタン・入力 ===== */
 
@@ -55,7 +65,7 @@ html.wmp-dark .wmp-scope,
     height: 32px;
     padding: 0 12px;
     border: 1px solid var(--wmp-border);
-    border-radius: 8px;
+    border-radius: var(--wmp-r-ctl, 8px);
     background: var(--wmp-bg);
     color: var(--wmp-text);
     font: 500 13px/1 var(--wmp-font);
@@ -94,7 +104,7 @@ html.wmp-dark .wmp-scope,
     height: 28px;
     padding: 0;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--wmp-r-ctl, 6px);
     background: transparent;
     color: var(--wmp-text-2);
     font: 16px/1 var(--wmp-font);
@@ -115,7 +125,7 @@ html.wmp-dark .wmp-scope,
     height: 32px;
     padding: 0 10px;
     border: 1px solid var(--wmp-border);
-    border-radius: 8px;
+    border-radius: var(--wmp-r-ctl, 8px);
     background: var(--wmp-bg);
     color: var(--wmp-text);
     font: 13px var(--wmp-font);
@@ -138,14 +148,14 @@ html.wmp-dark .wmp-scope,
 .wmp-segmented {
     display: inline-flex;
     padding: 2px;
-    border-radius: 9px;
+    border-radius: var(--wmp-r-ctl, 9px);
     background: var(--wmp-surface-2);
 }
 .wmp-segmented button {
     height: 26px;
     padding: 0 10px;
     border: none;
-    border-radius: 7px;
+    border-radius: var(--wmp-r-ctl, 7px);
     background: transparent;
     color: var(--wmp-text-2);
     font: 500 12px/1 var(--wmp-font);
@@ -199,7 +209,7 @@ html.wmp-dark .wmp-scope,
     width: 36px;
     height: 36px;
     margin-bottom: 8px;
-    border-radius: 50%;
+    border-radius: var(--wmp-r-round, 50%);
     background: color-mix(in srgb, var(--wmp-ok) 15%, transparent);
     color: var(--wmp-ok);
     font-size: 18px;
@@ -208,7 +218,7 @@ html.wmp-dark .wmp-scope,
 .wmp-error {
     margin: 8px 0;
     padding: 10px 12px;
-    border-radius: 8px;
+    border-radius: var(--wmp-r-ctl, 8px);
     background: color-mix(in srgb, var(--wmp-danger) 12%, transparent);
     color: var(--wmp-text);
     font-size: 13px;
@@ -249,7 +259,7 @@ html.wmp-dark .wmp-scope,
 }
 .wmp-tl-count {
     padding: 1px 6px;
-    border-radius: 99px;
+    border-radius: var(--wmp-r-badge, 99px);
     background: var(--wmp-surface-2);
     font-size: 11px;
 }
@@ -261,7 +271,7 @@ html.wmp-dark .wmp-scope,
     margin-bottom: 6px;
     padding: 8px 8px 8px 12px;
     border: 1px solid var(--wmp-border);
-    border-radius: 9px;
+    border-radius: var(--wmp-r-ctl, 9px);
     background: var(--wmp-bg);
     overflow: hidden;
 }
@@ -320,7 +330,7 @@ html.wmp-dark .wmp-scope,
 }
 .wmp-tl-remaining {
     padding: 1px 7px;
-    border-radius: 99px;
+    border-radius: var(--wmp-r-badge, 99px);
     background: var(--wmp-surface-2);
     color: var(--wmp-text-2);
     font-size: 11px;
@@ -359,7 +369,7 @@ html.wmp-dark .wmp-scope,
     max-height: calc(100vh - 48px);
     padding: 0;
     border: 1px solid var(--wmp-border);
-    border-radius: 14px;
+    border-radius: var(--wmp-r-dialog, 14px);
     background: var(--wmp-bg);
     color: var(--wmp-text);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
@@ -415,7 +425,7 @@ html.wmp-dark .wmp-scope,
     height: 24px;
     padding: 0;
     border: 2px solid transparent;
-    border-radius: 50%;
+    border-radius: var(--wmp-r-round, 50%);
     cursor: pointer;
 }
 .wmp-swatch.is-active {
@@ -432,7 +442,7 @@ html.wmp-dark .wmp-scope,
     z-index: 2147483646;
     max-width: 360px;
     padding: 12px 14px;
-    border-radius: 10px;
+    border-radius: var(--wmp-r-item, 10px);
     background: #1c2024;
     color: #fff;
     font: 13px/1.5 var(--wmp-font);
@@ -478,7 +488,7 @@ html.wmp-dark .wmp-scope,
     place-items: center;
     height: 28px;
     min-height: 0;
-    border-radius: 6px;
+    border-radius: var(--wmp-r-ctl, 6px);
     color: var(--wmp-text-2);
     font-weight: 600;
 }
@@ -499,7 +509,7 @@ html.wmp-dark .wmp-scope,
     align-items: center;
     justify-content: center;
     gap: 2px;
-    border-radius: 6px;
+    border-radius: var(--wmp-r-ctl, 6px);
     color: var(--wmp-text-2);
     text-align: center;
 }
@@ -524,7 +534,7 @@ html.wmp-dark .wmp-scope,
     gap: 4px;
     min-width: 0;
     padding: 2px;
-    border-radius: 8px;
+    border-radius: var(--wmp-r-ctl, 8px);
     background: var(--wmp-surface);
 }
 .wmp-tt-cell.is-today {
@@ -539,7 +549,7 @@ html.wmp-dark .wmp-scope,
     flex: 1;
     display: flex;
     min-height: 56px;
-    border-radius: 6px;
+    border-radius: var(--wmp-r-ctl, 6px);
     background: color-mix(in srgb, var(--wmp-course-color) 16%, var(--wmp-bg));
     border-left: 4px solid var(--wmp-course-color);
 }
@@ -576,7 +586,7 @@ html.wmp-dark .wmp-scope,
 .wmp-tt-tag {
     align-self: flex-start;
     padding: 0 5px;
-    border-radius: 4px;
+    border-radius: var(--wmp-r-sm, 4px);
     background: var(--wmp-surface-2);
     color: var(--wmp-text-2);
     font-size: 10px;
@@ -587,7 +597,7 @@ html.wmp-dark .wmp-scope,
     min-width: 18px;
     height: 18px;
     padding: 0 5px;
-    border-radius: 99px;
+    border-radius: var(--wmp-r-badge, 99px);
     background: var(--wmp-danger);
     color: #fff;
     font-size: 11px;
@@ -661,7 +671,7 @@ html.wmp-dark .wmp-scope,
     gap: 4px;
     max-width: 100%;
     padding: 2px 2px 2px 10px;
-    border-radius: 99px;
+    border-radius: var(--wmp-r-badge, 99px);
     background: color-mix(in srgb, var(--wmp-course-color) 14%, var(--wmp-bg));
     border: 1px solid color-mix(in srgb, var(--wmp-course-color) 40%, transparent);
 }
@@ -723,7 +733,7 @@ html.wmp-dark .wmp-scope,
     height: 40px;
     padding: 0 !important;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--wmp-r-ctl, 8px);
     background: transparent;
     color: inherit;
     cursor: pointer;
@@ -751,7 +761,7 @@ html.wmp-dark .wmp-scope,
     margin: 8px 0;
     padding: 8px 12px;
     border: 1px solid var(--wmp-border);
-    border-radius: 10px;
+    border-radius: var(--wmp-r-item, 10px);
     background: var(--wmp-surface);
     font-size: 13px;
 }
@@ -817,4 +827,230 @@ img#logoimage {
 .pagelayout-mydashboard .drawer-toggles .drawer-right-toggle .btn,
 .pagelayout-course .drawer-toggles .drawer-right-toggle .btn {
     display: inline-block !important;
+}
+
+/* ===== 共通の小物 ===== */
+
+/* 科目の印: 科目の色の四角に頭文字を入れる（時間割・左のメニュー・一覧で共通） */
+.wmp-mark {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--wmp-r-sm, 4px);
+    /* 黄色など明るい色でも白い字が読めるよう、少し暗くする */
+    background: color-mix(in srgb, var(--wmp-course-color, #7d8b99) 80%, #000);
+    color: #fff;
+    font: 700 12px/1 var(--wmp-font);
+}
+.wmp-visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+}
+.wmp-icon {
+    flex: none;
+    vertical-align: middle;
+}
+.wmp-tl-rel {
+    color: var(--wmp-text);
+    font-weight: 700;
+}
+.wmp-tl-date.is-overdue .wmp-tl-rel {
+    color: inherit;
+}
+/* 下線で選ぶタブ（新デザインの一覧の切り替えなど） */
+.wmp-tabs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--wmp-border);
+}
+.wmp-tabs button {
+    height: 32px;
+    margin-bottom: -1px;
+    padding: 0 12px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--wmp-text-2);
+    font: 600 13px/1 var(--wmp-font);
+    cursor: pointer;
+}
+.wmp-tabs button:hover {
+    color: var(--wmp-text);
+}
+.wmp-tabs button.is-active {
+    border-bottom-color: var(--wmp-accent);
+    color: var(--wmp-text);
+}
+/* 元の表示に切り替えたときに出す帯 */
+.wmp-back-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--wmp-border);
+    border-left: 3px solid var(--wmp-accent);
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    font: 13px/1.5 var(--wmp-font);
+}
+
+/* ===== 新デザイン（設定の「デザイン」が新デザインのとき） =====
+   角は丸めず（操作できる部品だけ 3px）、影は付けず、区切りは線で表す。
+   色は旧デザインと同じ（白と灰色の面、早稲田のえんじ）で、形と並べ方を変える。 */
+
+:root[data-wmp-design="new"] .wmp-scope {
+    --wmp-radius: 0;
+    --wmp-r-ctl: 3px;
+    --wmp-r-item: 0;
+    --wmp-r-dialog: 3px;
+    --wmp-r-badge: 2px;
+    --wmp-r-sm: 2px;
+    --wmp-r-round: 2px;
+    --wmp-shadow: none;
+    --wmp-font: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Meiryo UI", "Noto Sans JP", sans-serif;
+}
+
+/* 切り替えボタンの組は、背景の箱ではなく下線のタブにする */
+:root[data-wmp-design="new"] .wmp-segmented {
+    gap: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--wmp-border);
+    background: none;
+}
+:root[data-wmp-design="new"] .wmp-segmented button {
+    height: 30px;
+    margin-bottom: -1px;
+    padding: 0 10px;
+    border-bottom: 2px solid transparent;
+    font-weight: 600;
+}
+:root[data-wmp-design="new"] .wmp-segmented button.is-active {
+    border-bottom-color: var(--wmp-accent);
+    background: none;
+    box-shadow: none;
+}
+
+:root[data-wmp-design="new"] .wmp-btn {
+    font-weight: 600;
+}
+:root[data-wmp-design="new"] .wmp-card-title {
+    font-weight: 700 !important;
+}
+:root[data-wmp-design="new"] .wmp-input:focus,
+:root[data-wmp-design="new"] .wmp-select:focus,
+:root[data-wmp-design="new"] .wmp-textarea:focus {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: -1px;
+}
+
+/* 課題一覧: 1件ずつの箱ではなく、線で区切った行にする */
+:root[data-wmp-design="new"] .wmp-timeline {
+    gap: 16px;
+}
+:root[data-wmp-design="new"] .wmp-tl-date {
+    margin-bottom: 0 !important;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--wmp-text-3);
+    color: var(--wmp-text-2) !important;
+    font-size: 12px !important;
+}
+:root[data-wmp-design="new"] .wmp-tl-count {
+    margin-left: auto;
+    padding: 0;
+    background: none;
+}
+:root[data-wmp-design="new"] .wmp-tl-item {
+    margin-bottom: 0;
+    padding: 9px 4px 9px 14px;
+    border: 0;
+    border-bottom: 1px solid var(--wmp-border);
+    background: none;
+}
+:root[data-wmp-design="new"] .wmp-tl-item::before {
+    inset: 9px auto 9px 0;
+    width: 4px;
+}
+:root[data-wmp-design="new"] .wmp-tl-item:hover {
+    background: var(--wmp-surface);
+}
+:root[data-wmp-design="new"] .wmp-tl-remaining {
+    padding: 1px 6px;
+    font-weight: 600;
+}
+:root[data-wmp-design="new"] .wmp-tl-item.is-urgent .wmp-tl-remaining,
+:root[data-wmp-design="new"] .wmp-tl-item.is-overdue .wmp-tl-remaining {
+    background: var(--wmp-danger);
+    color: #fff;
+}
+/* 提出・受験などの操作は、下線の付いた文字ではなく小さなボタンにする */
+:root[data-wmp-design="new"] .wmp-tl-action {
+    margin-top: 2px;
+    padding: 2px 8px;
+    border: 1px solid var(--wmp-border);
+    border-radius: var(--wmp-r-ctl);
+    background: var(--wmp-bg);
+    color: var(--wmp-text) !important;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none !important;
+    white-space: nowrap;
+}
+:root[data-wmp-design="new"] .wmp-tl-action:hover {
+    border-color: var(--wmp-accent);
+    color: var(--wmp-accent) !important;
+}
+/* 非表示ボタンは、マウスを重ねたときだけ出すと右側に空白ができて並びがずれるので、薄く常に出しておく */
+:root[data-wmp-design="new"] .wmp-tl-hide {
+    width: 20px;
+    height: 20px;
+    margin-top: -1px;
+    color: var(--wmp-text-3);
+    opacity: 0.55;
+}
+:root[data-wmp-design="new"] .wmp-tl-item:hover .wmp-tl-hide,
+:root[data-wmp-design="new"] .wmp-tl-hide:focus-visible {
+    opacity: 1;
+}
+:root[data-wmp-design="new"] .wmp-tl-hide:hover {
+    color: var(--wmp-text);
+}
+:root[data-wmp-design="new"] .wmp-empty-icon {
+    width: auto;
+    height: auto;
+    background: none;
+}
+:root[data-wmp-design="new"] .wmp-dialog {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+}
+:root[data-wmp-design="new"] .wmp-toast {
+    border-left: 4px solid var(--wmp-accent);
+}
+
+/* 時間割: 箱を角ばらせ、枠の色の帯を太くする */
+:root[data-wmp-design="new"] .wmp-tt-grid {
+    gap: 2px;
+}
+:root[data-wmp-design="new"] .wmp-tt-day.is-today {
+    background: none;
+    color: var(--wmp-accent);
+    box-shadow: inset 0 -3px 0 var(--wmp-accent);
+}
+:root[data-wmp-design="new"] .wmp-tt-period.is-now {
+    background: none;
+    box-shadow: inset 3px 0 0 var(--wmp-accent);
+}
+:root[data-wmp-design="new"] .wmp-tt-cell.is-now {
+    outline-width: 2px;
+}
+:root[data-wmp-design="new"] .wmp-tt-course {
+    border-left-width: 5px;
 }

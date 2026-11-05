@@ -2,7 +2,7 @@
 // lib/defaults.js は globalThis.WMP を作るので、bg/* より先に読み込む必要がある。
 import "./lib/defaults.js";
 import "./lib/syllabus-info.js";
-import { clearCaches, getCourses, getSessionKey, getTimeline, setSessionKeyCache, touchSession } from "./bg/moodle.js";
+import { clearCaches, getCalendarMonth, getCourses, getSessionKey, getTimeline, setSessionKeyCache, touchSession } from "./bg/moodle.js";
 import { loginToMoodle, fetchSessionKeyFromPage, getLoginInfo } from "./bg/login.js";
 import { collectSyllabusInformation, getCollectProgress } from "./bg/syllabus.js";
 import { applyDarkModeToOpenTabs, syncFeatures } from "./bg/features.js";
@@ -11,9 +11,20 @@ import { createLauncherMenus, handleLauncherClick, prepareLaunch } from "./bg/la
 
 const { onSettingsChanged, LOGIN_INFO_KEY, MOODLE_ORIGIN } = globalThis.WMP;
 
+/** openLauncher で開いてよいページ（pages/launcher.js が扱えるもの） */
+const LAUNCH_TARGETS = ["my_waseda", "grade_inquiry", "course_registration", "portal", "waseda_email"];
+
 const handlers = {
     getTimeline: (p) => getTimeline(p ?? {}),
     getCourses: (p) => getCourses(p ?? {}),
+    getCalendarMonth: (p) => getCalendarMonth(p),
+    /** Moodle のページ（コンテンツスクリプト）からは設定画面を直接開けないので、代わりに開く */
+    openOptions: () => chrome.runtime.openOptionsPage(),
+    /** MyWaseda などを、ログインを済ませるページ経由で開く */
+    openLauncher: ({ target }) => {
+        if (!LAUNCH_TARGETS.includes(target)) throw new Error("開けないページです");
+        return chrome.tabs.create({ url: chrome.runtime.getURL(`pages/launcher.html?target=${target}`) });
+    },
     setSessionKey: async ({ sessionKey }) => {
         await setSessionKeyCache(sessionKey);
     },

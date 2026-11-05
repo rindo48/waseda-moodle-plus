@@ -578,6 +578,22 @@ html.wmp-dark .wmp-dark-bg {
 html.wmp-dark .wmp-dark-fg {
     color: var(--wmp-dark-fg) !important;
 }
+/* 入力中の本文（Atto エディタなど）の黒い文字。ここはクラスを付けると提出内容に入ってしまうので、CSS だけで明るくする */
+html.wmp-dark [contenteditable="true"] [style*="color: rgb(0, 0, 0)"],
+html.wmp-dark [contenteditable="true"] [style*="color:rgb(0,0,0)"],
+html.wmp-dark [contenteditable="true"] [style*="color: #000"],
+html.wmp-dark [contenteditable="true"] [style*="color:#000"],
+html.wmp-dark [contenteditable="true"] [style*="color: black"],
+html.wmp-dark [contenteditable="true"] [style*="color:black"],
+html.wmp-dark [contenteditable="true"] [style*="windowtext"],
+html.wmp-dark [contenteditable="true"] font[color="#000000"],
+html.wmp-dark [contenteditable="true"] font[color="black"] {
+    color: var(--wmpd-text) !important;
+}
+/* 背景が透明で黒い線だけの画像（数式の画像など）は反転して明るい線にする（content/dark-mode-inline-colors.js が判定） */
+html.wmp-dark img.wmp-dark-invert {
+    filter: invert(0.88) hue-rotate(180deg) !important;
+}
 
 /* ファイルピッカーのアイコン表示: サムネイルの白枠とファイル名の白背景 */
 html.wmp-dark .fp-thumbnail {
@@ -813,4 +829,83 @@ html.wmp-dark .form-control:disabled {
 html.wmp-dark ::selection {
     background-color: rgba(143, 180, 255, 0.38);
     color: #fff;
+}
+
+/* 新デザイン（styles/new-design.css）の色を、このダークテーマの配色に合わせる */
+html.wmp-dark.wmp-new {
+    --wmpn-page: var(--wmpd-bg);
+    --wmpn-paper: var(--wmpd-surface);
+    --wmpn-tint: var(--wmpd-surface-2);
+    --wmpn-line: var(--wmpd-border);
+    --wmpn-line-soft: #2a2d33;
+    --wmpn-ink: var(--wmpd-text);
+    --wmpn-ink-2: var(--wmpd-text-2);
+    --wmpn-enji: #ac3042;
+    --wmpn-enji-hover: #bf4255;
+    --wmpn-enji-ink: #f0a3ad;
+    --wmpn-enji-tint: rgba(208, 92, 108, 0.2);
+    --wmpn-on-enji: #ffffff;
+    --wmpn-rail-bg: #2b1116;
+    --wmpn-rail-ink: #ecd7db;
+    --wmpn-sun: #f08a80;
+    --wmpn-sat: #8fb4ff;
+}
+
+/* 活動の完了状態の札（「完了: 閲覧」「完了条件: 提出する」など）。
+   Moodle の版によってクラス名が変わる（badge-success / bg-success / bg-success-subtle / alert-success など）ので、
+   置かれている場所で見分けて、未完了は一段明るい面、完了は緑の面にする */
+html.wmp-dark :is(.automatic-completion-conditions, .completion-info, .activity-completion, [data-region="completionrequirements"], [data-region="completion-info"], [data-region="activity-information"]) .badge {
+    border: 1px solid var(--wmpd-border) !important;
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark :is(.automatic-completion-conditions, .completion-info, .activity-completion, [data-region="completionrequirements"], [data-region="completion-info"], [data-region="activity-information"]) .badge:is([class*="success"]) {
+    border-color: var(--wmpd-success-border) !important;
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+}
+html.wmp-dark :is(.automatic-completion-conditions, .completion-info, .activity-completion, [data-region="completionrequirements"], [data-region="completion-info"], [data-region="activity-information"]) .badge:is([class*="danger"], [class*="fail"]) {
+    border-color: #5a2226 !important;
+    background-color: #3a1618 !important;
+    color: #ffc9cc !important;
+}
+/* 札の中の太字・アイコンに付いた色（text-success など）は札の色に合わせる */
+html.wmp-dark :is(.automatic-completion-conditions, .completion-info, .activity-completion, [data-region="completionrequirements"], [data-region="completion-info"], [data-region="activity-information"]) .badge * {
+    color: inherit !important;
+}
+
+/* 表示された色で読めないと判断した札（content/dark-mode-inline-colors.js が付ける） */
+html.wmp-dark .badge.wmp-dark-badge {
+    border: 1px solid var(--wmpd-border) !important;
+    background: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    opacity: 1 !important;
+}
+html.wmp-dark .badge.wmp-dark-badge.is-ok {
+    border-color: var(--wmpd-success-border) !important;
+    background: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+}
+html.wmp-dark .badge.wmp-dark-badge.is-ng {
+    border-color: #5a2226 !important;
+    background: #3a1618 !important;
+    color: #ffc9cc !important;
+}
+html.wmp-dark .badge.wmp-dark-badge * {
+    color: inherit !important;
+}
+
+/* 完了状態の欄: 札の色は明るい文字・灰色の面になっているのに、画面では黒く潰れて見えることがある。
+   色ではなく、上から暗くする指定（フィルター・重ね方・透明度）が効いているため、欄の中ではそれを打ち消す */
+html.wmp-dark :is(.activity-information, [data-region="activity-information"], .completion-info, .automatic-completion-conditions, [data-region="completionrequirements"]),
+html.wmp-dark :is(.activity-information, [data-region="activity-information"], .completion-info, .automatic-completion-conditions, [data-region="completionrequirements"]) * {
+    filter: none !important;
+    mix-blend-mode: normal !important;
+    background-blend-mode: normal !important;
+    opacity: 1 !important;
+}
+html.wmp-dark :is(.activity-information, [data-region="activity-information"], .completion-info) .badge.bg-light {
+    border: 1px solid var(--wmpd-border) !important;
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
 }

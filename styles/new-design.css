@@ -1,0 +1,1919 @@
+/* 新デザイン。html.wmp-new が付いているときだけ効く（設定の「デザイン」で旧デザインに戻せる）。
+
+   見た目の決めごと
+   - 地は青みのある薄い灰色、紙は白。クリーム色・グラデーションは使わない
+   - 角は丸めない。押せる部品（ボタン・入力欄）だけ 3px。丸いピル形は使わない
+   - 影は浮いている部品（メニュー・検索・引き出し）にだけ付け、それ以外は 1px の線で区切る
+   - 色は早稲田のえんじを左のメニューと「選択中」にだけ使い、ほかは科目の色（時間割で決めた色）で見分ける
+   - 文字は日本語のゴシック体（ヒラギノ角ゴ・游ゴシック UI・メイリオ）。数字は桁をそろえる
+   ダークモード（専用テーマ）での値は dark-theme.css の末尾にある。 */
+
+/* ===== 値 ===== */
+
+html.wmp-new {
+    --wmpn-page: #eceef1;
+    --wmpn-paper: #ffffff;
+    --wmpn-tint: #f4f5f7;
+    --wmpn-line: #d4d8dd;
+    --wmpn-line-soft: #e6e8eb;
+    --wmpn-ink: #15181c;
+    --wmpn-ink-2: #555c66;
+    --wmpn-enji: #8c1d2b;
+    --wmpn-enji-hover: #741624;
+    --wmpn-enji-ink: #8c1d2b;
+    --wmpn-enji-tint: #f5e5e7;
+    --wmpn-on-enji: #ffffff;
+    --wmpn-rail-bg: #761a26;
+    --wmpn-rail-ink: #f6e8ea;
+    --wmpn-sun: #c0392b;
+    --wmpn-sat: #2759b0;
+    --wmpn-r-ctl: 3px;
+    --wmpn-font: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Meiryo UI", Meiryo, "Noto Sans JP", sans-serif;
+    --wmpn-rail-w: 208px;
+    --wmpn-nav-h: 60px;
+}
+/* メニューをたたんだとき、または Moodle の左のドロワー（コースの目次）を開いているときは細くする */
+html.wmp-new.wmp-rail-collapsed,
+html.wmp-new:has(.drawer-left.show) {
+    --wmpn-rail-w: 60px;
+}
+
+/* ===== 文字 ===== */
+
+html.wmp-new body {
+    font-family: var(--wmpn-font);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+    font-feature-settings: "palt" 0;
+}
+html.wmp-new h1,
+html.wmp-new h2,
+html.wmp-new h3,
+html.wmp-new h4,
+html.wmp-new .h1,
+html.wmp-new .h2,
+html.wmp-new .h3,
+html.wmp-new .h4 {
+    font-family: var(--wmpn-font);
+    font-weight: 700;
+    letter-spacing: 0;
+}
+html.wmp-new .no-overflow,
+html.wmp-new .text_to_html,
+html.wmp-new .posting {
+    overflow-wrap: anywhere;
+}
+
+/* ===== 地と紙 ===== */
+
+html.wmp-new body,
+html.wmp-new #page,
+html.wmp-new #page-wrapper,
+html.wmp-new #page.drawers,
+html.wmp-new #topofscroll {
+    background-color: var(--wmpn-page) !important;
+}
+html.wmp-new #page.drawers .main-inner,
+html.wmp-new .main-inner {
+    background-color: var(--wmpn-paper) !important;
+    border: 1px solid var(--wmpn-line);
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+/* 拡張機能が自前の画面を描くページは、紙を外して直接並べる */
+html.wmp-new #page-my-index #page .main-inner,
+html.wmp-new #page-my-courses #page .main-inner,
+html.wmp-new #page-calendar-view #page .main-inner,
+html.wmp-new body[id^="page-course-view"] #page .main-inner {
+    background-color: transparent !important;
+    border-color: transparent;
+}
+html.wmp-new #region-main,
+html.wmp-new #region-main-box {
+    background-color: transparent !important;
+}
+
+/* ===== ヘッダー ===== */
+
+html.wmp-new .navbar.fixed-top {
+    background-color: var(--wmpn-paper) !important;
+    border-bottom: 1px solid var(--wmpn-line) !important;
+    box-shadow: none !important;
+}
+html.wmp-new .navbar .moremenu .nav-link {
+    border-radius: 0;
+    font-weight: 600;
+}
+html.wmp-new .navbar .moremenu .nav-link.active {
+    border-bottom-color: var(--wmpn-enji) !important;
+}
+
+/* まとめて探す（Ctrl+K）の入口 */
+.wmp-search-trigger-wrap {
+    display: flex;
+    flex: 0 1 440px;
+    align-items: center;
+    min-width: 0;
+    margin: 0 16px 0 24px;
+}
+.wmp-search-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 36px;
+    padding: 0 8px 0 10px;
+    border: 1px solid var(--wmp-border);
+    border-radius: var(--wmpn-r-ctl);
+    background: var(--wmp-surface);
+    color: var(--wmp-text-2);
+    font: 13px/1 var(--wmp-font);
+    text-align: left;
+    cursor: pointer;
+}
+.wmp-search-trigger:hover {
+    border-color: var(--wmp-text-3);
+    color: var(--wmp-text);
+}
+.wmp-search-trigger:focus-visible {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: 1px;
+}
+.wmp-search-trigger-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wmp-search-trigger-key {
+    padding: 2px 5px;
+    border: 1px solid var(--wmp-border);
+    border-radius: 2px;
+    background: var(--wmp-bg) !important;
+    color: var(--wmp-text-2) !important;
+    font: 600 11px/1.2 var(--wmp-font) !important;
+    box-shadow: none !important;
+}
+@media (max-width: 991.98px) {
+    .wmp-search-trigger-wrap {
+        flex: none;
+        margin: 0 4px;
+    }
+    .wmp-search-trigger {
+        width: 40px;
+        padding: 0;
+        justify-content: center;
+        border-color: transparent;
+        background: none;
+    }
+    .wmp-search-trigger-text,
+    .wmp-search-trigger-key {
+        display: none;
+    }
+}
+
+/* 旧デザイン・新デザインの切り替えボタン */
+.wmp-design-toggle {
+    width: auto !important;
+    gap: 4px;
+    padding: 0 10px !important;
+    font: 700 12px/1 var(--wmpn-font, sans-serif);
+}
+html.wmp-new .wmp-design-toggle {
+    color: var(--wmpn-enji-ink);
+}
+
+/* ===== 左のメニュー（content/new-shell.js） ===== */
+
+.wmp-rail,
+.wmp-rail-panel {
+    display: none !important;
+}
+@media (min-width: 992px) {
+    /* 上のタブは左のメニューに移したので隠す */
+    html.wmp-new.wmp-has-rail.wmp-rail-ready .navbar .primary-navigation {
+        display: none !important;
+    }
+    /* メニューの幅だけ本文を右に寄せる（Moodle の左のドロワーと、それを開くボタンも一緒に） */
+    html.wmp-new.wmp-has-rail body:not(.pagelayout-secure):not(.pagelayout-embedded):not(.pagelayout-popup):not(.pagelayout-login):not(.pagelayout-redirect):not(.pagelayout-maintenance) {
+        padding-left: var(--wmpn-rail-w);
+    }
+    html.wmp-new.wmp-has-rail .drawer-left.show {
+        left: var(--wmpn-rail-w) !important;
+    }
+    html.wmp-new.wmp-has-rail .drawer-toggles .drawer-left-toggle {
+        left: var(--wmpn-rail-w) !important;
+    }
+
+    html.wmp-new.wmp-has-rail .wmp-rail {
+        display: flex !important;
+    }
+    html.wmp-new.wmp-has-rail .wmp-rail-panel:not([hidden]) {
+        display: flex !important;
+    }
+}
+
+.wmp-rail {
+    position: fixed;
+    top: var(--wmpn-nav-h);
+    bottom: 0;
+    left: 0;
+    z-index: 1029;
+    flex-direction: column;
+    width: var(--wmpn-rail-w);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--wmpn-rail-bg);
+    color: var(--wmpn-rail-ink);
+    font: 13px/1.4 var(--wmpn-font);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.wmp-rail-nav {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+.wmp-rail-item,
+.wmp-rail-course {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    border: 0;
+    background: none;
+    color: inherit !important;
+    text-align: left;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+.wmp-rail-item {
+    height: 40px;
+    padding: 0 16px 0 18px;
+    font: 600 13px/1 var(--wmpn-font);
+}
+.wmp-rail-item:hover,
+.wmp-rail-course:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: #fff !important;
+}
+.wmp-rail-item.is-active,
+.wmp-rail-item.is-open,
+.wmp-rail-course.is-active {
+    background: rgba(0, 0, 0, 0.24);
+    color: #fff !important;
+}
+.wmp-rail-item.is-active::before,
+.wmp-rail-item.is-open::before,
+.wmp-rail-course.is-active::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 0;
+    width: 4px;
+    background: #fff;
+}
+.wmp-rail-item:focus-visible,
+.wmp-rail-course:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -3px;
+}
+.wmp-rail-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wmp-rail-count {
+    min-width: 20px;
+    padding: 3px 5px;
+    border-radius: 2px;
+    background: var(--wmpn-rail-ink);
+    color: var(--wmpn-rail-bg);
+    font: 700 11px/1 var(--wmpn-font);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+.wmp-rail-section {
+    padding-bottom: 8px;
+}
+.wmp-rail-heading {
+    padding: 14px 18px 6px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 11px;
+    font-weight: 700;
+}
+.wmp-rail-courses {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none;
+}
+.wmp-rail-course {
+    gap: 10px;
+    padding: 6px 16px 6px 18px;
+    font-size: 12.5px;
+    line-height: 1.35;
+}
+.wmp-rail-course .wmp-mark {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+.wmp-rail-loading {
+    padding: 12px 18px;
+}
+.wmp-rail-loading .wmp-spinner {
+    border-color: rgba(255, 255, 255, 0.25);
+    border-top-color: #fff;
+}
+.wmp-rail-foot {
+    margin-top: auto;
+    padding: 4px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* たたんだとき: アイコンと科目の印だけにする */
+html.wmp-new.wmp-rail-collapsed .wmp-rail .wmp-rail-label,
+html.wmp-new.wmp-rail-collapsed .wmp-rail .wmp-rail-heading,
+html.wmp-new:has(.drawer-left.show) .wmp-rail .wmp-rail-label,
+html.wmp-new:has(.drawer-left.show) .wmp-rail .wmp-rail-heading {
+    display: none;
+}
+html.wmp-new.wmp-rail-collapsed .wmp-rail .wmp-rail-item,
+html.wmp-new.wmp-rail-collapsed .wmp-rail .wmp-rail-course,
+html.wmp-new:has(.drawer-left.show) .wmp-rail .wmp-rail-item,
+html.wmp-new:has(.drawer-left.show) .wmp-rail .wmp-rail-course {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+html.wmp-new.wmp-rail-collapsed .wmp-rail .wmp-rail-count,
+html.wmp-new:has(.drawer-left.show) .wmp-rail .wmp-rail-count {
+    position: absolute;
+    top: 3px;
+    right: 6px;
+    min-width: 16px;
+    padding: 2px 3px;
+    font-size: 10px;
+}
+html.wmp-new.wmp-rail-collapsed .wmp-rail .wmp-rail-courses,
+html.wmp-new:has(.drawer-left.show) .wmp-rail .wmp-rail-courses {
+    padding-top: 8px !important;
+}
+
+/* 締切の引き出し */
+.wmp-rail-panel {
+    position: fixed;
+    top: var(--wmpn-nav-h);
+    bottom: 0;
+    left: var(--wmpn-rail-w);
+    z-index: 1029;
+    flex-direction: column;
+    width: min(400px, calc(100vw - var(--wmpn-rail-w)));
+    border-right: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+    box-shadow: 10px 0 28px rgba(0, 0, 0, 0.14);
+    font-size: 13px;
+}
+.wmp-rail-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 10px 10px 18px;
+    border-bottom: 1px solid var(--wmp-border);
+}
+.wmp-rail-panel-header h2 {
+    flex: 1;
+    margin: 0 !important;
+    color: var(--wmp-text) !important;
+    font: 700 16px/1.3 var(--wmp-font) !important;
+}
+.wmp-rail-panel-body {
+    flex: 1;
+    overflow: auto;
+    padding: 12px 18px 24px;
+}
+
+/* ===== まとめて探す（Ctrl+K） ===== */
+
+.wmp-palette {
+    width: min(640px, calc(100vw - 32px));
+    max-height: min(580px, calc(100vh - 120px));
+    margin: 12vh auto auto;
+    padding: 0;
+    border: 1px solid var(--wmp-border);
+    border-radius: 3px;
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+    font: 13px/1.5 var(--wmp-font);
+}
+.wmp-palette[open] {
+    display: flex;
+    flex-direction: column;
+}
+.wmp-palette::backdrop {
+    background: rgba(16, 18, 22, 0.45);
+}
+.wmp-palette-field {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    border-bottom: 2px solid var(--wmp-accent);
+    color: var(--wmp-text-2);
+}
+.wmp-palette-input {
+    flex: 1;
+    height: 54px;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: var(--wmp-text);
+    font: 17px/1 var(--wmp-font);
+}
+.wmp-palette-input::-webkit-search-cancel-button {
+    display: none;
+}
+.wmp-palette-list {
+    flex: 1;
+    overflow: auto;
+    padding: 4px 0 8px;
+}
+.wmp-palette-group-title {
+    padding: 10px 16px 4px;
+    color: var(--wmp-text-2);
+    font-size: 11px;
+    font-weight: 700;
+}
+.wmp-palette-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 16px;
+    cursor: pointer;
+}
+.wmp-palette-item.is-selected {
+    background: var(--wmp-accent-soft);
+    box-shadow: inset 4px 0 0 var(--wmp-accent);
+}
+.wmp-palette-icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    color: var(--wmp-text-2);
+}
+.wmp-palette-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+.wmp-palette-label,
+.wmp-palette-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wmp-palette-label {
+    font-size: 14px;
+    font-weight: 600;
+}
+.wmp-palette-sub {
+    color: var(--wmp-text-2);
+    font-size: 12px;
+}
+.wmp-palette-hint {
+    flex: none;
+    color: var(--wmp-text-2);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-palette-item.is-urgent .wmp-palette-hint {
+    color: var(--wmp-danger);
+    font-weight: 700;
+}
+.wmp-palette-empty {
+    padding: 28px 16px;
+    color: var(--wmp-text-2);
+    text-align: center;
+}
+.wmp-palette-help {
+    flex: none;
+    padding: 8px 16px;
+    border-top: 1px solid var(--wmp-border);
+    color: var(--wmp-text-2);
+    font-size: 11px;
+}
+
+/* ===== ページ上部・タブ ===== */
+
+html.wmp-new #page-header .page-header-headings h1,
+html.wmp-new #page-header h1.h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+html.wmp-new .breadcrumb {
+    font-size: 0.8125rem;
+}
+html.wmp-new .breadcrumb-item,
+html.wmp-new .breadcrumb-item a {
+    color: var(--wmpn-ink-2) !important;
+}
+/* コースの中のタブ（コース・参加者・評定…）: 下線で選ぶ */
+html.wmp-new .secondary-navigation .moremenu .nav-tabs {
+    border-bottom: 1px solid var(--wmpn-line) !important;
+}
+html.wmp-new .secondary-navigation .moremenu .nav-link {
+    margin-bottom: -1px;
+    border: 0 !important;
+    border-bottom: 3px solid transparent !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--wmpn-ink-2) !important;
+    font-weight: 600;
+}
+html.wmp-new .secondary-navigation .moremenu .nav-link:hover {
+    color: var(--wmpn-ink) !important;
+}
+html.wmp-new .secondary-navigation .moremenu .nav-link.active {
+    border-bottom-color: var(--wmpn-enji) !important;
+    color: var(--wmpn-ink) !important;
+}
+
+/* ===== 箱 ===== */
+
+html.wmp-new .card,
+html.wmp-new .block.card,
+html.wmp-new .modal-content,
+html.wmp-new .popover,
+html.wmp-new .list-group,
+html.wmp-new .list-group-item {
+    border-radius: 0 !important;
+}
+html.wmp-new .card,
+html.wmp-new .block.card {
+    border-color: var(--wmpn-line) !important;
+    box-shadow: none !important;
+}
+html.wmp-new .block .card-title,
+html.wmp-new .block h5.card-title {
+    font-weight: 700;
+}
+html.wmp-new .alert {
+    border-radius: var(--wmpn-r-ctl) !important;
+    border-left-width: 4px;
+}
+html.wmp-new .badge {
+    border-radius: 2px !important;
+}
+html.wmp-new .dropdown-menu {
+    padding: 4px 0;
+    border-color: var(--wmpn-line);
+    border-radius: var(--wmpn-r-ctl) !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+}
+html.wmp-new .dropdown-item {
+    border-radius: 0;
+}
+html.wmp-new .modal-content {
+    border-radius: var(--wmpn-r-ctl) !important;
+}
+
+/* ===== ボタン・入力欄 ===== */
+
+html.wmp-new .btn {
+    border-radius: var(--wmpn-r-ctl) !important;
+    font-weight: 600;
+}
+html.wmp-new .btn-primary,
+html.wmp-new .btn-primary:not(:disabled):not(.disabled) {
+    background-color: var(--wmpn-enji) !important;
+    border-color: var(--wmpn-enji) !important;
+    color: var(--wmpn-on-enji) !important;
+}
+html.wmp-new .btn-primary:hover,
+html.wmp-new .btn-primary:focus {
+    background-color: var(--wmpn-enji-hover) !important;
+    border-color: var(--wmpn-enji-hover) !important;
+}
+html.wmp-new .form-control,
+html.wmp-new .custom-select,
+html.wmp-new .form-select {
+    border-radius: var(--wmpn-r-ctl) !important;
+}
+html.wmp-new .form-control:focus,
+html.wmp-new .custom-select:focus,
+html.wmp-new .form-select:focus {
+    border-color: var(--wmpn-enji) !important;
+    box-shadow: none !important;
+    outline: 2px solid var(--wmpn-enji);
+    outline-offset: -1px;
+}
+html.wmp-new .btn:focus-visible {
+    box-shadow: none !important;
+    outline: 2px solid var(--wmpn-enji);
+    outline-offset: 2px;
+}
+
+/* ===== 左のコースの目次（Moodle のドロワー） ===== */
+
+html.wmp-new .courseindex .courseindex-item {
+    border-radius: 0 !important;
+}
+html.wmp-new .courseindex .courseindex-item.pageitem {
+    background-color: var(--wmpn-enji-tint) !important;
+    box-shadow: inset 4px 0 0 var(--wmpn-enji);
+    color: var(--wmpn-ink) !important;
+}
+html.wmp-new .courseindex .courseindex-item.pageitem a {
+    color: inherit !important;
+}
+
+/* ===== 表 ===== */
+
+html.wmp-new .generaltable thead th,
+html.wmp-new .generaltable > tbody > tr:first-child > th {
+    border-bottom: 2px solid var(--wmpn-ink) !important;
+    font-weight: 700;
+}
+html.wmp-new .generaltable td,
+html.wmp-new .generaltable th {
+    vertical-align: middle;
+}
+
+/* ===== コースページ ===== */
+
+/* 節（週・トピック）は線で囲んだ紙にする */
+html.wmp-new .course-content li.section.main,
+html.wmp-new .course-content li.section.course-section {
+    margin-bottom: 12px !important;
+    padding: 4px 18px 10px !important;
+    border: 1px solid var(--wmpn-line) !important;
+    border-radius: 0 !important;
+    background-color: var(--wmpn-paper) !important;
+    box-shadow: none !important;
+    list-style: none;
+}
+html.wmp-new .format-topcoll .course-content ul.topics,
+html.wmp-new .format-topcoll .course-content ul.ctopics {
+    background-color: transparent !important;
+}
+html.wmp-new .course-content .sectionname,
+html.wmp-new .course-content .section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+/* Collapsed Topics の開閉する見出し: 科目ごとに付けられた色を外して、紙の見出しにする */
+html.wmp-new .format-topcoll .course-content .toggle {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+}
+html.wmp-new .format-topcoll .course-content .toggle:hover {
+    background-color: var(--wmpn-tint) !important;
+}
+html.wmp-new .format-topcoll .course-content .toggle,
+html.wmp-new .format-topcoll .course-content .toggle a,
+html.wmp-new .format-topcoll .course-content .toggle h3 {
+    color: var(--wmpn-ink) !important;
+}
+
+/* 活動の行: 箱をやめて、細い線で区切る */
+html.wmp-new .activity-item {
+    border-radius: 0 !important;
+}
+html.wmp-new .course-content li.activity + li.activity .activity-item:not(.activityinline) {
+    border-top: 1px solid var(--wmpn-line-soft) !important;
+}
+html.wmp-new .activity-item:not(.activityinline):hover {
+    background-color: var(--wmpn-tint) !important;
+}
+html.wmp-new .activityiconcontainer {
+    border-radius: var(--wmpn-r-ctl) !important;
+}
+html.wmp-new .activityname a,
+html.wmp-new .instancename {
+    font-weight: 600;
+}
+
+/* 絞り込み（content/new-course.js） */
+html.wmp-new .course-content li.activity.wmp-filtered-out,
+html.wmp-new .course-content li.section.wmp-filter-empty,
+html.wmp-new .course-content.wmp-filtering #toggle-all,
+html.wmp-new .course-content.wmp-filtering #topcoll-display-instructions {
+    display: none !important;
+}
+.wmp-course-tools {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+.wmp-course-deadlines:empty {
+    display: none;
+}
+.wmp-course-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    padding: 10px 14px;
+}
+.wmp-course-search {
+    flex: 1 1 240px;
+    min-width: 0;
+    height: 34px !important;
+}
+.wmp-course-chips {
+    flex-wrap: wrap;
+}
+.wmp-course-chip-count {
+    margin-left: 4px;
+    color: var(--wmp-text-3);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-course-result {
+    min-width: 3em;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-course-empty {
+    border: 1px dashed var(--wmp-border);
+}
+.wmp-course-chips button.is-new:not(.is-active) {
+    color: var(--wmp-accent);
+}
+
+/* 目次と本文を横に並べる。幅は本文の入れ物の幅で決める（左のメニューや Moodle のドロワーで狭くなるため） */
+.wmp-course-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 16px;
+    container-type: inline-size;
+}
+.wmp-course-main {
+    flex: 1 1 0;
+    min-width: 0;
+}
+html.wmp-new .course-content.wmp-course-enhanced > ul {
+    margin: 0 !important;
+    padding-left: 0 !important;
+}
+/* 回を切り替えたときに上へ戻す位置（固定ヘッダーの下に隠れないように） */
+.wmp-course-layout,
+html.wmp-new .course-content li.section {
+    scroll-margin-top: 12px;
+}
+@media (max-width: 991.98px) {
+    .wmp-course-layout,
+    html.wmp-new .course-content li.section {
+        scroll-margin-top: calc(var(--wmpn-nav-h) + 8px);
+    }
+}
+
+/* 目次 */
+.wmp-course-index {
+    position: sticky;
+    top: var(--wmp-sticky-top, 12px);
+    display: flex;
+    flex: 0 0 256px;
+    min-width: 0;
+    max-width: 100%;
+    flex-direction: column;
+    max-height: calc(100vh - var(--wmpn-nav-h) - 24px);
+    max-height: calc(100vh - max(var(--wmp-sticky-top, 12px), var(--wmpn-nav-h) + 12px) - 12px);
+    border: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+    font-size: 13px;
+}
+.wmp-course-index-head {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 10px 8px 14px;
+    border-bottom: 2px solid var(--wmp-text);
+}
+.wmp-course-index-head h2 {
+    flex: 1;
+    margin: 0 !important;
+    color: var(--wmp-text) !important;
+    font: 700 15px/1.3 var(--wmp-font) !important;
+}
+.wmp-course-index-bulk {
+    display: flex;
+    flex: none;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--wmp-border);
+}
+.wmp-course-index-bulk .wmp-btn {
+    flex: 1;
+    justify-content: center;
+    gap: 4px;
+}
+.wmp-course-index-list {
+    flex: 1;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    scrollbar-width: thin;
+}
+.wmp-course-index-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 8px;
+    width: 100%;
+    padding: 8px 10px 8px 12px;
+    border: 0;
+    border-bottom: 1px solid var(--wmp-border);
+    background: none;
+    color: var(--wmp-text);
+    font: 12.5px/1.4 var(--wmp-font);
+    text-align: left;
+    cursor: pointer;
+}
+.wmp-course-index-item:hover {
+    background: var(--wmp-surface);
+}
+.wmp-course-index-item:focus-visible {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: -2px;
+}
+.wmp-course-index-item.is-active {
+    background: var(--wmp-accent-soft);
+    box-shadow: inset 4px 0 0 var(--wmp-accent);
+}
+.wmp-course-index-no {
+    color: var(--wmp-text-2);
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+.wmp-course-index-item.is-active .wmp-course-index-no {
+    color: var(--wmp-accent);
+}
+.wmp-course-index-title {
+    display: -webkit-box;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.wmp-course-index-item.is-active .wmp-course-index-title {
+    font-weight: 700;
+}
+.wmp-course-index-item.is-empty {
+    color: var(--wmp-text-3);
+}
+.wmp-course-index-item.is-filtered-out {
+    display: none;
+}
+.wmp-course-index-tag {
+    grid-column: 3;
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 10.5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.wmp-course-index-tag.is-current {
+    border: 1px solid var(--wmp-accent);
+    color: var(--wmp-accent);
+}
+.wmp-course-index-tag.is-match {
+    background: var(--wmp-surface-2);
+    color: var(--wmp-text);
+    font-variant-numeric: tabular-nums;
+}
+.wmp-course-index-tag.is-new {
+    background: var(--wmp-accent);
+    color: #fff;
+}
+/* 「今週」と「新着」が両方あるときは縦に積む */
+.wmp-course-index-tag + .wmp-course-index-tag {
+    margin-top: 3px;
+}
+
+/* 1回ずつ表示: 選んだ回だけ出す（絞り込み中も同じ。一致した回の中から目次で選ぶ） */
+html.wmp-new .course-content.wmp-paged li.section:not(.wmp-section-shown),
+html.wmp-new .course-content.wmp-paged #toggle-all,
+html.wmp-new .course-content.wmp-paged #topcoll-display-instructions,
+html.wmp-new .course-content.wmp-filtering #toggle-all,
+/* Collapsed Topics の「すべて展開する」は、開閉をこちらで持っているので効かない。隠す */
+html.wmp-new .course-content.wmp-course-enhanced #toggle-all {
+    display: none !important;
+}
+html.wmp-new .course-content.wmp-paged li.section.wmp-section-shown {
+    margin-bottom: 0 !important;
+}
+
+/* 回ごとの開閉は content/new-course.js が持つ（wmp-open / wmp-closed）。Moodle 側の開閉の状態は使わない */
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-open .toggledsection,
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-open .course-content-item-content,
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-open .collapse:not(.show) {
+    display: block !important;
+    height: auto !important;
+    visibility: visible !important;
+}
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-closed .toggledsection,
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-closed .course-content-item-content,
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-closed .collapse {
+    display: none !important;
+}
+/* Moodle の開閉の矢印は状態がずれるので隠し、見出しの左に自前の矢印を出す */
+html.wmp-new .course-content.wmp-course-enhanced .toggle > span {
+    padding-left: 0 !important;
+    background-image: none !important;
+}
+html.wmp-new .course-content.wmp-course-enhanced .icons-collapse-expand {
+    display: none !important;
+}
+html.wmp-new .course-content.wmp-course-enhanced .wmp-section-head {
+    cursor: pointer;
+    user-select: none;
+}
+html.wmp-new .course-content.wmp-course-enhanced .wmp-section-head:focus-visible {
+    outline: 2px solid var(--wmpn-enji);
+    outline-offset: 2px;
+}
+html.wmp-new .course-content.wmp-course-enhanced .wmp-section-head .sectionname::before,
+html.wmp-new .course-content.wmp-course-enhanced .sectionname.wmp-section-head::before {
+    content: "";
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin: 0 10px 2px 2px;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid var(--wmpn-ink-2);
+    vertical-align: middle;
+    transition: transform 0.12s;
+}
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-open .wmp-section-head .sectionname::before,
+html.wmp-new .course-content.wmp-course-enhanced li.section.wmp-open .sectionname.wmp-section-head::before {
+    transform: rotate(90deg);
+}
+
+/* 前後の回 */
+.wmp-course-pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+}
+.wmp-course-pager-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    font: 13px/1.4 var(--wmp-font);
+    text-align: left;
+    cursor: pointer;
+}
+.wmp-course-pager-btn:hover {
+    border-color: var(--wmp-text-3);
+    background: var(--wmp-surface);
+}
+.wmp-course-pager-btn:focus-visible {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: 1px;
+}
+.wmp-course-pager-btn.is-next {
+    grid-column: 2;
+    justify-content: flex-end;
+    text-align: right;
+}
+.wmp-course-pager-btn > span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.wmp-course-pager-btn small {
+    color: var(--wmp-text-2);
+    font-size: 11px;
+}
+.wmp-course-pager-title {
+    overflow: hidden;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wmp-course-pager-btn .wmp-icon {
+    color: var(--wmp-text-2);
+}
+
+/* 新着の印（前回このページを開いたときに無かった活動） */
+.wmp-new-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    background: var(--wmp-accent);
+    color: #fff;
+    font: 700 11px/1.5 var(--wmp-font);
+    vertical-align: middle;
+}
+html.wmp-new .course-content li.activity.wmp-activity-new .activity-item {
+    box-shadow: inset 3px 0 0 var(--wmpn-enji);
+}
+
+/* 本文の入れ物が狭いとき: 目次は上に横並びにする */
+@container (max-width: 760px) {
+    .wmp-course-index {
+        position: static;
+        flex-basis: 100%;
+        max-height: none;
+    }
+    .wmp-course-index-list {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    .wmp-course-index-list > li {
+        flex: 0 0 168px;
+        border-right: 1px solid var(--wmp-border);
+    }
+    .wmp-course-index-item {
+        height: 100%;
+        border-bottom: 0;
+    }
+    .wmp-course-main {
+        flex-basis: 100%;
+    }
+}
+
+/* ===== ダッシュボード（content/new-home.js） ===== */
+
+/* 元のブロックを畳んでいるとき（ボタンで出せる） */
+html.wmp-new body.wmp-hide-original #block-region-content > .block,
+html.wmp-new body.wmp-hide-original #block-region-content > section.block {
+    display: none !important;
+}
+.wmp-home-original {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 16px;
+}
+
+.wmp-home {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+.wmp-home a {
+    color: inherit;
+}
+.wmp-home-day,
+.wmp-home-week {
+    padding: 16px 18px 18px;
+    border: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+}
+
+/* 今日の授業 */
+.wmp-home-day-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 18px;
+    margin-bottom: 14px;
+}
+.wmp-home-day-date {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 !important;
+    color: var(--wmp-text) !important;
+    font: 700 24px/1.2 var(--wmp-font) !important;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-home-day-weekday {
+    color: var(--wmp-text-2);
+    font-size: 14px;
+}
+.wmp-home-day-status {
+    margin: 0 !important;
+    padding-left: 12px;
+    border-left: 3px solid var(--wmp-accent);
+    color: var(--wmp-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+.wmp-home-track {
+    display: grid;
+    grid-template-columns: repeat(var(--wmp-periods, 6), minmax(0, 1fr));
+    grid-template-rows: auto minmax(72px, auto);
+    margin: 0 !important;
+    padding: 0 !important;
+    border-top: 1px solid var(--wmp-border);
+    border-left: 1px solid var(--wmp-border);
+    list-style: none;
+}
+.wmp-home-period {
+    grid-row: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 6px;
+    padding: 6px 8px 4px;
+    border-right: 1px solid var(--wmp-border);
+    color: var(--wmp-text-2);
+    font-size: 12px;
+}
+.wmp-home-slot {
+    grid-row: 2;
+    border-right: 1px solid var(--wmp-border);
+    border-bottom: 1px solid var(--wmp-border);
+}
+.wmp-home-slot.is-past {
+    background: var(--wmp-surface);
+}
+.wmp-home-slot.is-now {
+    background: color-mix(in srgb, var(--wmp-accent) 5%, var(--wmp-bg));
+}
+.wmp-home-period-no {
+    color: var(--wmp-text);
+    font-weight: 700;
+}
+.wmp-home-period-time {
+    font-variant-numeric: tabular-nums;
+}
+.wmp-home-period.is-past {
+    background: var(--wmp-surface);
+}
+.wmp-home-period.is-now {
+    box-shadow: inset 0 4px 0 var(--wmp-accent);
+    background: color-mix(in srgb, var(--wmp-accent) 5%, var(--wmp-bg));
+}
+.wmp-home-period.is-now .wmp-home-period-no {
+    color: var(--wmp-accent);
+}
+.wmp-home-class {
+    grid-row: 2;
+    z-index: 1;
+    min-width: 0;
+    margin: 4px 6px 6px;
+}
+.wmp-home-class a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    height: 100%;
+    padding: 8px 10px;
+    border-left: 5px solid var(--wmp-course-color);
+    background: color-mix(in srgb, var(--wmp-course-color) 13%, var(--wmp-bg));
+    color: var(--wmp-text) !important;
+    text-decoration: none !important;
+}
+.wmp-home-class a:hover {
+    background: color-mix(in srgb, var(--wmp-course-color) 22%, var(--wmp-bg));
+}
+.wmp-home-class.is-now a {
+    outline: 2px solid var(--wmp-course-color);
+    outline-offset: -2px;
+}
+.wmp-home-class.is-past {
+    opacity: 0.5;
+}
+.wmp-home-class-name {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.wmp-home-class-room {
+    color: var(--wmp-text-2);
+    font-size: 12px;
+}
+.wmp-home-class-period {
+    display: none;
+    color: var(--wmp-text-2);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* 締切の7日間 */
+.wmp-home-week-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+    margin-bottom: 12px;
+}
+.wmp-home-week-head h2 {
+    margin: 0 !important;
+    color: var(--wmp-text) !important;
+    font: 700 17px/1.3 var(--wmp-font) !important;
+}
+.wmp-home-week-total {
+    flex: 1;
+    color: var(--wmp-text-2);
+}
+.wmp-home-week-strip {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    border-top: 1px solid var(--wmp-border);
+    border-left: 1px solid var(--wmp-border);
+}
+.wmp-home-week-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    min-height: 116px;
+    padding: 8px 8px 10px;
+    border: 0;
+    border-right: 1px solid var(--wmp-border);
+    border-bottom: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+    color: var(--wmp-text);
+    font: 12px/1.3 var(--wmp-font);
+    text-align: left;
+    cursor: pointer;
+}
+.wmp-home-week-col.is-weekend {
+    background: var(--wmp-surface);
+}
+.wmp-home-week-col:disabled {
+    color: var(--wmp-text-2);
+    cursor: default;
+}
+.wmp-home-week-col:not(:disabled):hover {
+    background: color-mix(in srgb, var(--wmp-accent) 5%, var(--wmp-bg));
+}
+.wmp-home-week-col.is-open {
+    background: var(--wmp-accent-soft);
+    box-shadow: inset 0 -4px 0 var(--wmp-accent);
+}
+.wmp-home-week-col:focus-visible {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: -2px;
+}
+.wmp-home-week-label {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-home-week-label small {
+    color: var(--wmp-text-2);
+    font-size: 11px;
+}
+.wmp-home-week-col.is-today .wmp-home-week-label {
+    color: var(--wmp-accent);
+}
+.wmp-home-week-col.is-overdue .wmp-home-week-label {
+    color: var(--wmp-danger);
+}
+.wmp-home-week-items {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+.wmp-home-week-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 2px 5px;
+    border-left: 3px solid var(--wmp-course-color);
+    background: color-mix(in srgb, var(--wmp-course-color) 11%, var(--wmp-bg));
+}
+.wmp-home-week-time {
+    color: var(--wmp-text-2);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-home-week-name {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wmp-home-week-more {
+    color: var(--wmp-text-2);
+    font-size: 11px;
+}
+.wmp-home-week-count {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-home-week-col:disabled .wmp-home-week-count {
+    font-weight: 400;
+}
+.wmp-home-week-detail {
+    margin-top: 14px;
+}
+
+/* ===== マイコース（content/new-mycourses.js） ===== */
+
+.wmp-courses {
+    margin-bottom: 16px;
+    padding: 16px 18px 20px;
+    border: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+    font-size: 13px;
+    /* 表の列は、この枠の幅で出し入れする（左のメニューを広げると枠が狭くなるため、画面の幅では決めない） */
+    container-type: inline-size;
+}
+.wmp-courses-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px 16px;
+    margin-bottom: 8px;
+}
+.wmp-courses-head h2 {
+    margin: 0 8px 4px 0 !important;
+    color: var(--wmp-text) !important;
+    font: 700 22px/1.2 var(--wmp-font) !important;
+}
+.wmp-courses-search {
+    width: min(260px, 100%);
+    margin-left: auto;
+}
+.wmp-courses-body {
+    /* それでも収まらないときは、ページ全体ではなく表だけを横にスクロールさせる */
+    overflow-x: auto;
+}
+/* 列の幅は先に決めておき（table-layout: fixed）、中身が長いときは折り返す。
+   中身に合わせて広がる表だと、長い教室名や課題名で枠からはみ出す */
+.wmp-courses-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+.wmp-courses-table thead th {
+    padding: 10px 10px 6px;
+    border-bottom: 2px solid var(--wmp-text);
+    color: var(--wmp-text-2);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+.wmp-courses-table thead th:nth-child(1) {
+    width: 92px;
+}
+.wmp-courses-table thead th:nth-child(3) {
+    width: 15%;
+}
+.wmp-courses-table thead th:nth-child(4) {
+    width: 92px;
+}
+.wmp-courses-table thead th:nth-child(5) {
+    width: 30%;
+}
+.wmp-courses-table thead th:nth-child(6) {
+    width: 72px;
+}
+.wmp-courses-group th {
+    padding: 18px 10px 6px;
+    border-bottom: 1px solid var(--wmp-text-3);
+    color: var(--wmp-text);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: left;
+}
+.wmp-courses-group-sub {
+    margin-left: 10px;
+    color: var(--wmp-text-2);
+    font-size: 12px;
+    font-weight: 600;
+}
+.wmp-courses-row td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--wmp-border);
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+.wmp-courses-row:hover td {
+    background: var(--wmp-surface);
+}
+.wmp-courses-row.is-hidden {
+    opacity: 0.55;
+}
+.wmp-courses-period {
+    box-shadow: inset 5px 0 0 var(--wmp-course-color);
+    padding-left: 16px !important;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-courses-name a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    color: var(--wmp-text) !important;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none !important;
+}
+.wmp-courses-name a > span:last-child {
+    min-width: 0;
+}
+.wmp-courses-name a:hover > span:last-child {
+    text-decoration: underline;
+}
+.wmp-courses-original {
+    display: block;
+    margin: 2px 0 0 30px;
+    color: var(--wmp-text-2);
+    font-size: 11px;
+}
+.wmp-courses-room,
+.wmp-courses-delivery {
+    color: var(--wmp-text-2);
+}
+/* 次の締切は2行まで。それより長い課題名は省略する（全部はマウスを重ねると出る） */
+.wmp-courses-due a {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--wmp-text) !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.wmp-courses-due a.is-urgent {
+    color: var(--wmp-danger) !important;
+    font-weight: 700;
+}
+.wmp-courses-due-more {
+    margin-left: 6px;
+    color: var(--wmp-text-2);
+    font-size: 11px;
+    white-space: nowrap;
+}
+.wmp-courses-links a {
+    color: var(--wmp-accent) !important;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* 枠が狭いときは、優先度の低い列から隠す（形式・シラバス → 教室）。
+   列の幅が決まった表でセルを display: none にすると列がずれるので、列は残したまま幅を 0 にする */
+@container (max-width: 880px) {
+    .wmp-courses-table thead th:nth-child(4),
+    .wmp-courses-table thead th:nth-child(6) {
+        width: 0;
+    }
+    .wmp-courses-table thead th:nth-child(4),
+    .wmp-courses-table thead th:nth-child(6),
+    .wmp-courses-row td.wmp-courses-delivery,
+    .wmp-courses-row td.wmp-courses-links {
+        padding: 0 !important;
+        overflow: hidden;
+        font-size: 0;
+        visibility: hidden;
+    }
+    .wmp-courses-table thead th:nth-child(5) {
+        width: 40%;
+    }
+}
+@container (max-width: 600px) {
+    .wmp-courses-table thead th:nth-child(3) {
+        width: 0;
+    }
+    .wmp-courses-table thead th:nth-child(3),
+    .wmp-courses-row td.wmp-courses-room {
+        padding: 0 !important;
+        overflow: hidden;
+        font-size: 0;
+        visibility: hidden;
+    }
+    .wmp-courses-table thead th:nth-child(1) {
+        width: 72px;
+    }
+    .wmp-courses-table thead th:nth-child(5) {
+        width: 44%;
+    }
+    .wmp-courses-search {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* ===== カレンダー（content/new-calendar.js） ===== */
+
+.wmp-cal {
+    margin-bottom: 16px;
+    padding: 14px 18px 18px;
+    border: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+    font-size: 13px;
+    /* 右の欄を横に置くかは、この枠の幅で決める（左のメニューを広げると狭くなるため、画面の幅では決めない） */
+    container-type: inline-size;
+}
+.wmp-cal-head {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+.wmp-cal-title {
+    min-width: 7.5em;
+    margin: 0 4px !important;
+    color: var(--wmp-text) !important;
+    font: 700 22px/1.2 var(--wmp-font) !important;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+.wmp-cal-head .wmp-btn {
+    margin-left: 6px;
+}
+.wmp-cal-spacer {
+    flex: 1;
+}
+.wmp-cal-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 18px;
+    align-items: start;
+}
+.wmp-cal-grid {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--wmp-border);
+    border-left: 1px solid var(--wmp-border);
+    transition: opacity 0.1s;
+}
+.wmp-cal-grid.is-loading {
+    opacity: 0.55;
+}
+.wmp-cal-row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.wmp-cal-dayname {
+    padding: 6px 8px;
+    border-right: 1px solid var(--wmp-border);
+    border-bottom: 2px solid var(--wmp-text);
+    color: var(--wmp-text-2);
+    font-size: 12px;
+    font-weight: 700;
+}
+.wmp-cal-dayname.is-sun,
+.wmp-cal-cell.is-sun .wmp-cal-date {
+    color: var(--wmpn-sun);
+}
+.wmp-cal-dayname.is-sat,
+.wmp-cal-cell.is-sat .wmp-cal-date {
+    color: var(--wmpn-sat);
+}
+.wmp-cal-cell {
+    min-width: 0;
+    min-height: 110px;
+    padding: 4px 4px 6px;
+    border-right: 1px solid var(--wmp-border);
+    border-bottom: 1px solid var(--wmp-border);
+    background: var(--wmp-bg);
+    cursor: pointer;
+}
+.wmp-cal-cell.is-pad {
+    background: var(--wmp-surface);
+    cursor: default;
+}
+.wmp-cal-cell:not(.is-pad):hover {
+    background: color-mix(in srgb, var(--wmp-accent) 4%, var(--wmp-bg));
+}
+.wmp-cal-cell.is-selected {
+    box-shadow: inset 0 0 0 2px var(--wmp-accent);
+}
+.wmp-cal-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 26px;
+    height: 24px;
+    padding: 0 5px;
+    border: 0;
+    background: none;
+    color: var(--wmp-text);
+    font: 700 13px/1 var(--wmp-font);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+.wmp-cal-cell.is-today .wmp-cal-date {
+    border-radius: 2px;
+    background: var(--wmp-accent);
+    color: #fff !important;
+}
+.wmp-cal-class-mark {
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+    opacity: 0.45;
+}
+.wmp-cal-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 4px 0 0 !important;
+    padding: 0 !important;
+    list-style: none;
+}
+.wmp-cal-events a {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    min-width: 0;
+    padding: 1px 4px;
+    border-left: 3px solid var(--wmp-course-color);
+    background: color-mix(in srgb, var(--wmp-course-color) 10%, var(--wmp-bg));
+    color: var(--wmp-text) !important;
+    font-size: 11.5px;
+    line-height: 1.4;
+    text-decoration: none !important;
+}
+.wmp-cal-events a:hover {
+    background: color-mix(in srgb, var(--wmp-course-color) 22%, var(--wmp-bg));
+}
+.wmp-cal-event-time {
+    flex: none;
+    color: var(--wmp-text-2);
+    font-variant-numeric: tabular-nums;
+}
+/* 予定の名前は1行で切らず、2行まで折り返す（全部はマウスを重ねると出る） */
+.wmp-cal-event-name {
+    display: -webkit-box;
+    text-align: left;
+    min-width: 0;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.wmp-cal-more {
+    padding: 0 4px;
+    color: var(--wmp-text-2);
+    font-size: 11px;
+}
+.wmp-cal-agenda {
+    position: sticky;
+    top: calc(var(--wmpn-nav-h) + 12px);
+    padding-top: 10px;
+    border-top: 4px solid var(--wmp-accent);
+}
+.wmp-cal-agenda-date {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 0 6px !important;
+    color: var(--wmp-text) !important;
+    font: 700 20px/1.3 var(--wmp-font) !important;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-cal-agenda-date span {
+    color: var(--wmp-text-2);
+    font-size: 13px;
+}
+.wmp-scope .wmp-cal-agenda-heading {
+    margin: 14px 0 0 !important;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--wmp-text-3);
+    color: var(--wmp-text-2) !important;
+    font: 700 12px/1.4 var(--wmp-font) !important;
+}
+.wmp-cal-agenda-list {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none;
+}
+.wmp-cal-agenda-list li {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    column-gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--wmp-border);
+}
+.wmp-cal-agenda-time {
+    grid-row: span 2;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-cal-agenda-list li.is-overdue .wmp-cal-agenda-time {
+    color: var(--wmp-danger);
+}
+.wmp-cal-agenda-name {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+    color: var(--wmp-text) !important;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+.wmp-cal-agenda-name:hover {
+    text-decoration: underline !important;
+}
+.wmp-cal-agenda .wmp-mark {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+}
+.wmp-cal-dot {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    background: var(--wmp-course-color);
+}
+.wmp-cal-agenda-sub {
+    overflow: hidden;
+    color: var(--wmp-text-2);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wmp-cal-agenda-none {
+    margin: 8px 0 !important;
+}
+.wmp-cal-day-link {
+    margin-top: 16px;
+}
+
+html.wmp-inner-scroll .wmp-cal-agenda {
+    top: 12px;
+}
+
+/* ===== サイトのホーム: お知らせの掲示板（content/new-site-home.js） ===== */
+
+.wmp-board {
+    margin: 0 0 4px;
+}
+.wmp-board-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--wmp-text);
+}
+.wmp-board-head h2 {
+    margin: 0 !important;
+    color: var(--wmp-text) !important;
+    font: 700 22px/1.2 var(--wmp-font) !important;
+}
+.wmp-board-count {
+    flex: 1;
+    color: var(--wmp-text-2);
+    font-variant-numeric: tabular-nums;
+}
+html.wmp-new .wmp-notice {
+    margin: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--wmpn-line) !important;
+    border-radius: 0 !important;
+    background: var(--wmpn-paper) !important;
+    box-shadow: none !important;
+}
+html.wmp-new .wmp-notice:not(.is-open) > :not(.wmp-notice-summary) {
+    display: none !important;
+}
+html.wmp-new .wmp-notice.is-open {
+    padding-bottom: 12px !important;
+}
+.wmp-notice-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 12px 8px;
+    border: 0;
+    background: none;
+    color: var(--wmp-text);
+    font: 14px/1.5 var(--wmp-font);
+    text-align: left;
+    cursor: pointer;
+}
+.wmp-notice-summary:hover {
+    background: var(--wmp-surface);
+}
+.wmp-notice-summary:focus-visible {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: -2px;
+}
+.wmp-notice-date {
+    flex: none;
+    width: 7em;
+    color: var(--wmp-text-2);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+.wmp-notice-subject {
+    flex: 1;
+    min-width: 0;
+    font-weight: 700;
+}
+.wmp-notice-new {
+    flex: none;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: var(--wmp-accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+}
+.wmp-notice-summary .wmp-icon {
+    color: var(--wmp-text-2);
+    transition: transform 0.15s;
+}
+html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
+    transform: rotate(180deg);
+}
+
+/* ===== 画面が狭いとき ===== */
+
+/* 枠がかなり狭いときだけ、右の欄を表の下に回す */
+@container (max-width: 820px) {
+    .wmp-cal-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .wmp-cal-agenda {
+        position: static;
+    }
+}
+/* さらに狭いときは、時刻を名前の上に置いて名前の幅を確保する */
+@container (max-width: 760px) {
+    .wmp-cal-events a {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+@media (max-width: 767.98px) {
+    .wmp-home-track {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        border: 0;
+    }
+    .wmp-home-period,
+    .wmp-home-slot {
+        display: none;
+    }
+    .wmp-home-class {
+        margin: 0;
+    }
+    .wmp-home-class-period {
+        display: block;
+    }
+    .wmp-home-week-strip {
+        grid-auto-columns: 132px;
+        overflow-x: auto;
+    }
+    .wmp-cal-cell {
+        min-height: 64px;
+    }
+    .wmp-cal-event-time,
+    .wmp-cal-event-name {
+        display: none;
+    }
+    .wmp-cal-events a {
+        height: 5px;
+        padding: 0;
+    }
+    .wmp-notice-date {
+        width: auto;
+    }
+}
+/* 科目名が折り返しても、頭文字の四角と色の印は1行目にそろえる */
+.wmp-cal-agenda-name > .wmp-mark,
+.wmp-cal-agenda-name > .wmp-cal-dot {
+    margin-top: 2px;
+}
+
+/* カレンダーとマイコースは横に広いほど見やすいので、Moodle が本文に付けている最大幅を外す */
+html.wmp-new :is(#page-calendar-view, #page-my-courses) .main-inner,
+html.wmp-new :is(#page-calendar-view, #page-my-courses) #page.drawers .main-inner,
+html.wmp-new :is(#page-calendar-view, #page-my-courses) #topofscroll,
+html.wmp-new :is(#page-calendar-view, #page-my-courses) #page-content,
+html.wmp-new :is(#page-calendar-view, #page-my-courses) #region-main-box,
+html.wmp-new :is(#page-calendar-view, #page-my-courses) #region-main {
+    max-width: none !important;
+}

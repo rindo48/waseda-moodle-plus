@@ -933,3 +933,7 @@ html.wmp-dark .navbar [data-toggler="drawers"] .icon,
 html.wmp-dark .navbar .drawertoggle .icon {
     color: var(--wmpd-text) !important;
 }
+/* Moodle の「≡」のアイコンは画像（Bootstrap の navbar-toggler-icon）なので、色ではなく反転で明るくする */
+html.wmp-dark .navbar .navbar-toggler-icon {
+    filter: invert(1) brightness(1.4);
+}

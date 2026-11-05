@@ -190,8 +190,7 @@ html.wmp-new .wmp-design-toggle {
 .wmp-rail-panel {
     display: none !important;
 }
-/* 幅が 600px 以上なら左のメニューを出す（狭いと Moodle はタブを「≡」の中にしまうので、ここで出さないとタブが見えにくい） */
-@media (min-width: 600px) {
+@media (min-width: 992px) {
     /* 上のタブは左のメニューに移したので隠す */
     html.wmp-new.wmp-has-rail.wmp-rail-ready .navbar .primary-navigation {
         display: none !important;
@@ -1964,28 +1963,76 @@ html.wmp-new #page-site-index .wmp-empty-head {
     display: none !important;
 }
 
-/* 600〜991px では、左のメニューはいつもアイコンだけの細い形にする */
-@media (min-width: 600px) and (max-width: 991.98px) {
-    html.wmp-new {
-        --wmpn-rail-w: 60px;
+/* ===== 画面が狭いとき（992px 未満）: 左のメニューは引き出しにする（content/new-shell.js） ===== */
+.wmp-rail-toggle,
+.wmp-rail-backdrop {
+    display: none;
+}
+@media (max-width: 991.98px) {
+    /* Moodle の「≡」とドロワは旧デザインの見た目なので、新デザインの引き出しに置き換える */
+    html.wmp-new.wmp-rail-ready .navbar .primary-navigation,
+    html.wmp-new.wmp-rail-ready #theme_boost-drawers-primary,
+    html.wmp-new.wmp-rail-ready .drawer-primary,
+    html.wmp-new.wmp-rail-ready .navbar [data-target="theme_boost-drawers-primary"] {
+        display: none !important;
     }
+    html.wmp-new.wmp-rail-ready .wmp-rail-toggle {
+        display: inline-grid;
+        flex: none;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        margin-right: 6px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--wmpn-r-ctl);
+        background: none;
+        color: var(--wmpn-ink);
+        cursor: pointer;
+    }
+    html.wmp-new.wmp-rail-ready .wmp-rail-toggle:hover {
+        background: var(--wmpn-tint);
+    }
+    html.wmp-new.wmp-rail-ready .wmp-rail {
+        display: flex !important;
+        width: min(280px, 85vw);
+        transform: translateX(-105%);
+        transition: transform 0.18s ease-out;
+        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.3);
+        visibility: hidden;
+    }
+    html.wmp-new.wmp-rail-drawer-open .wmp-rail {
+        transform: none;
+        visibility: visible;
+    }
+    html.wmp-new.wmp-rail-drawer-open .wmp-rail-backdrop {
+        position: fixed;
+        inset: var(--wmpn-nav-h) 0 0 0;
+        z-index: 1028;
+        display: block;
+        background: rgba(10, 12, 16, 0.45);
+    }
+    /* 引き出しの中では、たたんだ設定に関係なく名前まで出す */
     html.wmp-new .wmp-rail .wmp-rail-label,
-    html.wmp-new .wmp-rail .wmp-rail-heading,
-    html.wmp-new .wmp-rail .wmp-rail-collapse {
-        display: none;
+    html.wmp-new .wmp-rail .wmp-rail-heading {
+        display: block !important;
     }
     html.wmp-new .wmp-rail .wmp-rail-item,
     html.wmp-new .wmp-rail .wmp-rail-course {
-        justify-content: center;
-        padding-left: 0;
-        padding-right: 0;
+        justify-content: flex-start !important;
+        padding-left: 18px !important;
+        padding-right: 16px !important;
     }
     html.wmp-new .wmp-rail .wmp-rail-count {
-        position: absolute;
-        top: 3px;
-        right: 6px;
-        min-width: 16px;
-        padding: 2px 3px;
-        font-size: 10px;
+        position: static !important;
+    }
+    html.wmp-new .wmp-rail .wmp-rail-collapse {
+        display: none;
+    }
+    /* 締切の引き出しは画面の左端から出す */
+    html.wmp-new.wmp-rail-ready .wmp-rail-panel:not([hidden]) {
+        display: flex !important;
+        left: 0;
+        width: min(400px, 100vw);
     }
 }

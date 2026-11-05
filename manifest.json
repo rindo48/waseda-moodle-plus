@@ -64,7 +64,8 @@
                 "content/new-mycourses.js",
                 "content/new-calendar.js",
                 "content/new-course.js",
-                "content/main.js"
+                "content/main.js",
+                "content/a11y-bridge.js"
             ],
             "css": [
                 "styles/components.css"

@@ -937,3 +937,10 @@ html.wmp-dark .navbar .drawertoggle .icon {
 html.wmp-dark .navbar .navbar-toggler-icon {
     filter: invert(1) brightness(1.4);
 }
+
+/* アクセシビリティのパネル（右下の人のボタン）: 各設定の見出しが暗い色のままで読めないので明るくする。
+   パネルで文字色を選んだときは、content/a11y-bridge.js の規則のほうが強いのでそちらが効く */
+html.wmp-dark .local-accessibility-panel .card-body p,
+html.wmp-dark .local-accessibility-panel .card-body strong {
+    color: var(--wmpd-text);
+}

@@ -29,7 +29,16 @@ function contentScripts(settings) {
         runAt: "document_start",
         allFrames: true,
     });
-    add(settings.modernLook, { id: "modern-look", matches: [MOODLE], css: ["styles/modern-look.css"], runAt: "document_start" });
+    const isNewDesign = settings.design === "new";
+    add(isNewDesign, {
+        id: "new-design",
+        matches: [MOODLE],
+        js: ["content/new-design-flag.js"],
+        css: ["styles/new-design.css"],
+        runAt: "document_start",
+    });
+    // 「見た目を整える」は旧デザイン用（新デザインはその内容を含んでいる）
+    add(settings.modernLook && !isNewDesign, { id: "modern-look", matches: [MOODLE], css: ["styles/modern-look.css"], runAt: "document_start" });
     add(settings.reduceCourseContentPadding, {
         id: "reduce-course-content-padding",
         matches: [MOODLE],

@@ -331,8 +331,41 @@
         update();
     }
 
+    // ===== ヘッダーの旧デザイン・新デザイン切り替えボタン =====
+    const LAYOUT =
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 9v12"/></svg>';
+
+    function designToggle(settings) {
+        const nav = document.getElementById("usernavigation");
+        if (!nav || document.getElementById("wmp-design-toggle")) return;
+
+        const isNew = settings.design === "new";
+        const label = isNew ? "旧デザインに戻す" : "新デザインにする";
+        const button = el("button", {
+            id: "wmp-design-toggle",
+            type: "button",
+            class: `nav-link wmp-dark-toggle wmp-design-toggle${isNew ? " is-new" : ""}`,
+            title: `${label}（ページを読み込み直します）`,
+            "aria-label": label,
+            innerHTML: `${LAYOUT}<span class="wmp-design-toggle-text">${isNew ? "新" : "旧"}</span>`,
+        });
+        button.addEventListener("click", async () => {
+            button.disabled = true;
+            await WMP.setSettings({ design: isNew ? "classic" : "new" });
+            // 新しいページから効くスタイルの登録が終わってから読み込み直す
+            await WMP.send("syncFeatures").catch(() => {});
+            location.reload();
+        });
+
+        nav.prepend(el("div", { class: "wmp-dark-toggle-wrap" }, button));
+        WMP.onSettingsChanged((next) => {
+            if (!next.designToggleInHeader) button.parentElement?.remove();
+        });
+    }
+
     WMP.initFeatures = function initFeatures(settings) {
         if (settings.darkModeToggleInHeader) darkModeToggle(settings);
+        if (settings.designToggleInHeader) designToggle(settings);
 
         const sessionKey = WMP.findSessionKey();
         if (sessionKey) WMP.send("setSessionKey", { sessionKey }).catch(() => {});

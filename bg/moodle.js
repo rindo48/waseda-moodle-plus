@@ -112,7 +112,18 @@ export async function touchSession(sessionKey) {
 
 // ===== キャッシュ =====
 
-async function withCache(key, ttlMs, force, fetcher) {
+/** 取得中のもの（同じキーへの同時の呼び出しは、1回の取得を待って結果を分け合う） */
+const inFlight = new Map();
+
+function withCache(key, ttlMs, force, fetcher) {
+    const running = inFlight.get(key);
+    if (running) return running;
+    const promise = withCacheOnce(key, ttlMs, force, fetcher).finally(() => inFlight.delete(key));
+    inFlight.set(key, promise);
+    return promise;
+}
+
+async function withCacheOnce(key, ttlMs, force, fetcher) {
     const { [key]: cache } = await chrome.storage.local.get(key);
     if (!force && cache && Date.now() - cache.timestamp < ttlMs) return { value: cache.value, cached: true, timestamp: cache.timestamp };
     try {
@@ -158,6 +169,7 @@ function slimEvent(e) {
         activityname: e.activityname,
         activitystr: e.activitystr,
         modulename: e.modulename,
+        eventtype: e.eventtype,
         timesort: e.timesort,
         overdue: e.overdue,
         url: e.url ?? e.viewurl,
@@ -235,4 +247,42 @@ function decodeEntities(text) {
 
 export async function getCourses({ force = false } = {}) {
     return withCache("coursesCache", 6 * 60 * 60 * 1000, force, fetchEnrolledCourses);
+}
+
+// ===== カレンダー（新デザインのカレンダー画面用） =====
+
+/** 月のカレンダーを取得する（Moodle のカレンダー画面が月の移動に使っているのと同じ API） */
+export async function getCalendarMonth({ year, month }) {
+    const data = await callMoodleAPI("core_calendar_get_calendar_monthly_view", { year, month });
+    return {
+        periodname: data.periodname,
+        daynames: (data.daynames ?? []).map((d) => ({ dayno: d.dayno, shortname: d.shortname })),
+        weeks: (data.weeks ?? []).map((w) => ({
+            prepadding: (w.prepadding ?? []).length,
+            postpadding: (w.postpadding ?? []).length,
+            days: (w.days ?? []).map((d) => ({
+                mday: d.mday,
+                wday: d.wday,
+                timestamp: d.timestamp,
+                istoday: Boolean(d.istoday),
+                isweekend: Boolean(d.isweekend),
+                events: (d.events ?? []).map(slimCalendarEvent).sort((a, b) => a.timestart - b.timestart),
+            })),
+        })),
+    };
+}
+
+function slimCalendarEvent(e) {
+    return {
+        id: e.id,
+        name: decodeEntities(e.name ?? ""),
+        timestart: e.timestart,
+        timeduration: e.timeduration ?? 0,
+        eventtype: e.normalisedeventtype ?? e.eventtype,
+        eventtypetext: e.normalisedeventtypetext ?? "",
+        modulename: e.modulename ?? null,
+        url: e.url ?? e.viewurl ?? null,
+        overdue: Boolean(e.overdue),
+        course: e.course ? { id: String(e.course.id), fullname: decodeEntities(e.course.fullname ?? "") } : null,
+    };
 }

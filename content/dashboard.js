@@ -92,7 +92,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
 
     function pendingCount(courseId) {
         const now = Date.now();
-        return events.filter((e) => String(e.course?.id) === courseId && e.actionable !== false && e.timesort * 1000 > now - WMP.DAY)
+        return WMP.visibleEvents(events, settings).filter((e) => String(e.course?.id) === courseId && e.actionable !== false && e.timesort * 1000 > now - WMP.DAY)
             .length;
     }
 
@@ -145,12 +145,12 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                         renderTimetable();
                     },
                 },
-                showHidden ? "◉" : "◎"
+                WMP.icon(showHidden ? "eye" : "eyeOff")
             ),
             el(
                 "button",
-                { class: "wmp-icon-btn", title: "科目一覧を再取得", onclick: () => loadCourses(true) },
-                "↻"
+                { class: "wmp-icon-btn", title: "科目一覧を再取得", "aria-label": "科目一覧を再取得", onclick: () => loadCourses(true) },
+                WMP.icon("refresh")
             )
         );
 
@@ -296,7 +296,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 method === "realtime_streaming" ? el("span", { class: "wmp-tt-tag" }, "リアルタイム配信") : null
             ),
             count > 0 ? el("span", { class: "wmp-tt-badge", title: `未提出の課題など ${count}件` }, String(count)) : null,
-            note ? el("span", { class: "wmp-tt-note", title: note }, "✎") : null,
+            note ? el("span", { class: "wmp-tt-note", title: note }, WMP.icon("edit", { size: 12 })) : null,
             el(
                 "button",
                 {
@@ -308,7 +308,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                         openCourseDialog(course);
                     },
                 },
-                "⋯"
+                WMP.icon("more")
             )
         );
     }
@@ -341,7 +341,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                         { class: "wmp-tt-chip", style: { "--wmp-course-color": WMP.courseColor(settings, c.id) } },
                         el("a", { href: c.url }, WMP.courseName(settings, c)),
                         pendingCount(c.id) > 0 ? el("span", { class: "wmp-tt-badge" }, String(pendingCount(c.id))) : null,
-                        el("button", { class: "wmp-icon-btn", title: "科目の設定", onclick: () => openCourseDialog(c) }, "⋯")
+                        el("button", { class: "wmp-icon-btn", title: "科目の設定", "aria-label": "科目の設定", onclick: () => openCourseDialog(c) }, WMP.icon("more"))
                     )
                 )
             )
@@ -440,7 +440,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                                     renderSlots();
                                 },
                             },
-                            "×"
+                            WMP.icon("close", { size: 16 })
                         )
                     )
                 ),
@@ -504,7 +504,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 "div",
                 { class: "wmp-dialog-header" },
                 el("h2", {}, course.name),
-                el("button", { class: "wmp-icon-btn", "aria-label": "閉じる", onclick: () => dialog.close() }, "×")
+                el("button", { class: "wmp-icon-btn", "aria-label": "閉じる", onclick: () => dialog.close() }, WMP.icon("close"))
             ),
             el(
                 "div",
@@ -562,7 +562,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                     "div",
                     { class: "wmp-muted" },
                     course.url ? el("a", { href: course.url }, "Moodle のコースページ") : null,
-                    syllabusKey ? " · " : null,
+                    syllabusKey ? " ／ " : null,
                     syllabusKey
                         ? el("a", { href: `https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${syllabusKey}`, target: "_blank" }, "シラバス")
                         : null
@@ -637,7 +637,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 "header",
                 { class: "wmp-card-header" },
                 el("h2", { class: "wmp-card-title" }, "締切が近い課題"),
-                el("button", { class: "wmp-icon-btn", title: "更新", onclick: () => loadTimeline(true) }, "↻")
+                el("button", { class: "wmp-icon-btn", title: "更新", "aria-label": "更新", onclick: () => loadTimeline(true) }, WMP.icon("refresh"))
             ),
             el(
                 "div",

@@ -962,3 +962,21 @@ html.wmp-dark .submissionstatustable tr.table-danger > * {
     background-color: #3a1a1d !important;
     color: #f2b8be !important;
 }
+
+/* 小テストの残り時間（Moodle 標準の表示）。Moodle は白い地に赤い枠で出し、文字だけがダークの明るい色になって読めなくなるので、
+   暗い面に明るい文字、枠は赤のまま。残り 100 秒を切ると Moodle が timeleft0 / timeleft1 を交互に付けて点滅させるので、
+   timeleft1 のほうを赤い面にして点滅を残す（右下に固定表示する設定のときもこの色になる） */
+html.wmp-dark #quiz-timer-wrapper #quiz-timer,
+html.wmp-dark #quiz-timer {
+    background-color: var(--wmpd-surface-2) !important;
+    border-color: #e5484d !important;
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark #quiz-timer * {
+    color: inherit !important;
+}
+html.wmp-dark #quiz-timer-wrapper #quiz-timer[class*="timeleft"]:not(.timeleft0),
+html.wmp-dark #quiz-timer[class*="timeleft"]:not(.timeleft0) {
+    background-color: #ac3042 !important;
+    color: #ffffff !important;
+}

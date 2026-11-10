@@ -1,7 +1,7 @@
 // 授業動画のファイル・配信ストリーム（mp4 / m3u8 / mpd など）の URL を一覧にして、コピーできるようにする。
 // learningx（コースビルダー）などの動画プレーヤーは、ページ（または iframe）が読み込んだ通信に動画の URL が出てくるので、
 // Resource Timing（performance のリソース記録）と <video> / <source> の src から拾う。追加の権限は要らない。
-// 見つかったフレームの左下に「動画のURL」ボタンを出し、押すと一覧が開く。
+// 見つかったフレームの、動画プレーヤーのタイトルの右に「動画のURL」ボタンを出し、押すと一覧が開く。
 (async () => {
     if (globalThis.__wmpVideoUrl) return;
     globalThis.__wmpVideoUrl = true;
@@ -52,31 +52,39 @@
     }
 
     // ===== 画面 =====
-    let host = null;
-    let shadow = null;
-    let listEl = null;
+    // ボタンは動画プレーヤーのタイトルのすぐ右に入れる（タイトルが見つからないときだけフレームの左下に浮かせる）。
+    // 一覧はタイトル側の overflow や transform に影響されないよう、body 直下の別の要素に出す。
+    let btnHost = null;
     let toggleBtn = null;
+    let panelHost = null;
+    let panelShadow = null;
     let panel = null;
+    let listEl = null;
 
-    const CSS = `
+    const FONT = `font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", sans-serif;`;
+
+    const BTN_CSS = `
+        :host { all: initial; display: inline-block; vertical-align: middle; margin-left: 12px; color: inherit; line-height: 1; }
+        :host([data-flex]) { flex: none; margin-right: auto; }
+        :host([data-float]) { position: fixed; left: 12px; bottom: 12px; margin: 0; z-index: 2147483000; color: #fff; }
+        button {
+            ${FONT} font-size: 12px; line-height: 1.3; color: inherit; cursor: pointer; white-space: nowrap;
+            background: transparent; border: 1px solid currentColor; border-radius: 2px;
+            padding: 3px 8px; opacity: .75; transition: opacity .15s;
+        }
+        :host([data-float]) button { background: #1a1a1a; border-color: #1a1a1a; opacity: .55; }
+        button:hover, button:focus-visible, button[aria-expanded="true"] { opacity: 1; }
+        .n { margin-left: 6px; padding-left: 6px; border-left: 1px solid currentColor; font-variant-numeric: tabular-nums; }
+    `;
+
+    const PANEL_CSS = `
         :host { all: initial; }
-        .wrap {
-            position: fixed; left: 12px; bottom: 12px; z-index: 2147483000;
-            font: 13px/1.45 system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", sans-serif;
-            color: #1a1a1a;
-            display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
-        }
-        button { font: inherit; color: inherit; cursor: pointer; }
-        .toggle {
-            background: #1a1a1a; color: #fff; border: 1px solid #1a1a1a; border-radius: 2px;
-            padding: 5px 10px; opacity: .55; transition: opacity .15s;
-        }
-        .toggle:hover, .toggle:focus-visible, .toggle[aria-expanded="true"] { opacity: 1; }
-        .toggle .n { margin-left: 6px; padding-left: 6px; border-left: 1px solid rgba(255,255,255,.4); font-variant-numeric: tabular-nums; }
         .panel {
+            position: fixed; z-index: 2147483001;
+            ${FONT} font-size: 13px; line-height: 1.45; color: #1a1a1a;
             background: #fff; border: 1px solid #1a1a1a; border-radius: 2px;
             box-shadow: 0 2px 10px rgba(0,0,0,.18);
-            width: min(560px, calc(100vw - 24px)); max-height: min(60vh, 420px); overflow-y: auto; overflow-x: hidden;
+            width: min(560px, calc(100vw - 24px)); overflow-y: auto; overflow-x: hidden;
         }
         .panel[hidden] { display: none; }
         .head {
@@ -95,17 +103,14 @@
         }
         .actions { display: flex; gap: 6px; align-self: start; }
         .actions button, .actions a {
-            background: #fff; border: 1px solid #888; border-radius: 2px; padding: 2px 8px;
+            ${FONT} cursor: pointer; background: #fff; border: 1px solid #888; border-radius: 2px; padding: 2px 8px;
             font-size: 12px; color: #1a1a1a; text-decoration: none;
         }
         .actions button:hover, .actions a:hover { border-color: #1a1a1a; }
         .actions button.done { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
         .note { padding: 8px 10px; color: #666; font-size: 12px; overflow-wrap: anywhere; border-top: 1px solid #d0d0d0; }
         @media (prefers-color-scheme: dark) {
-            .wrap { color: #eee; }
-            .toggle { background: #eee; color: #111; border-color: #eee; }
-            .toggle .n { border-left-color: rgba(0,0,0,.3); }
-            .panel { background: #1e1e1e; border-color: #666; }
+            .panel { color: #eee; background: #1e1e1e; border-color: #666; }
             .head { border-bottom-color: #444; }
             .head small, .kind, .note { color: #aaa; }
             li { border-bottom-color: #333; }
@@ -117,17 +122,31 @@
         }
     `;
 
-    function build() {
-        host = document.createElement("wmp-video-url");
-        shadow = host.attachShadow({ mode: "closed" });
-        const style = document.createElement("style");
-        style.textContent = CSS;
-        const wrap = document.createElement("div");
-        wrap.className = "wrap";
+    /** ボタン・一覧へのクリックやキー操作が、プレーヤー側（再生・一時停止のショートカットなど）に伝わらないようにする */
+    function isolate(el) {
+        for (const type of ["click", "dblclick", "mousedown", "mouseup", "pointerdown", "pointerup", "keydown", "keyup", "keypress"]) {
+            el.addEventListener(type, (e) => e.stopPropagation());
+        }
+    }
 
+    function build() {
+        btnHost = document.createElement("wmp-video-url");
+        const bs = btnHost.attachShadow({ mode: "closed" });
+        const bStyle = document.createElement("style");
+        bStyle.textContent = BTN_CSS;
+        toggleBtn = document.createElement("button");
+        toggleBtn.type = "button";
+        toggleBtn.setAttribute("aria-haspopup", "dialog");
+        toggleBtn.setAttribute("aria-expanded", "false");
+        toggleBtn.addEventListener("click", () => setOpen(panel.hidden));
+        bs.append(bStyle, toggleBtn);
+
+        panelHost = document.createElement("wmp-video-url-panel");
+        panelShadow = panelHost.attachShadow({ mode: "closed" });
+        const pStyle = document.createElement("style");
+        pStyle.textContent = PANEL_CSS;
         panel = document.createElement("div");
         panel.className = "panel";
-        panel.id = "panel";
         panel.hidden = true;
         panel.setAttribute("role", "dialog");
         panel.setAttribute("aria-label", "動画のURL");
@@ -140,31 +159,121 @@
         note.textContent =
             "URL には期限付きの認証情報が含まれることがあり、時間がたつと開けなくなる場合があります。HLS（.m3u8）は VLC や ffmpeg などで開けます。";
         panel.append(head, listEl, note);
+        panelShadow.append(pStyle, panel);
 
-        toggleBtn = document.createElement("button");
-        toggleBtn.className = "toggle";
-        toggleBtn.type = "button";
-        toggleBtn.setAttribute("aria-controls", "panel");
-        toggleBtn.setAttribute("aria-expanded", "false");
-        toggleBtn.addEventListener("click", () => setOpen(panel.hidden));
-
-        wrap.append(panel, toggleBtn);
-        shadow.append(style, wrap);
-
-        shadow.addEventListener("keydown", (e) => {
+        const onKey = (e) => {
             if (e.key === "Escape" && !panel.hidden) {
                 setOpen(false);
                 toggleBtn.focus();
             }
-        });
-        document.addEventListener("pointerdown", (e) => {
-            if (!panel.hidden && !e.composedPath().includes(host)) setOpen(false);
-        });
+        };
+        btnHost.addEventListener("keydown", onKey);
+        panelHost.addEventListener("keydown", onKey);
+        isolate(btnHost);
+        isolate(panelHost);
+        // 外側のクリックで閉じる（ボタン・一覧の中のクリックは isolate で止まるのでここには来ない）
+        document.addEventListener("pointerdown", () => !panel.hidden && setOpen(false));
+        addEventListener("resize", () => !panel.hidden && positionPanel());
+        addEventListener("scroll", () => !panel.hidden && positionPanel(), true);
     }
 
     function setOpen(open) {
         panel.hidden = !open;
         toggleBtn.setAttribute("aria-expanded", String(open));
+        if (open) positionPanel();
+    }
+
+    /** 一覧をボタンのすぐ下（下に入らなければ上）に出す */
+    function positionPanel() {
+        const r = toggleBtn.getBoundingClientRect();
+        const margin = 12;
+        const width = Math.min(560, innerWidth - margin * 2);
+        const left = Math.max(margin, Math.min(r.left, innerWidth - width - margin));
+        const below = innerHeight - r.bottom - 6 - margin;
+        const above = r.top - 6 - margin;
+        panel.style.left = `${left}px`;
+        if (below >= 200 || below >= above) {
+            panel.style.top = `${r.bottom + 6}px`;
+            panel.style.bottom = "";
+            panel.style.maxHeight = `${Math.min(420, below)}px`;
+        } else {
+            panel.style.top = "";
+            panel.style.bottom = `${innerHeight - r.top + 6}px`;
+            panel.style.maxHeight = `${Math.min(420, above)}px`;
+        }
+    }
+
+    /** いちばん大きく表示されている <video> */
+    function mainVideo() {
+        let best = null;
+        let bestArea = 0;
+        for (const v of document.querySelectorAll("video")) {
+            const r = v.getBoundingClientRect();
+            const area = r.width * r.height;
+            if (area > bestArea) {
+                best = v;
+                bestArea = area;
+            }
+        }
+        return best;
+    }
+
+    /**
+     * 動画プレーヤーのタイトルの要素を探す。
+     * 動画の上端の近く（プレーヤー上部のタイトルバー、またはそのすぐ上）にあって左寄せの、文字を直接持つ要素のうち、
+     * 動画の上端にいちばん近いもの。
+     */
+    function findTitle() {
+        const video = mainVideo();
+        if (!video) return null;
+        const vr = video.getBoundingClientRect();
+        if (vr.width < 160) return null;
+        let best = null;
+        let bestDist = Infinity;
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+            acceptNode: (n) => (n.nodeValue.trim().length >= 2 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT),
+        });
+        for (let t = walker.nextNode(); t; t = walker.nextNode()) {
+            const el = t.parentElement;
+            if (!el || el.closest("button, a, script, style, select, option, label, input, textarea")) continue;
+            const r = el.getBoundingClientRect();
+            if (!r.width || !r.height || r.height > 80) continue;
+            if (r.bottom > vr.top + 80 || r.top < vr.top - 120) continue;
+            if (r.left < vr.left - 40 || r.left > vr.left + vr.width / 2) continue;
+            if (/^[\d:\s/.]+$/.test(t.nodeValue.trim())) continue; // 再生時間などの数字だけの表示
+            const dist = Math.abs(r.top - vr.top);
+            if (dist < bestDist) {
+                best = el;
+                bestDist = dist;
+            }
+        }
+        return best;
+    }
+
+    let placedIn = null;
+    function place() {
+        if (!panelHost.isConnected) document.body.append(panelHost);
+        if (placedIn?.isConnected && btnHost.isConnected) return; // 一度入れたら、タイトルが消えるまで動かさない
+        const title = findTitle();
+        if (title) {
+            btnHost.removeAttribute("data-float");
+            // ふつうはタイトルの文末に入れる。タイトルが長い名前を「…」で切る箱（overflow: hidden）だとボタンも切れるので、
+            // そのときはタイトルの隣に入れ、margin-right: auto で右側のアイコン類から離してタイトルに寄せる
+            const clips = getComputedStyle(title).overflow !== "visible";
+            const parentDisplay = title.parentElement ? getComputedStyle(title.parentElement).display : "";
+            if (clips && /flex/.test(parentDisplay)) {
+                btnHost.setAttribute("data-flex", "");
+                title.after(btnHost);
+            } else {
+                btnHost.removeAttribute("data-flex");
+                title.append(btnHost);
+            }
+            placedIn = title;
+        } else if (!btnHost.isConnected || btnHost.parentNode !== document.body) {
+            btnHost.setAttribute("data-float", "");
+            document.body.append(btnHost);
+            placedIn = null;
+        }
     }
 
     async function copy(text) {
@@ -176,7 +285,7 @@
             const ta = document.createElement("textarea");
             ta.value = text;
             ta.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0";
-            shadow.append(ta);
+            panelShadow.append(ta);
             ta.select();
             let ok = false;
             try {
@@ -189,18 +298,18 @@
 
     function render() {
         if (!settings.videoUrlCopy || found.size === 0 || !document.body) {
-            host?.remove();
+            btnHost?.remove();
+            panelHost?.remove();
+            placedIn = null;
             return;
         }
-        if (!host) build();
-        if (!host.isConnected) document.body.append(host);
+        if (!btnHost) build();
+        place();
 
-        toggleBtn.innerHTML = "";
-        toggleBtn.append("動画のURL");
         const n = document.createElement("span");
         n.className = "n";
         n.textContent = String(found.size);
-        toggleBtn.append(n);
+        toggleBtn.replaceChildren("動画のURL", n);
 
         listEl.replaceChildren(
             ...[...found.values()].map((item) => {
@@ -259,6 +368,7 @@
     // <video> の src は再生前後に差し替わることがあるので、読み込みの開始を拾う
     document.addEventListener("loadstart", (e) => e.target instanceof HTMLMediaElement && scanVideos(), true);
     document.addEventListener("loadedmetadata", (e) => e.target instanceof HTMLMediaElement && scanVideos(), true);
+    // プレーヤーのタイトルバーは動画より後に描かれることがあるので、DOM が変わったらボタンの置き場所も見直す
     let scanQueued = false;
     new MutationObserver(() => {
         if (scanQueued) return;
@@ -266,6 +376,7 @@
         setTimeout(() => {
             scanQueued = false;
             scanVideos();
+            if (btnHost && found.size && settings.videoUrlCopy) place();
         }, 300);
     }).observe(document.documentElement, {
         childList: true,

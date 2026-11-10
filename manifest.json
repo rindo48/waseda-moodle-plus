@@ -90,6 +90,17 @@
         },
         {
             "matches": [
+                "https://*.waseda.jp/*"
+            ],
+            "js": [
+                "lib/defaults.js",
+                "content/video-url.js"
+            ],
+            "all_frames": true,
+            "run_at": "document_idle"
+        },
+        {
+            "matches": [
                 "https://login.microsoftonline.com/b3865172-9887-4b3a-89ff-95a35b92f4c3/*"
             ],
             "js": [

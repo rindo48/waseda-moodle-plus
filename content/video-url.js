@@ -115,63 +115,54 @@
     let panel = null;
     let listEl = null;
 
+    // 色はこの拡張機能のダークモード（<html> の wmp-dark。Moodle のページ）に合わせる。値は dark-theme.css / new-design.css と同じ
     const CSS = `
         :host { all: initial; }
         .wrap {
-            position: fixed; left: 12px; bottom: 12px; z-index: 2147483000;
+            --bg: #ffffff; --bg-2: #f4f5f7; --line: #d4d8dd; --line-soft: #e6e8eb; --ink: #15181c; --ink-2: #555c66; --strong: #15181c; --on-strong: #ffffff;
+            position: fixed; left: var(--wmp-vu-left, 12px); bottom: 12px; z-index: 2147483000;
             font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", sans-serif;
-            font-size: 13px; line-height: 1.45; color: #1a1a1a;
+            font-size: 13px; line-height: 1.45; color: var(--ink);
             display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+        }
+        :host([data-dark]) .wrap {
+            --bg: #1b1d21; --bg-2: #24272c; --line: #343840; --line-soft: #2a2d33; --ink: #e6e8eb; --ink-2: #a9aeb6; --strong: #e6e8eb; --on-strong: #121316;
         }
         button { font: inherit; color: inherit; cursor: pointer; }
         .toggle {
-            background: #1a1a1a; color: #fff; border: 1px solid #1a1a1a; border-radius: 2px;
-            padding: 5px 10px; font-size: 12px; opacity: .6; transition: opacity .15s;
+            background: var(--bg); color: var(--ink-2); border: 1px solid var(--line); border-radius: 2px;
+            padding: 5px 10px; font-size: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.12);
         }
-        .toggle:hover, .toggle:focus-visible, .toggle[aria-expanded="true"] { opacity: 1; }
-        .n { margin-left: 6px; padding-left: 6px; border-left: 1px solid rgba(255,255,255,.4); font-variant-numeric: tabular-nums; }
+        .toggle:hover, .toggle:focus-visible, .toggle[aria-expanded="true"] { color: var(--ink); border-color: var(--ink-2); }
+        .n { margin-left: 6px; padding-left: 6px; border-left: 1px solid var(--line); font-variant-numeric: tabular-nums; }
         .panel {
-            background: #fff; border: 1px solid #1a1a1a; border-radius: 2px;
+            background: var(--bg); border: 1px solid var(--line); border-radius: 2px;
             box-shadow: 0 2px 10px rgba(0,0,0,.18);
-            width: min(560px, calc(100vw - 24px)); max-height: min(60vh, 420px); overflow-y: auto; overflow-x: hidden;
+            width: min(560px, calc(100vw - var(--wmp-vu-left, 12px) - 12px)); max-height: min(60vh, 420px); overflow-y: auto; overflow-x: hidden;
         }
         .panel[hidden] { display: none; }
         .head {
             display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
-            padding: 8px 10px; border-bottom: 1px solid #d0d0d0; font-weight: 600;
+            padding: 8px 10px; border-bottom: 1px solid var(--line); font-weight: 600; background: var(--bg-2);
         }
-        .head small { font-weight: 400; color: #666; }
+        .head small { font-weight: 400; color: var(--ink-2); }
         ul { list-style: none; margin: 0; padding: 0; }
-        li { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 8px 10px; border-bottom: 1px solid #ececec; }
+        li { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 8px 10px; border-bottom: 1px solid var(--line-soft); }
         li:last-child { border-bottom: 0; }
         .name { font-weight: 600; overflow-wrap: anywhere; }
-        .kind { font-weight: 400; color: #666; margin-left: 6px; font-size: 12px; }
+        .kind { font-weight: 400; color: var(--ink-2); margin-left: 6px; font-size: 12px; }
         .url {
-            grid-column: 1 / -1; font: 11px/1.4 ui-monospace, Consolas, monospace; color: #444;
+            grid-column: 1 / -1; font: 11px/1.4 ui-monospace, Consolas, monospace; color: var(--ink-2);
             overflow-wrap: anywhere; user-select: all; max-height: 4.2em; overflow: hidden;
         }
         .actions { display: flex; gap: 6px; align-self: start; }
         .actions button, .actions a {
-            background: #fff; border: 1px solid #888; border-radius: 2px; padding: 2px 8px;
-            font-size: 12px; color: #1a1a1a; text-decoration: none;
+            background: var(--bg); border: 1px solid var(--line); border-radius: 2px; padding: 2px 8px;
+            font-size: 12px; color: var(--ink); text-decoration: none;
         }
-        .actions button:hover, .actions a:hover { border-color: #1a1a1a; }
-        .actions button.done { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
-        .note { padding: 8px 10px; color: #666; font-size: 12px; overflow-wrap: anywhere; border-top: 1px solid #d0d0d0; }
-        @media (prefers-color-scheme: dark) {
-            .wrap { color: #eee; }
-            .toggle { background: #eee; color: #111; border-color: #eee; }
-            .n { border-left-color: rgba(0,0,0,.3); }
-            .panel { background: #1e1e1e; border-color: #666; }
-            .head { border-bottom-color: #444; }
-            .head small, .kind, .note { color: #aaa; }
-            li { border-bottom-color: #333; }
-            .url { color: #bbb; }
-            .actions button, .actions a { background: #1e1e1e; color: #eee; border-color: #777; }
-            .actions button:hover, .actions a:hover { border-color: #eee; }
-            .actions button.done { background: #eee; color: #111; border-color: #eee; }
-            .note { border-top-color: #444; }
-        }
+        .actions button:hover, .actions a:hover { border-color: var(--ink-2); }
+        .actions button.done { background: var(--strong); color: var(--on-strong); border-color: var(--strong); }
+        .note { padding: 8px 10px; color: var(--ink-2); font-size: 12px; overflow-wrap: anywhere; border-top: 1px solid var(--line); }
     `;
 
     function build() {
@@ -246,6 +237,45 @@
         }
     }
 
+    /**
+     * 左下に固定で出ているもの（新デザインの左のレール・締切パネル、Moodle の左のドロワー）があれば、その右に寄せる。
+     * ダークモードも <html> の wmp-dark を見て合わせる。
+     */
+    const LEFT_SIDE = ".wmp-rail, .wmp-rail-panel:not([hidden]), .drawer.drawer-left.show";
+    let lookObserved = false;
+    function updateLook() {
+        if (!host) return;
+        let left = 12;
+        for (const el of document.querySelectorAll(LEFT_SIDE)) {
+            if (el === host) continue;
+            const cs = getComputedStyle(el);
+            if (cs.display === "none" || cs.visibility === "hidden") continue;
+            const r = el.getBoundingClientRect();
+            // 画面の左端から、いちばん下（ボタンの高さ）まで届いているものだけ避ける
+            if (!r.width || r.left > 12 || r.bottom < innerHeight - 48 || r.top > innerHeight - 48) continue;
+            left = Math.max(left, Math.round(r.right + 12));
+        }
+        host.style.setProperty("--wmp-vu-left", `${left}px`);
+        host.toggleAttribute("data-dark", document.documentElement.classList.contains("wmp-dark"));
+
+        if (!lookObserved) {
+            lookObserved = true;
+            let raf = 0;
+            const queue = () => {
+                raf ||= requestAnimationFrame(() => {
+                    raf = 0;
+                    updateLook();
+                });
+            };
+            addEventListener("resize", queue);
+            // ダークモード・レールをたたむ切り替えは <html> の class、レールの出し入れは body の中の変化で起きる
+            new MutationObserver(queue).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+            new MutationObserver(queue).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "hidden"] });
+            // レールの幅はアニメーションで変わるので、終わったときにも測り直す
+            document.addEventListener("transitionend", queue, true);
+        }
+    }
+
     function render() {
         if (!settings.videoUrlCopy || found.size === 0 || !document.body) {
             host?.remove();
@@ -253,6 +283,7 @@
         }
         if (!host) build();
         if (!host.isConnected) document.body.append(host);
+        updateLook();
 
         const n = document.createElement("span");
         n.className = "n";

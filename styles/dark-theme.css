@@ -944,3 +944,21 @@ html.wmp-dark .local-accessibility-panel .card-body p,
 html.wmp-dark .local-accessibility-panel .card-body strong {
     color: var(--wmpd-text);
 }
+
+/* 課題の提出状況の表: ライトモードと同じく、提出済み・評定済みは緑、期限切れ・遅れて提出は赤にする
+   （上の .generaltable td の暗い背景で色が消えていたため） */
+html.wmp-dark .path-mod-assign :is(td, th, div, a).submissionstatussubmitted,
+html.wmp-dark .path-mod-assign :is(td, th, div, a).submissiongraded,
+html.wmp-dark .path-mod-assign :is(td, th, div, a).earlysubmission,
+html.wmp-dark .submissionstatustable td.table-success,
+html.wmp-dark .submissionstatustable tr.table-success > * {
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+}
+html.wmp-dark .path-mod-assign :is(td, th, div, a).overdue,
+html.wmp-dark .path-mod-assign :is(td, th, div, a).latesubmission,
+html.wmp-dark .submissionstatustable td.table-danger,
+html.wmp-dark .submissionstatustable tr.table-danger > * {
+    background-color: #3a1a1d !important;
+    color: #f2b8be !important;
+}

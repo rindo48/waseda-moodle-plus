@@ -228,9 +228,17 @@
         if (!video) return null;
         const vr = video.getBoundingClientRect();
         if (vr.width < 160) return null;
+        // プレーヤーの枠 = 動画から親をたどって、幅が動画とほぼ同じ（タイトルバー・操作バーの分だけ高い）いちばん外側の要素。
+        // ページ側の「再生時間」などプレーヤーの外の文字をタイトルと取り違えないよう、この中だけを探す
+        let player = video;
+        for (let p = video.parentElement; p && p !== document.documentElement; p = p.parentElement) {
+            const pr = p.getBoundingClientRect();
+            if (pr.width > vr.width + 40 || pr.height > vr.height + 240) break;
+            player = p;
+        }
         let best = null;
         let bestDist = Infinity;
-        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        const walker = document.createTreeWalker(player, NodeFilter.SHOW_TEXT, {
             acceptNode: (n) => (n.nodeValue.trim().length >= 2 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT),
         });
         for (let t = walker.nextNode(); t; t = walker.nextNode()) {
@@ -384,6 +392,25 @@
         attributes: true,
         attributeFilter: ["src"],
     });
+
+    // プレーヤーのタイトルバーは再生中に隠れ、マウスを動かしたときや一時停止したときにだけ出ることが多い。
+    // 隠れている間はタイトルを見つけられないので、タイトルバーが出そうなとき（マウス操作・一時停止）と、
+    // 開いてからしばらくの間は1秒ごとに、まだ左下に浮いていればタイトルを探し直す。
+    let retryTimer = 0;
+    function retryPlace(delay = 350) {
+        if (!btnHost || !btnHost.hasAttribute("data-float") || retryTimer) return;
+        retryTimer = setTimeout(() => {
+            retryTimer = 0;
+            if (found.size && settings.videoUrlCopy) place();
+        }, delay);
+    }
+    for (const type of ["pointermove", "pointerdown", "keydown"]) addEventListener(type, () => retryPlace(), { passive: true });
+    document.addEventListener("pause", () => retryPlace(), true);
+    let ticks = 0;
+    const poll = setInterval(() => {
+        if (++ticks > 60) clearInterval(poll);
+        retryPlace(0);
+    }, 1000);
 
     WMP.onSettingsChanged((next, keys) => {
         settings = next;

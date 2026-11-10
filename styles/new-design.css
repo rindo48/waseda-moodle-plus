@@ -545,6 +545,35 @@ html.wmp-new .secondary-navigation .moremenu .nav-link.active {
     border-bottom-color: var(--wmpn-enji) !important;
     color: var(--wmpn-ink) !important;
 }
+/* 本文の中のタブ（出席の「このコース／すべてのコース／すべてのセッション」など）も、上のタブと同じく下線で選ぶ。
+   早稲田のテーマは灰色の枠に赤い角丸の箱を並べるが、新デザインの他の部分と形がそろわないため */
+html.wmp-new #region-main .nav-tabs {
+    gap: 4px;
+    padding: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--wmpn-line) !important;
+    background: transparent !important;
+}
+html.wmp-new #region-main .nav-tabs .nav-item {
+    margin: 0 !important;
+}
+html.wmp-new #region-main .nav-tabs .nav-link {
+    margin-bottom: -1px;
+    padding: 10px 14px;
+    border: 0 !important;
+    border-bottom: 3px solid transparent !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--wmpn-ink-2) !important;
+    font-weight: 600;
+}
+html.wmp-new #region-main .nav-tabs .nav-link:hover {
+    color: var(--wmpn-ink) !important;
+}
+html.wmp-new #region-main .nav-tabs .nav-link.active {
+    border-bottom-color: var(--wmpn-enji) !important;
+    color: var(--wmpn-ink) !important;
+}
 
 /* ===== 箱 ===== */
 

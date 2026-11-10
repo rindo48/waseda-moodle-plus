@@ -980,3 +980,14 @@ html.wmp-dark #quiz-timer[class*="timeleft"]:not(.timeleft0) {
     background-color: #ac3042 !important;
     color: #ffffff !important;
 }
+
+/* 本文の中のタブ（出席のタブなど）: 早稲田のテーマの明るい灰色の枠と白っぽい箱を、暗い色にする（選んでいるタブの赤はそのまま） */
+html.wmp-dark #region-main .nav-tabs {
+    background-color: transparent !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark #region-main .nav-tabs .nav-link:not(.active) {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}

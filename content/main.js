@@ -35,4 +35,11 @@
     if (path === "/my/courses.php") WMP.initNewMyCourses(settings);
     if (path === "/calendar/view.php") WMP.initNewCalendar(settings);
     if (path === "/course/view.php") WMP.initNewCourse(settings);
+    // パンくずなどから1回分のページ（section.php）を開いたときは、目次・検索・絞り込みのあるコースのページの
+    // その回へ移る（section.php には新デザインの目次などを付けていないため）。編集モードの先生には何もしない
+    if (path === "/course/section.php" && !document.body.classList.contains("editing")) {
+        const course = document.body.className.match(/\bcourse-(\d+)\b/)?.[1];
+        const section = document.querySelector('#region-main li.section[id^="section-"], #region-main [data-for="section"][id^="section-"]');
+        if (course && course !== "1" && section) location.replace(`/course/view.php?id=${course}#${section.id}`);
+    }
 })();

@@ -707,7 +707,7 @@ html.wmp-dark .wmp-scope,
     font-size: 13px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 991.98px) {
     .wmp-tt-period small {
         display: none;
     }
@@ -740,6 +740,17 @@ html.wmp-dark .wmp-scope,
 }
 .wmp-dark-toggle:hover {
     background: rgba(127, 127, 127, 0.15);
+}
+/* 旧デザイン・新デザインの切り替えボタン（新デザインでは new-design.css で色だけ変える） */
+.wmp-design-toggle {
+    width: auto !important;
+    gap: 4px;
+    padding: 0 10px !important;
+    font: 700 12px/1 var(--wmpn-font, sans-serif);
+}
+/* Moodle の .nav-link の太さに負けないよう、文字そのものに太字を指定する */
+.wmp-design-toggle .wmp-design-toggle-text {
+    font-weight: 700 !important;
 }
 
 .wmp-word-counter {
@@ -1053,4 +1064,81 @@ img#logoimage {
 }
 :root[data-wmp-design="new"] .wmp-tt-course {
     border-left-width: 5px;
+}
+
+/* ===== 右下に浮いているボタンの列（content/fab-stack.js） ===== */
+/* 別々のプラグインのボタンを、同じ大きさ（48px）・同じ形・同じ影で、12px 間隔の1列にそろえる。上から:
+   「?」（Moodle のフッター）→ 学習ツール（local_learningtools。開くとブックマーク・メモがその上に出る）
+   → アクセシビリティ（local_accessibility。ふだんは薄く、近づいたらはっきり出す） */
+:root {
+    --wmp-fab-right: 24px;
+    --wmp-fab-size: 48px;
+    --wmp-fab-gap: 12px;
+    --wmp-fab-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+/* 右のブロックの引き出しを開いたときは、列ごとその左に寄せる */
+body:has(#page.drawers.show-drawer-right) {
+    --wmp-fab-right: calc(315px + 24px);
+}
+
+/* いちばん下: アクセシビリティ。近づいたことを拾うため、入れ物に透明な余白（20px）を付けて、その分だけ外側にずらす */
+#local-accessibility-buttoncontainer.local-accessibility-buttoncontainer {
+    right: calc(var(--wmp-fab-right) - 20px) !important;
+    bottom: calc(var(--wmp-fab-gap) - 20px) !important;
+    z-index: 1030;
+    padding: 20px;
+    opacity: 0.3;
+    transition: opacity 0.15s ease-out;
+}
+#local-accessibility-buttoncontainer.local-accessibility-buttoncontainer:hover,
+#local-accessibility-buttoncontainer.local-accessibility-buttoncontainer:focus-within {
+    opacity: 1;
+}
+#local-accessibility-buttoncontainer button.btn {
+    width: var(--wmp-fab-size);
+    height: var(--wmp-fab-size);
+    padding: 0;
+    border-radius: 3px;
+    box-shadow: var(--wmp-fab-shadow);
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* その上: 学習ツール */
+.learningtools-action-info .floating-button {
+    right: var(--wmp-fab-right) !important;
+    bottom: calc(var(--wmp-fab-gap) * 2 + var(--wmp-fab-size)) !important;
+    width: var(--wmp-fab-size);
+}
+.learningtools-action-info .floating-button > button,
+.learningtools-action-info .floating-button > div > div button {
+    width: var(--wmp-fab-size) !important;
+    height: var(--wmp-fab-size) !important;
+    margin: 0 !important;
+    padding: 0;
+    border-radius: 3px !important;
+    box-shadow: var(--wmp-fab-shadow) !important;
+    line-height: 1 !important;
+}
+.learningtools-action-info .floating-button > button i,
+.learningtools-action-info .floating-button > div > div button i {
+    font-size: 20px;
+}
+/* 開いたときのブックマーク・メモも同じ間隔で積む（プラグインは上に 55px の空きを作るので、ふつうの形では外す） */
+.learningtools-action-info .floating-button > div > div {
+    margin: 0 0 var(--wmp-fab-gap) !important;
+}
+.learningtools-action-info .floating-button:not(.sticky-tool) .list-learningtools.show {
+    padding-top: 0 !important;
+}
+
+/* いちばん上: 「?」。学習ツールを開くと高さが変わるので、上端の位置はスクリプトが --wmp-fab-top に入れる */
+.btn-footer-popover {
+    right: var(--wmp-fab-right) !important;
+    bottom: var(--wmp-fab-top, calc(var(--wmp-fab-gap) * 2 + var(--wmp-fab-size))) !important;
+    width: var(--wmp-fab-size) !important;
+    height: var(--wmp-fab-size) !important;
+    border-radius: 3px !important;
+    box-shadow: var(--wmp-fab-shadow);
+    font-size: 20px;
 }

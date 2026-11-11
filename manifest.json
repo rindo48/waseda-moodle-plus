@@ -64,7 +64,9 @@
                 "content/new-mycourses.js",
                 "content/new-calendar.js",
                 "content/new-course.js",
-                "content/main.js"
+                "content/main.js",
+                "content/a11y-bridge.js",
+                "content/fab-stack.js"
             ],
             "css": [
                 "styles/components.css"
@@ -85,6 +87,17 @@
                 "styles/components.css"
             ],
             "run_at": "document_end"
+        },
+        {
+            "matches": [
+                "https://*.waseda.jp/*"
+            ],
+            "js": [
+                "lib/defaults.js",
+                "content/video-url.js"
+            ],
+            "all_frames": true,
+            "run_at": "document_idle"
         },
         {
             "matches": [

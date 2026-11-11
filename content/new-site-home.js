@@ -10,6 +10,8 @@ globalThis.WMP.initNewSiteHome = function initNewSiteHome() {
     const main = document.querySelector("#region-main");
     if (!main) return;
 
+    removeNestedFrames(main);
+
     // Moodle 4 のフォーラムの投稿は article[data-region="post"]。古い形式の .forumpost にも対応する
     let posts = [...main.querySelectorAll('article[data-region="post"], [data-region="post"]')];
     if (posts.length === 0) posts = [...main.querySelectorAll(".forumpost")];
@@ -71,3 +73,29 @@ globalThis.WMP.initNewSiteHome = function initNewSiteHome() {
     });
     updateToggleAll();
 };
+
+/**
+ * ホームの本文の中にある「四辺に線があって角が丸い枠」を外す。
+ * 枠はテーマや大学が書いた HTML のどこから付いているか決まっていないので、表示された見た目で探す。
+ * 拡張機能の部品（.wmp-scope）と、ボタン・入力欄・画像などの部品は対象外
+ */
+function removeNestedFrames(main) {
+    const SKIP = ".wmp-scope, .btn, button, input, select, textarea, img, .badge, .dropdown-menu, .modal, [data-region='post']";
+    const apply = () => {
+        for (const el of main.querySelectorAll("div, section, ul, li, article, aside")) {
+            if (el.classList.contains("wmp-frame-off") || el.closest(SKIP)) continue;
+            const cs = getComputedStyle(el);
+            const sides = ["Top", "Right", "Bottom", "Left"];
+            const bordered = sides.every((side) => parseFloat(cs[`border${side}Width`]) > 0 && cs[`border${side}Style`] !== "none");
+            const rounded = parseFloat(cs.borderTopLeftRadius) >= 4;
+            if (bordered && rounded && el.offsetWidth > 200) el.classList.add("wmp-frame-off");
+        }
+        // 回の見出しが空（名前の無いトップページの回）なら、見出しの場所ごと隠す
+        for (const head of main.querySelectorAll(".course-section-header, .section-title, .sectionname, .section_title")) {
+            if (!head.textContent.trim() && !head.querySelector("img, svg, input, button, a[href]")) head.classList.add("wmp-empty-head");
+        }
+    };
+    apply();
+    // 本文の一部は後から読み込まれるので、少し待ってもう一度見る
+    setTimeout(apply, 1500);
+}

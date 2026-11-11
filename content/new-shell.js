@@ -267,6 +267,7 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     }
 
     function togglePanel(open = panel.hidden) {
+        if (open) setDrawer(false); // 画面が狭いときは、引き出しを閉じてから締切を出す
         panel.hidden = !open;
         deadlineButton.classList.toggle("is-open", open);
         deadlineButton.setAttribute("aria-expanded", String(open));
@@ -476,7 +477,33 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     else if (userNav) userNav.insertAdjacentElement("beforebegin", triggerWrap);
     else navbar.append(triggerWrap);
 
-    document.body.append(rail, panel, palette);
+    // ===== 画面が狭いとき: 左のメニューを引き出しにする =====
+    // Moodle の「≡」とそのドロワ（旧デザインの見た目）は隠し、同じ場所に左のメニューを引き出すボタンを置く
+    const narrow = matchMedia("(max-width: 991.98px)");
+    const backdrop = el("div", { class: "wmp-rail-backdrop", onclick: () => setDrawer(false) });
+    const drawerButton = el(
+        "button",
+        { type: "button", class: "wmp-scope wmp-rail-toggle", title: "メニューを開く", "aria-label": "メニューを開く", "aria-controls": "wmp-rail", "aria-expanded": "false", onclick: () => setDrawer(!root.classList.contains("wmp-rail-drawer-open")) },
+        icon("list", { size: 22 })
+    );
+    function setDrawer(open) {
+        open = open && narrow.matches;
+        root.classList.toggle("wmp-rail-drawer-open", open);
+        drawerButton.setAttribute("aria-expanded", String(open));
+        drawerButton.title = open ? "メニューを閉じる" : "メニューを開く";
+        if (open) rail.querySelector("a, button")?.focus({ preventScroll: true });
+    }
+    // 画面を広げたら引き出しは閉じる（広い画面ではいつも出ているので）
+    narrow.addEventListener("change", () => setDrawer(false));
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && root.classList.contains("wmp-rail-drawer-open")) setDrawer(false);
+    });
+    rail.addEventListener("click", (e) => {
+        if (e.target.closest("a[href]")) setDrawer(false);
+    });
+    navbar.prepend(drawerButton);
+
+    document.body.append(rail, backdrop, panel, palette);
     root.classList.add("wmp-has-rail", "wmp-rail-ready");
     setCollapsed(localStorage.getItem("wmpRailCollapsed") === "1");
     renderCourses();

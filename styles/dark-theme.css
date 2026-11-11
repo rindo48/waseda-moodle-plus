@@ -909,3 +909,85 @@ html.wmp-dark :is(.activity-information, [data-region="activity-information"], .
     background-color: var(--wmpd-surface-2) !important;
     color: var(--wmpd-text) !important;
 }
+
+/* Moodle 4.4 以降の回の中身の枠（.section-item）。線が白いまま残るので、ダークテーマの線の色にする */
+html.wmp-dark .course-content .section-item {
+    border-color: var(--wmpd-border) !important;
+    background-color: transparent !important;
+}
+
+/* 本文の中の横線（先生・大学が入れた <hr>）。枠線と同じ色だと背景に溶けて見えないので、一段明るくする。
+   Bootstrap は横線を半透明にもしているので、透明度も戻す */
+html.wmp-dark #page-content hr {
+    border: 0 !important;
+    border-top: 1px solid #5a606a !important;
+    background: none !important;
+    color: #5a606a !important;
+    opacity: 1 !important;
+}
+
+/* 画面が狭いときに Moodle がタブをしまう「≡」ボタン。暗い色のままだと見えないので明るくする */
+html.wmp-dark .navbar [data-toggler="drawers"],
+html.wmp-dark .navbar .drawertoggle,
+html.wmp-dark .navbar [data-toggler="drawers"] .icon,
+html.wmp-dark .navbar .drawertoggle .icon {
+    color: var(--wmpd-text) !important;
+}
+/* Moodle の「≡」のアイコンは画像（Bootstrap の navbar-toggler-icon）なので、色ではなく反転で明るくする */
+html.wmp-dark .navbar .navbar-toggler-icon {
+    filter: invert(1) brightness(1.4);
+}
+
+/* アクセシビリティのパネル（右下の人のボタン）: 各設定の見出しが暗い色のままで読めないので明るくする。
+   パネルで文字色を選んだときは、content/a11y-bridge.js の規則のほうが強いのでそちらが効く */
+html.wmp-dark .local-accessibility-panel .card-body p,
+html.wmp-dark .local-accessibility-panel .card-body strong {
+    color: var(--wmpd-text);
+}
+
+/* 課題の提出状況の表: ライトモードと同じく、提出済み・評定済みは緑、期限切れ・遅れて提出は赤にする
+   （上の .generaltable td の暗い背景で色が消えていたため） */
+html.wmp-dark .path-mod-assign :is(td, th, div, a).submissionstatussubmitted,
+html.wmp-dark .path-mod-assign :is(td, th, div, a).submissiongraded,
+html.wmp-dark .path-mod-assign :is(td, th, div, a).earlysubmission,
+html.wmp-dark .submissionstatustable td.table-success,
+html.wmp-dark .submissionstatustable tr.table-success > * {
+    background-color: var(--wmpd-success-bg) !important;
+    color: var(--wmpd-success-text) !important;
+}
+html.wmp-dark .path-mod-assign :is(td, th, div, a).overdue,
+html.wmp-dark .path-mod-assign :is(td, th, div, a).latesubmission,
+html.wmp-dark .submissionstatustable td.table-danger,
+html.wmp-dark .submissionstatustable tr.table-danger > * {
+    background-color: #3a1a1d !important;
+    color: #f2b8be !important;
+}
+
+/* 小テストの残り時間（Moodle 標準の表示）。Moodle は白い地に赤い枠で出し、文字だけがダークの明るい色になって読めなくなるので、
+   暗い面に明るい文字、枠は赤のまま。残り 100 秒を切ると Moodle が timeleft0 / timeleft1 を交互に付けて点滅させるので、
+   timeleft1 のほうを赤い面にして点滅を残す（右下に固定表示する設定のときもこの色になる） */
+html.wmp-dark #quiz-timer-wrapper #quiz-timer,
+html.wmp-dark #quiz-timer {
+    background-color: var(--wmpd-surface-2) !important;
+    border-color: #e5484d !important;
+    color: var(--wmpd-text) !important;
+}
+html.wmp-dark #quiz-timer * {
+    color: inherit !important;
+}
+html.wmp-dark #quiz-timer-wrapper #quiz-timer[class*="timeleft"]:not(.timeleft0),
+html.wmp-dark #quiz-timer[class*="timeleft"]:not(.timeleft0) {
+    background-color: #ac3042 !important;
+    color: #ffffff !important;
+}
+
+/* 本文の中のタブ（出席のタブなど）: 早稲田のテーマの明るい灰色の枠と白っぽい箱を、暗い色にする（選んでいるタブの赤はそのまま） */
+html.wmp-dark #region-main .nav-tabs {
+    background-color: transparent !important;
+    border-color: var(--wmpd-border) !important;
+}
+html.wmp-dark #region-main .nav-tabs .nav-link:not(.active) {
+    background-color: var(--wmpd-surface-2) !important;
+    color: var(--wmpd-text) !important;
+    border-color: var(--wmpd-border) !important;
+}

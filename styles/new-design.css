@@ -155,31 +155,30 @@ html.wmp-new .navbar .moremenu .nav-link.active {
     font: 600 11px/1.2 var(--wmp-font) !important;
     box-shadow: none !important;
 }
-@media (max-width: 991.98px) {
-    .wmp-search-trigger-wrap {
-        flex: none;
-        margin: 0 4px;
-    }
-    .wmp-search-trigger {
-        width: 40px;
-        padding: 0;
-        justify-content: center;
-        border-color: transparent;
-        background: none;
-    }
-    .wmp-search-trigger-text,
+/* 入口は画面の幅で一気にアイコンにせず、入口そのものの幅に合わせて段階的に縮める:
+   全部 → 「Ctrl K」を隠す → 文字を省略 → 虫めがねだけ */
+.wmp-search-trigger-wrap {
+    container-type: inline-size;
+    min-width: 40px;
+}
+@container (max-width: 300px) {
     .wmp-search-trigger-key {
         display: none;
     }
 }
-
-/* 旧デザイン・新デザインの切り替えボタン */
-.wmp-design-toggle {
-    width: auto !important;
-    gap: 4px;
-    padding: 0 10px !important;
-    font: 700 12px/1 var(--wmpn-font, sans-serif);
+@container (max-width: 130px) {
+    /* 虫めがねだけになっても、枠の左に置く（文字があるときと同じ位置） */
+    .wmp-search-trigger-text {
+        display: none;
+    }
 }
+@media (max-width: 991.98px) {
+    .wmp-search-trigger-wrap {
+        margin: 0 8px;
+    }
+}
+
+/* 旧デザイン・新デザインの切り替えボタン（形と太さは components.css。旧デザインでも使うため） */
 html.wmp-new .wmp-design-toggle {
     color: var(--wmpn-enji-ink);
 }
@@ -543,6 +542,35 @@ html.wmp-new .secondary-navigation .moremenu .nav-link:hover {
     color: var(--wmpn-ink) !important;
 }
 html.wmp-new .secondary-navigation .moremenu .nav-link.active {
+    border-bottom-color: var(--wmpn-enji) !important;
+    color: var(--wmpn-ink) !important;
+}
+/* 本文の中のタブ（出席の「このコース／すべてのコース／すべてのセッション」など）も、上のタブと同じく下線で選ぶ。
+   早稲田のテーマは灰色の枠に赤い角丸の箱を並べるが、新デザインの他の部分と形がそろわないため */
+html.wmp-new #region-main .nav-tabs {
+    gap: 4px;
+    padding: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--wmpn-line) !important;
+    background: transparent !important;
+}
+html.wmp-new #region-main .nav-tabs .nav-item {
+    margin: 0 !important;
+}
+html.wmp-new #region-main .nav-tabs .nav-link {
+    margin-bottom: -1px;
+    padding: 10px 14px;
+    border: 0 !important;
+    border-bottom: 3px solid transparent !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--wmpn-ink-2) !important;
+    font-weight: 600;
+}
+html.wmp-new #region-main .nav-tabs .nav-link:hover {
+    color: var(--wmpn-ink) !important;
+}
+html.wmp-new #region-main .nav-tabs .nav-link.active {
     border-bottom-color: var(--wmpn-enji) !important;
     color: var(--wmpn-ink) !important;
 }
@@ -1866,7 +1894,7 @@ html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
         gap: 0;
     }
 }
-@media (max-width: 767.98px) {
+@media (max-width: 991.98px) {
     .wmp-home-track {
         display: flex;
         flex-direction: column;
@@ -1883,9 +1911,13 @@ html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
     .wmp-home-class-period {
         display: block;
     }
+    /* 締切の7日間は、幅によらず 4列＋3列 に固定する（5＋2 のような中途半端な折り返しにしない） */
     .wmp-home-week-strip {
-        grid-auto-columns: 132px;
-        overflow-x: auto;
+        grid-auto-flow: row;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .wmp-home-week-col {
+        min-height: 96px;
     }
     .wmp-cal-cell {
         min-height: 64px;
@@ -1902,6 +1934,31 @@ html.wmp-new .wmp-notice.is-open > .wmp-notice-summary .wmp-icon {
         width: auto;
     }
 }
+/* 締切の枠が 4列 で 1列 110px を切るほど狭いときは、1日1行の縦のリストにする
+   （日付 | 締切 | 件数）。左のメニューの開閉でも枠の幅は変わるので、画面ではなく枠の幅で決める */
+.wmp-home-week {
+    container-type: inline-size;
+}
+@container (max-width: 480px) {
+    .wmp-home-week-strip {
+        grid-auto-flow: row;
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .wmp-home-week-col {
+        display: grid;
+        grid-template-columns: 64px minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 0 10px;
+        min-height: 0;
+        padding: 10px;
+    }
+    .wmp-home-week-items:empty {
+        display: none;
+    }
+    .wmp-home-week-count {
+        grid-column: 3;
+    }
+}
 /* 科目名が折り返しても、頭文字の四角と色の印は1行目にそろえる */
 .wmp-cal-agenda-name > .wmp-mark,
 .wmp-cal-agenda-name > .wmp-cal-dot {
@@ -1916,4 +1973,151 @@ html.wmp-new :is(#page-calendar-view, #page-my-courses) #page-content,
 html.wmp-new :is(#page-calendar-view, #page-my-courses) #region-main-box,
 html.wmp-new :is(#page-calendar-view, #page-my-courses) #region-main {
     max-width: none !important;
+}
+
+/* サイトのホーム: 本文の紙の中に、回の枠・活動の枠と枠が重なって見えるので、中の枠は外す */
+html.wmp-new #page-site-index .course-content li.section,
+html.wmp-new #page-site-index .course-content li.section.main,
+html.wmp-new #page-site-index .course-content li.section.course-section {
+    padding: 0 !important;
+    border: 0 !important;
+    background-color: transparent !important;
+}
+html.wmp-new #page-site-index .course-content .activity-item,
+html.wmp-new #page-site-index .course-content .sitetopic,
+html.wmp-new #page-site-index .course-content li.activity {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+/* content/new-site-home.js が見つけた、角が丸い入れ子の枠 */
+html.wmp-new #page-site-index .wmp-frame-off {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Moodle 4.4 以降は回の中身を .section-item（線と角丸の枠）で包む。新デザインは回そのものを紙にしているので、
+   内側の枠は外す（ホームでもコースページでも二重の枠になる） */
+html.wmp-new .course-content .section-item {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+html.wmp-new #page-site-index .course-content .section-item {
+    padding: 0 !important;
+}
+
+/* サイトのホーム: ダークテーマは本文の入れ物をページの地と同じ暗い色で塗るので、紙の中で黒い四角に見える。透明にする */
+html.wmp-new #page-site-index .course-content,
+html.wmp-new #page-site-index .course-content ul,
+html.wmp-new #page-site-index .course-content .section-item,
+html.wmp-new #page-site-index .course-content .course-section-header,
+html.wmp-new #page-site-index #section-0 {
+    background-color: transparent !important;
+}
+/* 中身の無い見出し（content/new-site-home.js が見つける）は場所を取らないようにする */
+html.wmp-new #page-site-index .wmp-empty-head {
+    display: none !important;
+}
+
+/* ===== 画面が狭いとき（992px 未満）: 左のメニューは引き出しにする（content/new-shell.js） ===== */
+.wmp-rail-toggle,
+.wmp-rail-backdrop {
+    display: none;
+}
+@media (max-width: 991.98px) {
+    /* Moodle の「≡」とドロワは旧デザインの見た目なので、新デザインの引き出しに置き換える */
+    html.wmp-new.wmp-rail-ready .navbar .primary-navigation,
+    html.wmp-new.wmp-rail-ready #theme_boost-drawers-primary,
+    html.wmp-new.wmp-rail-ready .drawer-primary,
+    html.wmp-new.wmp-rail-ready .navbar [data-target="theme_boost-drawers-primary"] {
+        display: none !important;
+    }
+    html.wmp-new.wmp-rail-ready .wmp-rail-toggle {
+        display: inline-grid;
+        flex: none;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        /* Moodle のヘッダーは中身を上にそろえるので、ボタンだけ縦の真ん中に置く */
+        align-self: center;
+        margin: 0 6px 0 0;
+        padding: 0;
+        border: 0;
+        border-radius: var(--wmpn-r-ctl);
+        background: none;
+        color: var(--wmpn-ink);
+        cursor: pointer;
+    }
+    html.wmp-new.wmp-rail-ready .wmp-rail-toggle:hover {
+        background: var(--wmpn-tint);
+    }
+    html.wmp-new.wmp-rail-ready .wmp-rail {
+        display: flex !important;
+        width: min(280px, 85vw);
+        transform: translateX(-105%);
+        transition: transform 0.18s ease-out;
+        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.3);
+        visibility: hidden;
+    }
+    html.wmp-new.wmp-rail-drawer-open .wmp-rail {
+        transform: none;
+        visibility: visible;
+    }
+    html.wmp-new.wmp-rail-drawer-open .wmp-rail-backdrop {
+        position: fixed;
+        inset: var(--wmpn-nav-h) 0 0 0;
+        z-index: 1028;
+        display: block;
+        background: rgba(10, 12, 16, 0.45);
+    }
+    /* 引き出しの中では、たたんだ設定に関係なく名前まで出す */
+    html.wmp-new .wmp-rail .wmp-rail-label,
+    html.wmp-new .wmp-rail .wmp-rail-heading {
+        display: block !important;
+    }
+    html.wmp-new .wmp-rail .wmp-rail-item,
+    html.wmp-new .wmp-rail .wmp-rail-course {
+        justify-content: flex-start !important;
+        padding-left: 18px !important;
+        padding-right: 16px !important;
+    }
+    html.wmp-new .wmp-rail .wmp-rail-count {
+        position: static !important;
+    }
+    html.wmp-new .wmp-rail .wmp-rail-collapse {
+        display: none;
+    }
+    /* 締切の引き出しは画面の左端から出す */
+    html.wmp-new.wmp-rail-ready .wmp-rail-panel:not([hidden]) {
+        display: flex !important;
+        left: 0;
+        width: min(400px, 100vw);
+    }
+}
+
+/* ===== 広い・狭いの切り替えを 992px の1回にそろえる ===== */
+/* Moodle はロゴを 768px 未満で隠すが、新デザインではいつも出す */
+html.wmp-new .navbar .navbar-brand {
+    display: flex !important;
+    flex: none;
+}
+/* Moodle は本文の上の余白を 576px 未満で 24px → 8px にするので、992px で切り替える */
+html.wmp-new #page.drawers .main-inner,
+html.wmp-new #topofscroll {
+    margin-top: 24px !important;
+}
+@media (max-width: 991.98px) {
+    html.wmp-new #page.drawers .main-inner,
+    html.wmp-new #topofscroll {
+        margin-top: 8px !important;
+    }
+}
+/* 新デザインの部品が画面より広くなって、ページ全体が横にスクロールしないようにする */
+.wmp-home,
+.wmp-home-day,
+.wmp-home-week,
+.wmp-dash {
+    min-width: 0;
+    max-width: 100%;
 }

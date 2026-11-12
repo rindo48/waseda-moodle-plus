@@ -124,7 +124,8 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
                     },
                     el(
                         "a",
-                        { href: course.url, title: WMP.courseName(settings, course) },
+                        // クラスを付けておく（クラスの無いリンクには、押したあと Moodle が薄い背景と濃い文字の強調を付けるため）
+                        { class: "wmp-home-class-link", href: course.url, title: WMP.courseName(settings, course) },
                         // 画面が狭いと時限の列を出さないので、そのときだけ見せる時限
                         el(
                             "span",

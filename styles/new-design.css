@@ -1213,6 +1213,11 @@ html.wmp-new body.wmp-hide-original #block-region-content > section.block {
     color: var(--wmp-text) !important;
     text-decoration: none !important;
 }
+/* キーボードで選んだときだけ枠を出す（マウスで押したあとは、見た目を変えない） */
+.wmp-home-class a:focus-visible {
+    outline: 2px solid var(--wmp-accent);
+    outline-offset: 2px;
+}
 .wmp-home-class a:hover {
     background: color-mix(in srgb, var(--wmp-course-color) 22%, var(--wmp-bg));
 }

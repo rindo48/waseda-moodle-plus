@@ -209,7 +209,10 @@ html.wmp-dark .aalink:focus,
 html.wmp-dark .aalink.focus,
 html.wmp-dark a.autolink:focus,
 html.wmp-dark a.autolink.focus,
-html.wmp-dark #page-footer a:not([class]):focus {
+html.wmp-dark #page-footer a:not([class]):focus,
+html.wmp-dark #page-content a:not([class]):focus,
+html.wmp-dark .arrow_link:focus,
+html.wmp-dark .activityinstance > a:focus {
     color: var(--wmpd-link) !important;
     background-color: rgba(143, 180, 255, 0.16) !important;
     box-shadow: 0 -0.25rem rgba(143, 180, 255, 0.16), 0 0.25rem var(--wmpd-link) !important;

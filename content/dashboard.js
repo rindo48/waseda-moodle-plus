@@ -339,7 +339,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                     el(
                         "div",
                         { class: "wmp-tt-chip", style: { "--wmp-course-color": WMP.courseColor(settings, c.id) } },
-                        el("a", { href: c.url }, WMP.courseName(settings, c)),
+                        el("a", { class: "wmp-link", href: c.url }, WMP.courseName(settings, c)),
                         pendingCount(c.id) > 0 ? el("span", { class: "wmp-tt-badge" }, String(pendingCount(c.id))) : null,
                         el("button", { class: "wmp-icon-btn", title: "科目の設定", "aria-label": "科目の設定", onclick: () => openCourseDialog(c) }, WMP.icon("more"))
                     )
@@ -561,10 +561,10 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 el(
                     "div",
                     { class: "wmp-muted" },
-                    course.url ? el("a", { href: course.url }, "Moodle のコースページ") : null,
+                    course.url ? el("a", { class: "wmp-link", href: course.url }, "Moodle のコースページ") : null,
                     syllabusKey ? " ／ " : null,
                     syllabusKey
-                        ? el("a", { href: `https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${syllabusKey}`, target: "_blank" }, "シラバス")
+                        ? el("a", { class: "wmp-link", href: `https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${syllabusKey}`, target: "_blank" }, "シラバス")
                         : null
                 )
             ),

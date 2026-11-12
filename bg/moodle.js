@@ -182,6 +182,14 @@ function slimEvent(e) {
 }
 
 /**
+ * 先生が設定した「完了予定日」（Moodle の表示では「〜 要完了」）か。提出期限ではない目安の日。
+ * 古いキャッシュには eventtype が無いので、名前の末尾でも判断する（lib/timeline-view.js と同じ判定）
+ */
+function isExpectCompletion(e) {
+    return e.eventtype === "expectcompletionon" || /(要完了|should be completed)\s*$/i.test(e.name ?? "");
+}
+
+/**
  * タイムラインを取得する（非表示設定を反映済み）。
  *
  * @param {{ force?: boolean, includeHidden?: boolean }} options
@@ -198,7 +206,8 @@ export async function getTimeline({ force = false, includeHidden = false } = {})
             (e.timesort * 1000 <= until &&
                 !settings.timelineHiddenEventIds.includes(e.id) &&
                 !settings.timelineHiddenCourses.includes(String(e.course?.id)) &&
-                !settings.timelineHiddenModuleNames.includes(e.modulename))
+                !settings.timelineHiddenModuleNames.includes(e.modulename) &&
+                !(settings.timelineHideExpectCompletion && isExpectCompletion(e)))
     );
     return { ...result, value: events };
 }

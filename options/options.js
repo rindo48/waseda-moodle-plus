@@ -479,6 +479,12 @@
             title: "課題一覧",
             items: [
                 toggle("timelineEnabled", "課題一覧", "ツールバーのアイコンをクリックすると、締切が近い課題・小テストなどの一覧を表示します。"),
+                toggle(
+                    "timelineHideExpectCompletion",
+                    "提出期限だけを表示",
+                    "先生が決めた「完了予定日」（「〜 要完了」。提出期限ではない目安の日）を、一覧・件数・通知に出しません。",
+                    { dependsOn: "timelineEnabled" }
+                ),
                 toggle("timelineShowInDashboard", "ダッシュボードにも表示", "", { dependsOn: "timelineEnabled" }),
                 toggle("badgeEnabled", "アイコンに件数を表示", "締切が近い課題の数をアイコンに表示します。", { dependsOn: "timelineEnabled" }),
                 number("badgeDeadlineRangeDays", "件数に含める範囲", "", { min: 1, max: 60, unit: "日以内の締切", dependsOn: "badgeEnabled" }),

@@ -8,7 +8,7 @@ import { collectSyllabusInformation, getCollectProgress } from "./bg/syllabus.js
 import { applyDarkModeToOpenTabs, syncFeatures } from "./bg/features.js";
 import { BADGE_ALARM, handleNotificationClick, updateBadge } from "./bg/badge.js";
 import { createLauncherMenus, handleLauncherClick, prepareLaunch } from "./bg/launcher.js";
-import { UPDATE_ALARM, checkForUpdate, handleUpdateNotificationClick } from "./bg/update-check.js";
+import { UPDATE_ALARM, checkForUpdate } from "./bg/update-check.js";
 
 const { onSettingsChanged, LOGIN_INFO_KEY, MOODLE_ORIGIN } = globalThis.WMP;
 
@@ -121,9 +121,7 @@ chrome.runtime.onStartup.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener(handleLauncherClick);
-chrome.notifications.onClicked.addListener(async (id) => {
-    if (!(await handleUpdateNotificationClick(id))) handleNotificationClick(id);
-});
+chrome.notifications.onClicked.addListener(handleNotificationClick);
 
 chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === BADGE_ALARM) updateBadge({ force: true });

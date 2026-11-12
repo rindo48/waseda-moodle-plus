@@ -168,6 +168,15 @@
             "matches": [
                 "*://*.waseda.jp/*"
             ]
+        },
+        {
+            "resources": [
+                "lib/i18n/*.json"
+            ],
+            "matches": [
+                "*://*.waseda.jp/*",
+                "https://login.microsoftonline.com/*"
+            ]
         }
     ]
 }

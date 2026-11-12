@@ -9,7 +9,7 @@ const SESSION_KEY_TTL = 2 * 60 * 60 * 1000;
 
 export class NotLoggedInError extends Error {
     constructor() {
-        super("Waseda Moodle にログインしていません");
+        super(globalThis.WMP.t("Waseda Moodle にログインしていません"));
         this.name = "NotLoggedInError";
     }
 }
@@ -74,10 +74,10 @@ export async function callMoodleAPI(methodname, args, { retried = false } = {}) 
             body: JSON.stringify([{ index: 0, methodname, args }]),
         }
     );
-    if (!response.ok) throw new Error(`Moodle API エラー: ${response.status}`);
+    if (!response.ok) throw new Error(globalThis.WMP.t("Moodle API エラー: {status}", { status: response.status }));
     const json = await response.json();
 
-    if (!Array.isArray(json)) throw new Error(json?.error ?? "Moodle API から不正な応答がありました");
+    if (!Array.isArray(json)) throw new Error(json?.error ?? globalThis.WMP.t("Moodle API から不正な応答がありました"));
     const [result] = json;
     if (result.error) {
         const code = result.exception?.errorcode;
@@ -86,7 +86,7 @@ export async function callMoodleAPI(methodname, args, { retried = false } = {}) 
             return callMoodleAPI(methodname, args, { retried: true });
         }
         if (code === "servicerequireslogin") throw new NotLoggedInError();
-        throw new Error(result.exception?.message ?? "Moodle API エラー");
+        throw new Error(result.exception?.message ?? globalThis.WMP.t("Moodle API エラー"));
     }
     return result.data;
 }

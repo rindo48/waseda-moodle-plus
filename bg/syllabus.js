@@ -75,7 +75,7 @@ export const getCollectProgress = () => progress;
  */
 export async function collectSyllabusInformation({ year, onlyMissing = false } = {}) {
     if (progress.running) return progress;
-    progress = { running: true, done: 0, total: 0, message: "受講科目を取得しています…", succeeded: [], failed: [] };
+    progress = { running: true, done: 0, total: 0, message: globalThis.WMP.t("受講科目を取得しています…"), succeeded: [], failed: [] };
 
     try {
         let { value: courses } = await getCourses({ force: true });
@@ -96,7 +96,7 @@ export async function collectSyllabusInformation({ year, onlyMissing = false } =
         const deliveryMethods = {};
 
         for (const course of courses) {
-            progress.message = `「${course.name}」のシラバスを検索しています（${progress.done + 1}/${courses.length}）`;
+            progress.message = globalThis.WMP.t("「{name}」のシラバスを検索しています（{n}/{total}）", { name: course.name, n: progress.done + 1, total: courses.length });
             try {
                 const found = await findSyllabusForCourse(course, oldYears);
                 if (found) {
@@ -121,9 +121,9 @@ export async function collectSyllabusInformation({ year, onlyMissing = false } =
             courseSyllabusKeys: { ...latest.courseSyllabusKeys, ...syllabusKeys },
             courseDeliveryMethods: { ...latest.courseDeliveryMethods, ...deliveryMethods },
         });
-        progress.message = `完了: ${progress.succeeded.length}件取得、${progress.failed.length}件見つかりませんでした`;
+        progress.message = globalThis.WMP.t("完了: {ok}件取得、{ng}件見つかりませんでした", { ok: progress.succeeded.length, ng: progress.failed.length });
     } catch (e) {
-        progress.message = `エラー: ${e.message ?? e}`;
+        progress.message = globalThis.WMP.t("エラー: {message}", { message: e.message ?? e });
         throw e;
     } finally {
         progress.running = false;

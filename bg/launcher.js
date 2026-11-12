@@ -18,9 +18,11 @@ const MENUS = [
 ];
 
 export async function createLauncherMenus() {
+    // 言語を決めてから作る（設定・最後に開いた Moodle の言語を読む）
+    await globalThis.WMP.getSettings();
     await chrome.contextMenus.removeAll();
     for (const menu of MENUS) {
-        chrome.contextMenus.create({ id: menu.id, title: menu.title, parentId: menu.parentId, contexts: ["action"] });
+        chrome.contextMenus.create({ id: menu.id, title: globalThis.WMP.t(menu.title), parentId: menu.parentId, contexts: ["action"] });
     }
 }
 
@@ -57,7 +59,7 @@ export async function prepareLaunch(target) {
         course_registration: { url: COURSEREG_PORTAL },
         waseda_email: { url: COURSEREG_PORTAL },
     }[target];
-    if (!fallback) throw new Error(`不明なページです: ${target}`);
+    if (!fallback) throw new Error(globalThis.WMP.t("不明なページです: {target}", { target }));
 
     try {
         await getLoginInfo();

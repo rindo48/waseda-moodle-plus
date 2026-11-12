@@ -12,7 +12,7 @@
     let savedTimer;
     async function save(patch) {
         settings = await WMP.setSettings(patch);
-        savedLabel.textContent = "保存しました";
+        savedLabel.textContent = WMP.t("保存しました");
         savedLabel.style.opacity = "1";
         clearTimeout(savedTimer);
         savedTimer = setTimeout(() => (savedLabel.style.opacity = "0"), 1500);
@@ -22,9 +22,11 @@
 
     // ===== 項目の部品 =====
 
-    const toggle = (key, title, desc, { dependsOn } = {}) => ({ type: "toggle", key, title, desc, dependsOn });
-    const select = (key, title, desc, options, { dependsOn } = {}) => ({ type: "select", key, title, desc, options, dependsOn });
-    const number = (key, title, desc, { min, max, unit, dependsOn } = {}) => ({ type: "number", key, title, desc, min, max, unit, dependsOn });
+    // 見出し・説明・選択肢・単位は、ここで今の言語に訳す（設定の一覧は日本語のまま書ける）
+    const tr = (text) => (text ? WMP.t(text) : text);
+    const toggle = (key, title, desc, { dependsOn } = {}) => ({ type: "toggle", key, title: tr(title), desc: tr(desc), dependsOn });
+    const select = (key, title, desc, options, { dependsOn } = {}) => ({ type: "select", key, title: tr(title), desc: tr(desc), options: options.map(([v, label]) => [v, tr(label)]), dependsOn });
+    const number = (key, title, desc, { min, max, unit, dependsOn } = {}) => ({ type: "number", key, title: tr(title), desc: tr(desc), min, max, unit: tr(unit), dependsOn });
     const custom = (render) => ({ type: "custom", render });
 
     function itemShell(item, control) {
@@ -101,20 +103,20 @@
         const box = el("div", { class: "op-item is-block" });
         (async () => {
             const { [WMP.LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(WMP.LOGIN_INFO_KEY);
-            const userId = el("input", { class: "wmp-input", placeholder: "例: xxxxx@akane.waseda.jp", value: info?.userId ?? "", autocomplete: "username" });
-            const password = el("input", { class: "wmp-input", type: "password", placeholder: "パスワード", value: info?.password ?? "", autocomplete: "current-password" });
+            const userId = el("input", { class: "wmp-input", placeholder: WMP.t("例: xxxxx@akane.waseda.jp"), value: info?.userId ?? "", autocomplete: "username" });
+            const password = el("input", { class: "wmp-input", type: "password", placeholder: WMP.t("パスワード"), value: info?.password ?? "", autocomplete: "current-password" });
             const status = el("span", { class: "wmp-muted" });
             box.replaceChildren(
                 el(
                     "div",
                     { class: "op-item-text" },
-                    el("div", { class: "op-item-title" }, "ログイン情報"),
-                    el("div", { class: "op-item-desc" }, "Waseda メールアドレス（@akane.waseda.jp など）とパスワードです。")
+                    el("div", { class: "op-item-title" }, WMP.t("ログイン情報")),
+                    el("div", { class: "op-item-desc" }, WMP.t("Waseda メールアドレス（@akane.waseda.jp など）とパスワードです。"))
                 ),
                 el(
                     "div",
                     { class: "op-note" },
-                    "パスワードはこのパソコンの Chrome の中（拡張機能のストレージ）に暗号化されずに保存されます。共用のパソコンでは使わないでください。多要素認証（MFA）が必要な場合は自動ログインできません。"
+                    WMP.t("パスワードはこのパソコンの Chrome の中（拡張機能のストレージ）に暗号化されずに保存されます。共用のパソコンでは使わないでください。多要素認証（MFA）が必要な場合は自動ログインできません。")
                 ),
                 el("div", { class: "op-row" }, userId, password),
                 el(
@@ -126,47 +128,47 @@
                             class: "wmp-btn is-primary",
                             onclick: async () => {
                                 if (!userId.value || !password.value) {
-                                    status.textContent = "ID とパスワードを入力してください";
+                                    status.textContent = WMP.t("ID とパスワードを入力してください");
                                     return;
                                 }
                                 await chrome.storage.local.set({ [WMP.LOGIN_INFO_KEY]: { userId: userId.value.trim(), password: password.value } });
                                 await save({ autoLoginEnabled: true });
                             },
                         },
-                        "保存して有効にする"
+                        WMP.t("保存して有効にする")
                     ),
                     el(
                         "button",
                         {
                             class: "wmp-btn",
                             onclick: async () => {
-                                status.textContent = "ログインを試しています…";
+                                status.textContent = WMP.t("ログインを試しています…");
                                 try {
                                     const result = await WMP.send("testLogin");
                                     status.textContent = {
-                                        ok: "ログインに成功しました",
-                                        failed: "ログインできませんでした",
+                                        ok: WMP.t("ログインに成功しました"),
+                                        failed: WMP.t("ログインできませんでした"),
                                         alreadyLoggedIn:
-                                            "Moodle にはすでにログインしています。ID・パスワードを確かめるには、Moodle からログアウトしてから試してください。",
+                                            WMP.t("Moodle にはすでにログインしています。ID・パスワードを確かめるには、Moodle からログアウトしてから試してください。"),
                                     }[result];
                                 } catch (e) {
-                                    status.textContent = `失敗: ${e.message}`;
+                                    status.textContent = WMP.t("失敗: {message}", { message: e.message });
                                 }
                             },
                         },
-                        "ログインを試す"
+                        WMP.t("ログインを試す")
                     ),
                     el(
                         "button",
                         {
                             class: "wmp-btn is-danger",
                             onclick: async () => {
-                                if (!confirm("保存したログイン情報を削除しますか？")) return;
+                                if (!confirm(WMP.t("保存したログイン情報を削除しますか？"))) return;
                                 await chrome.storage.local.remove(WMP.LOGIN_INFO_KEY);
                                 await save({ autoLoginEnabled: false });
                             },
                         },
-                        "削除"
+                        WMP.t("削除")
                     ),
                     status
                 )
@@ -189,7 +191,7 @@
                     await new Promise((r) => setTimeout(r, 1000));
                 }
             } catch (e) {
-                status.textContent = `エラー: ${e.message}`;
+                status.textContent = WMP.t("エラー: {message}", { message: e.message });
             }
         };
         return el(
@@ -198,23 +200,23 @@
             el(
                 "div",
                 { class: "op-item-text" },
-                el("div", { class: "op-item-title" }, "シラバスから時間割を取得"),
-                el("div", { class: "op-item-desc" }, "受講中の科目のシラバスを検索して、曜日・時限・教室を自動で設定します。科目数によっては数分かかります。")
+                el("div", { class: "op-item-title" }, WMP.t("シラバスから時間割を取得")),
+                el("div", { class: "op-item-desc" }, WMP.t("受講中の科目のシラバスを検索して、曜日・時限・教室を自動で設定します。科目数によっては数分かかります。"))
             ),
             el(
                 "div",
                 { class: "op-row" },
                 yearInput,
-                el("span", { class: "wmp-muted" }, "年度"),
-                el("button", { class: "wmp-btn is-primary", onclick: () => run(false) }, "すべて取得"),
-                el("button", { class: "wmp-btn", onclick: () => run(true) }, "未設定の科目だけ"),
+                el("span", { class: "wmp-muted" }, WMP.t("年度")),
+                el("button", { class: "wmp-btn is-primary", onclick: () => run(false) }, WMP.t("すべて取得")),
+                el("button", { class: "wmp-btn", onclick: () => run(true) }, WMP.t("未設定の科目だけ")),
                 el(
                     "button",
                     {
                         class: "wmp-btn is-danger",
-                        onclick: () => confirm("時間割の情報（曜日・時限・教室）をすべて消しますか？") && save({ timetable: {} }),
+                        onclick: () => confirm(WMP.t("時間割の情報（曜日・時限・教室）をすべて消しますか？")) && save({ timetable: {} }),
                     },
-                    "時間割をリセット"
+                    WMP.t("時間割をリセット")
                 )
             ),
             status
@@ -226,12 +228,12 @@
         const removeFrom = (key, value) => save({ [key]: settings[key].filter((x) => x !== value) });
         const tags = (key, labelOf) =>
             settings[key].length === 0
-                ? el("span", { class: "wmp-muted" }, "なし")
+                ? el("span", { class: "wmp-muted" }, WMP.t("なし"))
                 : el(
                       "div",
                       { class: "op-list" },
                       settings[key].map((v) =>
-                          el("span", { class: "op-tag" }, labelOf(v), el("button", { class: "wmp-icon-btn", title: "再表示", "aria-label": "再表示", onclick: () => removeFrom(key, v) }, WMP.icon("close", { size: 14 })))
+                          el("span", { class: "op-tag" }, labelOf(v), el("button", { class: "wmp-icon-btn", title: WMP.t("再表示"), "aria-label": WMP.t("再表示"), onclick: () => removeFrom(key, v) }, WMP.icon("close", { size: 14 })))
                       )
                   );
 
@@ -242,11 +244,11 @@
             } catch {
                 // ログインしていなくても ID で表示する
             }
-            const courseLabel = (id) => courses.find((c) => c.id === id)?.name ?? `科目 ${id}`;
+            const courseLabel = (id) => courses.find((c) => c.id === id)?.name ?? WMP.t("科目 {id}", { id });
             const courseSelect = el(
                 "select",
                 { class: "wmp-select", style: { maxWidth: "320px" } },
-                el("option", { value: "" }, "科目を選んで非表示にする…"),
+                el("option", { value: "" }, WMP.t("科目を選んで非表示にする…")),
                 courses.filter((c) => !settings.timelineHiddenCourses.includes(c.id)).map((c) => el("option", { value: c.id }, c.name))
             );
             courseSelect.addEventListener("change", () => {
@@ -257,21 +259,21 @@
                 el(
                     "div",
                     { class: "op-item-text" },
-                    el("div", { class: "op-item-title" }, "非表示にした項目"),
-                    el("div", { class: "op-item-desc" }, "課題一覧の「非表示にする」ボタンで隠した項目や、表示しない科目・種類です。")
+                    el("div", { class: "op-item-title" }, WMP.t("非表示にした項目")),
+                    el("div", { class: "op-item-desc" }, WMP.t("課題一覧の「非表示にする」ボタンで隠した項目や、表示しない科目・種類です。"))
                 ),
                 el(
                     "div",
                     { class: "op-row" },
-                    el("span", {}, `非表示にした課題など: ${settings.timelineHiddenEventIds.length}件`),
+                    el("span", {}, WMP.t("非表示にした課題など: {count}件", { count: settings.timelineHiddenEventIds.length })),
                     settings.timelineHiddenEventIds.length > 0
-                        ? el("button", { class: "wmp-btn is-small", onclick: () => save({ timelineHiddenEventIds: [] }) }, "すべて再表示")
+                        ? el("button", { class: "wmp-btn is-small", onclick: () => save({ timelineHiddenEventIds: [] }) }, WMP.t("すべて再表示"))
                         : null
                 ),
-                el("div", { class: "op-item-title" }, "表示しない科目"),
+                el("div", { class: "op-item-title" }, WMP.t("表示しない科目")),
                 tags("timelineHiddenCourses", courseLabel),
                 courses.length > 0 ? courseSelect : null,
-                el("div", { class: "op-item-title" }, "表示しない種類"),
+                el("div", { class: "op-item-title" }, WMP.t("表示しない種類")),
                 el(
                     "div",
                     { class: "op-list" },
@@ -305,11 +307,11 @@
             el(
                 "div",
                 { class: "op-item-text" },
-                el("div", { class: "op-item-title" }, "ファイル名の形式"),
+                el("div", { class: "op-item-title" }, WMP.t("ファイル名の形式")),
                 el("div", {
                     class: "op-item-desc",
                     innerHTML:
-                        "<code>{filename}</code> 元のファイル名、<code>{extension}</code> 拡張子（.pdf など）、<code>{course}</code> 科目名、<code>{assignment}</code> 課題名。科目ごとの形式はダッシュボードの時間割で科目の設定ボタンから設定できます。",
+                        WMP.t("<code>{filename}</code> 元のファイル名、<code>{extension}</code> 拡張子（.pdf など）、<code>{course}</code> 科目名、<code>{assignment}</code> 課題名。科目ごとの形式はダッシュボードの時間割で科目の設定ボタンから設定できます。"),
                 })
             ),
             el("input", {
@@ -329,10 +331,10 @@
                 const data = JSON.parse(await file.text());
                 const restored = data.settings ?? data;
                 const known = Object.fromEntries(Object.entries(restored).filter(([k]) => k in WMP.DEFAULT_SETTINGS));
-                if (!confirm(`${Object.keys(known).length}項目の設定を読み込みます。現在の設定は上書きされます。よろしいですか？`)) return;
+                if (!confirm(WMP.t("{count}項目の設定を読み込みます。現在の設定は上書きされます。よろしいですか？", { count: Object.keys(known).length }))) return;
                 await save(known);
             } catch (e) {
-                alert(`読み込めませんでした: ${e.message}`);
+                alert(WMP.t("読み込めませんでした: {message}", { message: e.message }));
             }
         });
         return el(
@@ -341,8 +343,8 @@
             el(
                 "div",
                 { class: "op-item-text" },
-                el("div", { class: "op-item-title" }, "バックアップ"),
-                el("div", { class: "op-item-desc" }, "時間割・色・メモを含む設定を JSON ファイルに書き出します。ログイン情報は含まれません。")
+                el("div", { class: "op-item-title" }, WMP.t("バックアップ")),
+                el("div", { class: "op-item-desc" }, WMP.t("時間割・色・メモを含む設定を JSON ファイルに書き出します。ログイン情報は含まれません。"))
             ),
             el(
                 "div",
@@ -360,9 +362,9 @@
                             URL.revokeObjectURL(a.href);
                         },
                     },
-                    "書き出す"
+                    WMP.t("書き出す")
                 ),
-                el("button", { class: "wmp-btn", onclick: () => fileInput.click() }, "読み込む"),
+                el("button", { class: "wmp-btn", onclick: () => fileInput.click() }, WMP.t("読み込む")),
                 fileInput
             )
         );
@@ -376,8 +378,8 @@
             el(
                 "div",
                 { class: "op-item-text" },
-                el("div", { class: "op-item-title" }, "キャッシュを削除"),
-                el("div", { class: "op-item-desc" }, "新しく登録した科目や課題が表示されないときに使います。"),
+                el("div", { class: "op-item-title" }, WMP.t("キャッシュを削除")),
+                el("div", { class: "op-item-desc" }, WMP.t("新しく登録した科目や課題が表示されないときに使います。")),
                 status
             ),
             el(
@@ -386,10 +388,10 @@
                     class: "wmp-btn",
                     onclick: async () => {
                         await WMP.send("clearCaches");
-                        status.textContent = "削除しました";
+                        status.textContent = WMP.t("削除しました");
                     },
                 },
-                "削除"
+                WMP.t("削除")
             )
         );
     }
@@ -415,6 +417,11 @@
                     "ヘッダーにデザインの切り替えボタンを表示",
                     "Moodle の上部ヘッダーに、旧デザインと新デザインを切り替えるボタンを表示します。押すとページを読み込み直します。"
                 ),
+                select("language", "言語", "拡張機能の表示の言語です。「自動」では Moodle の言語設定（英語など）に合わせます。切り替えは次にページを開いたときから反映されます。", [
+                    ["auto", "自動（Moodle の言語設定に合わせる）"],
+                    ["ja", "日本語"],
+                    ["en", "English"],
+                ]),
                 select("darkMode", "Moodle のダークモード", "Moodle のページを暗い配色で表示します。", [
                     ["off", "オフ"],
                     ["on", "常にオン"],
@@ -561,9 +568,9 @@
                         el(
                             "div",
                             { class: "op-item-desc" },
-                            "Waseda Moodle Plus は、",
+                            WMP.t("Waseda Moodle Plus は、"),
                             el("a", { href: "https://github.com/mkihr-ojisan/better-waseda-moodle", target: "_blank" }, "Better Waseda Moodle"),
-                            "（MIT License, © mkihr-ojisan）を参考に作った個人用の拡張機能です。早稲田大学の公式ツールではありません。Moodle やシラバスの仕様が変わると、一部の機能が動かなくなることがあります。"
+                            WMP.t("（MIT License, © mkihr-ojisan）を参考に作った個人用の拡張機能です。早稲田大学の公式ツールではありません。Moodle やシラバスの仕様が変わると、一部の機能が動かなくなることがあります。")
                         )
                     )
                 ),
@@ -590,11 +597,11 @@
             ? el(
                   "div",
                   { class: "op-welcome" },
-                  el("h2", {}, "インストールありがとうございます"),
+                  el("h2", {}, WMP.t("インストールありがとうございます")),
                   el(
                       "div",
                       {},
-                      "Waseda Moodle を開くと、ダッシュボードに時間割と課題一覧が表示されます。まずは「時間割」の「シラバスから時間割を取得」を試してみてください。自動ログインを使う場合は「自動ログイン」でログイン情報を設定します。"
+                      WMP.t("Waseda Moodle を開くと、ダッシュボードに時間割と課題一覧が表示されます。まずは「時間割」の「シラバスから時間割を取得」を試してみてください。自動ログインを使う場合は「自動ログイン」でログイン情報を設定します。")
                   )
               )
             : null;
@@ -603,15 +610,15 @@
             : el(
                   "div",
                   { class: "op-welcome" },
-                  el("h2", {}, "サイトへのアクセスを許可してください"),
-                  el("div", {}, "Waseda Moodle などのページを読み書きする許可が無いため、ほとんどの機能が動きません。"),
+                  el("h2", {}, WMP.t("サイトへのアクセスを許可してください")),
+                  el("div", {}, WMP.t("Waseda Moodle などのページを読み書きする許可が無いため、ほとんどの機能が動きません。")),
                   el(
                       "div",
                       { class: "row" },
                       el(
                           "button",
                           { class: "wmp-btn is-primary", onclick: () => chrome.permissions.request(HOST_ACCESS) },
-                          "アクセスを許可"
+                          WMP.t("アクセスを許可")
                       )
                   )
               );
@@ -621,7 +628,7 @@
                 el(
                     "section",
                     { class: "wmp-card op-section", id: section.id },
-                    el("header", { class: "wmp-card-header" }, el("h2", { class: "wmp-card-title" }, section.title)),
+                    el("header", { class: "wmp-card-header" }, el("h2", { class: "wmp-card-title" }, WMP.t(section.title))),
                     el("div", { class: "wmp-card-body" }, section.items.map(renderItem))
                 )
             )
@@ -629,7 +636,7 @@
         window.scrollTo(0, scroll);
     }
 
-    nav.replaceChildren(...SECTIONS.map((s) => el("a", { href: `#${s.id}`, dataset: { id: s.id } }, s.title)));
+    nav.replaceChildren(...SECTIONS.map((s) => el("a", { href: `#${s.id}`, dataset: { id: s.id } }, WMP.t(s.title))));
     const observer = new IntersectionObserver(
         (entries) => {
             for (const entry of entries) {

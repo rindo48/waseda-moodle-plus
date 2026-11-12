@@ -75,7 +75,7 @@
         const dialog = el(
             "dialog",
             { class: "wmp-dialog wmp-scope" },
-            el("div", { class: "wmp-dialog-header" }, el("h2", {}, unknown ? "セッションを確認できませんでした" : "セッションが切れています")),
+            el("div", { class: "wmp-dialog-header" }, el("h2", {}, unknown ? WMP.t("セッションを確認できませんでした") : WMP.t("セッションが切れています"))),
             el(
                 "div",
                 { class: "wmp-dialog-body" },
@@ -83,16 +83,16 @@
                     "p",
                     { style: { margin: "0", lineHeight: "1.7" } },
                     unknown
-                        ? "Moodle との通信に時間がかかっているか、通信エラーが起きています。ログインが切れている場合、送信すると入力内容が失われる可能性があります。"
-                        : "このまま送信すると、入力内容が失われる可能性があります。",
+                        ? WMP.t("Moodle との通信に時間がかかっているか、通信エラーが起きています。ログインが切れている場合、送信すると入力内容が失われる可能性があります。")
+                        : WMP.t("このまま送信すると、入力内容が失われる可能性があります。"),
                     el("br"),
-                    "心配な場合は、入力した文章をコピーして控えておき、別のタブで Moodle にログインし直してから、このページを再読み込みしてください。"
+                    WMP.t("心配な場合は、入力した文章をコピーして控えておき、別のタブで Moodle にログインし直してから、このページを再読み込みしてください。")
                 )
             ),
             el(
                 "div",
                 { class: "wmp-dialog-footer" },
-                el("button", { class: "wmp-btn", onclick: () => dialog.close() }, "閉じる"),
+                el("button", { class: "wmp-btn", onclick: () => dialog.close() }, WMP.t("閉じる")),
                 el(
                     "button",
                     {
@@ -102,12 +102,12 @@
                             submit();
                         },
                     },
-                    "このまま送信する"
+                    WMP.t("このまま送信する")
                 ),
                 el(
                     "a",
                     { class: "wmp-btn is-primary", href: "/login/index.php", target: "_blank", onclick: () => dialog.close() },
-                    "別のタブでログイン"
+                    WMP.t("別のタブでログイン")
                 )
             )
         );
@@ -136,19 +136,19 @@
             const ascii = [...chars].filter((c) => c.charCodeAt(0) < 128).length;
             return chars.length > 0 && ascii / chars.length > 0.8 ? "word" : "char";
         };
-        const format = (t) => (typeOf(t) === "word" ? `${countWords(t)} 語` : `${countChars(t)} 文字`);
+        const format = (t) => (typeOf(t) === "word" ? WMP.t("{n} 語", { n: countWords(t) }) : WMP.t("{n} 文字", { n: countChars(t) }));
 
         /** @param {HTMLElement} host - カウンターを付ける場所, @param {() => string} getText, @param {() => string} getSelection */
         function attach(host, getText, observeTarget, getSelectedText) {
             if (host.dataset.wmpCounter) return;
             host.dataset.wmpCounter = "1";
-            const label = el("span", { title: "クリックで文字数と単語数を切り替え" });
+            const label = el("span", { title: WMP.t("クリックで文字数と単語数を切り替え") });
             const wrap = el("div", { class: "wmp-word-counter" }, label);
             host.insertAdjacentElement("afterend", wrap);
             const update = () => {
                 const sel = getSelectedText?.() ?? "";
                 const text = getText();
-                const next = sel ? `選択中: ${format(sel)}（全体: ${format(text)}）` : format(text);
+                const next = sel ? WMP.t("選択中: {sel}（全体: {all}）", { sel: format(sel), all: format(text) }) : format(text);
                 if (label.textContent !== next) label.textContent = next;
             };
             label.addEventListener("click", () => {
@@ -271,10 +271,10 @@
                 if (!button) return;
                 const unanswered = [...document.querySelectorAll('div[id^="question-"]')].filter((q) => !isAnswered(q));
                 if (unanswered.length === 0) return;
-                const names = unanswered.map((q) => q.querySelector("h3")?.innerText?.replace(/\s+/g, " ").trim() ?? "問題").join("\n・");
+                const names = unanswered.map((q) => q.querySelector("h3")?.innerText?.replace(/\s+/g, " ").trim() ?? WMP.t("問題")).join("\n・");
                 const message = sequential
-                    ? `まだ解答していない問題があります。この小テストは前のページに戻れません。\n\n・${names}\n\nこのまま次へ進みますか？`
-                    : `まだ解答していない問題があります。\n\n・${names}\n\nこのまま次へ進みますか？`;
+                    ? WMP.t("まだ解答していない問題があります。この小テストは前のページに戻れません。\n\n・{names}\n\nこのまま次へ進みますか？", { names })
+                    : WMP.t("まだ解答していない問題があります。\n\n・{names}\n\nこのまま次へ進みますか？", { names });
                 if (!confirm(message)) {
                     event.preventDefault();
                     event.stopImmediatePropagation();
@@ -312,8 +312,8 @@
             const dark = isDark();
             // 今がダークなら太陽（押すとライト）、ライトなら月（押すとダーク）を出す
             button.innerHTML = dark ? SUN : MOON;
-            const label = dark ? "ライトモードに切り替える" : "ダークモードに切り替える";
-            button.title = settings.darkMode === "auto" ? `${label}（今はシステムの設定に合わせています）` : label;
+            const label = dark ? WMP.t("ライトモードに切り替える") : WMP.t("ダークモードに切り替える");
+            button.title = settings.darkMode === "auto" ? WMP.t("{label}（今はシステムの設定に合わせています）", { label }) : label;
             button.setAttribute("aria-label", label);
             button.setAttribute("aria-pressed", String(dark));
         };
@@ -341,14 +341,14 @@
         if (!nav || document.getElementById("wmp-design-toggle")) return;
 
         const isNew = settings.design === "new";
-        const label = isNew ? "旧デザインに戻す" : "新デザインにする";
+        const label = isNew ? WMP.t("旧デザインに戻す") : WMP.t("新デザインにする");
         const button = el("button", {
             id: "wmp-design-toggle",
             type: "button",
             class: `nav-link wmp-dark-toggle wmp-design-toggle${isNew ? " is-new" : ""}`,
-            title: `${label}（ページを読み込み直します）`,
+            title: WMP.t("{label}（ページを読み込み直します）", { label }),
             "aria-label": label,
-            innerHTML: `${LAYOUT}<span class="wmp-design-toggle-text">${isNew ? "新" : "旧"}</span>`,
+            innerHTML: `${LAYOUT}<span class="wmp-design-toggle-text">${isNew ? WMP.t("新") : WMP.t("旧")}</span>`,
         });
         button.addEventListener("click", async () => {
             button.disabled = true;

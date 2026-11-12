@@ -11,6 +11,7 @@
 
     let settings = await WMP.getSettings();
     WMP.applyUiTheme(settings);
+    WMP.translateDom();
 
     let events = null;
     let kind = "";
@@ -23,7 +24,7 @@
         if (!updateInfo?.version) return;
         const notice = document.getElementById("update-notice");
         notice.href = updateInfo.url;
-        notice.textContent = `新しいバージョン ${updateInfo.version} が出ています（今は ${chrome.runtime.getManifest().version}）。ダウンロード →`;
+        notice.textContent = WMP.t("新しいバージョン {latest} が出ています（今は {current}）。ダウンロード →", { latest: updateInfo.version, current: chrome.runtime.getManifest().version });
         notice.hidden = false;
     });
     document.querySelectorAll("[data-launch]").forEach((a) =>
@@ -66,7 +67,7 @@
         if (!events) return;
         const children = [];
         if (lastError) {
-            children.push(el("div", { class: "wmp-error pp-stale" }, `最新の情報を取得できませんでした（${lastError}）。前回取得した内容を表示しています。`));
+            children.push(el("div", { class: "wmp-error pp-stale" }, WMP.t("最新の情報を取得できませんでした（{error}）。前回取得した内容を表示しています。", { error: lastError })));
         }
         children.push(
             WMP.renderTimeline(filtered(), settings, {
@@ -82,21 +83,21 @@
             el(
                 "div",
                 { class: "pp-login" },
-                el("strong", {}, "Waseda Moodle にログインしていません"),
+                el("strong", {}, WMP.t("Waseda Moodle にログインしていません")),
                 el(
                     "p",
                     {},
                     hasLoginInfo
-                        ? "自動ログインに失敗しました。Moodle を開いて手動でログインしてください。"
-                        : "Moodle にログインすると課題の一覧が表示されます。自動ログインを設定すると、ログインの手間が省けます。"
+                        ? WMP.t("自動ログインに失敗しました。Moodle を開いて手動でログインしてください。")
+                        : WMP.t("Moodle にログインすると課題の一覧が表示されます。自動ログインを設定すると、ログインの手間が省けます。")
                 ),
                 el(
                     "div",
                     { class: "row" },
-                    el("a", { class: "wmp-btn is-primary", href: "https://wsdmoodle.waseda.jp/my/" }, "Moodle を開く"),
+                    el("a", { class: "wmp-btn is-primary", href: "https://wsdmoodle.waseda.jp/my/" }, WMP.t("Moodle を開く")),
                     hasLoginInfo
                         ? null
-                        : el("button", { class: "wmp-btn", onclick: () => chrome.runtime.openOptionsPage() }, "自動ログインを設定")
+                        : el("button", { class: "wmp-btn", onclick: () => chrome.runtime.openOptionsPage() }, WMP.t("自動ログインを設定"))
                 )
             )
         );
@@ -109,15 +110,15 @@
             const result = await WMP.send("getTimeline", { force });
             events = result.value;
             lastError = result.error ?? null;
-            updated.textContent = `${WMP.timeFormat.format(new Date(result.timestamp))} 時点`;
+            updated.textContent = WMP.t("{time} 時点", { time: WMP.timeFormat.format(new Date(result.timestamp)) });
             render();
             WMP.send("updateBadge").catch(() => {});
         } catch (e) {
-            if (/ログインしていません|ログイン情報/.test(e.message)) {
+            if (/ログインしていません|ログイン情報|not logged in|login details/i.test(e.message)) {
                 const status = await WMP.send("getLoginStatus").catch(() => ({}));
                 renderLoginRequired(status.hasLoginInfo);
             } else {
-                body.replaceChildren(el("div", { class: "wmp-error" }, `読み込みに失敗しました: ${e.message}`));
+                body.replaceChildren(el("div", { class: "wmp-error" }, WMP.t("読み込みに失敗しました: {message}", { message: e.message })));
             }
         } finally {
             refreshButton.disabled = false;
@@ -129,8 +130,8 @@
             el(
                 "div",
                 { class: "pp-login" },
-                el("p", {}, "課題一覧は設定でオフになっています。"),
-                el("button", { class: "wmp-btn", onclick: () => chrome.runtime.openOptionsPage() }, "設定を開く")
+                el("p", {}, WMP.t("課題一覧は設定でオフになっています。")),
+                el("button", { class: "wmp-btn", onclick: () => chrome.runtime.openOptionsPage() }, WMP.t("設定を開く"))
             )
         );
         return;

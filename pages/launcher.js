@@ -12,7 +12,8 @@
         waseda_email: "Waseda メール",
     };
     const target = new URLSearchParams(location.search).get("target");
-    document.getElementById("title").textContent = `${TITLES[target] ?? "ページ"}を開いています`;
+    WMP.translateDom();
+    document.getElementById("title").textContent = WMP.t("{name}を開いています", { name: WMP.t(TITLES[target] ?? "ページ") });
 
     try {
         const result = await WMP.send("prepareLaunch", { target });
@@ -28,9 +29,9 @@
         form.submit();
     } catch (e) {
         document.getElementById("card").replaceChildren(
-            el("h1", {}, "開けませんでした"),
+            el("h1", {}, WMP.t("開けませんでした")),
             el("p", {}, e.message),
-            el("a", { class: "wmp-btn", href: "https://my.waseda.jp/" }, "MyWaseda を開く")
+            el("a", { class: "wmp-btn", href: "https://my.waseda.jp/" }, WMP.t("MyWaseda を開く"))
         );
     }
 })();

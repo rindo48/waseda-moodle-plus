@@ -29,8 +29,8 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
     let events = [];
     let openColumn = null; // 締切の列で開いているもの（"overdue" か日付のキー）
 
-    const dayTrack = el("section", { class: "wmp-home-day", "aria-label": "今日の授業" });
-    const week = el("section", { class: "wmp-home-week", "aria-label": "これから7日間の締切" });
+    const dayTrack = el("section", { class: "wmp-home-day", "aria-label": WMP.t("今日の授業") });
+    const week = el("section", { class: "wmp-home-week", "aria-label": WMP.t("これから7日間の締切") });
     root.append(dayTrack, week);
 
     WMP.onSettingsChanged((next) => {
@@ -62,18 +62,18 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
     }
 
     function statusText(now, classes) {
-        if (classes.length === 0) return "今日は時間割に登録した授業がありません";
+        if (classes.length === 0) return WMP.t("今日は時間割に登録した授業がありません");
         const { current, next } = WMP.currentPeriod(now);
         const name = (x) => WMP.courseName(settings, x.course);
         const ongoing = current && classes.find(({ slot }) => slot.from <= current && current <= slot.to);
-        if (ongoing) return `いまは${current}限、${name(ongoing)}（${ongoing.slot.classroom || "教室未設定"}）`;
+        if (ongoing) return WMP.t("いまは{p}限、{name}（{room}）", { p: current, name: name(ongoing), room: ongoing.slot.classroom || WMP.t("教室未設定") });
         const from = current ? current + 1 : next;
         const upcoming = from && classes.find(({ slot }) => slot.from >= from);
         if (upcoming) {
             const p = upcoming.slot.from;
-            return `次は${p}限 ${WMP.formatHM(WMP.PERIODS[p][0])}から、${name(upcoming)}（${upcoming.slot.classroom || "教室未設定"}）`;
+            return WMP.t("次は{p}限 {time}から、{name}（{room}）", { p, time: WMP.formatHM(WMP.PERIODS[p][0]), name: name(upcoming), room: upcoming.slot.classroom || WMP.t("教室未設定") });
         }
-        return "今日の授業はすべて終わりました";
+        return WMP.t("今日の授業はすべて終わりました");
     }
 
     function renderDay() {
@@ -90,10 +90,10 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
             el(
                 "h2",
                 { class: "wmp-home-day-date" },
-                new Intl.DateTimeFormat("ja-JP", { month: "long", day: "numeric" }).format(now),
-                el("span", { class: "wmp-home-day-weekday" }, new Intl.DateTimeFormat("ja-JP", { weekday: "long" }).format(now))
+                WMP.dateTimeFormat({ month: "long", day: "numeric" }).format(now),
+                el("span", { class: "wmp-home-day-weekday" }, WMP.dateTimeFormat({ weekday: "long" }).format(now))
             ),
-            el("p", { class: "wmp-home-day-status" }, courses === null ? "読み込んでいます" : statusText(now, classes))
+            el("p", { class: "wmp-home-day-status" }, courses === null ? WMP.t("読み込んでいます") : statusText(now, classes))
         );
 
         // 時限ごとの列。複数の時限にまたがる授業は列をつなげる
@@ -106,7 +106,7 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
                 el(
                     "li",
                     { class: `wmp-home-period${state}`, style: { gridColumn: String(p) }, "aria-hidden": "true" },
-                    el("span", { class: "wmp-home-period-no" }, `${p}限`),
+                    el("span", { class: "wmp-home-period-no" }, WMP.t("{p}限", { p })),
                     times ? el("span", { class: "wmp-home-period-time" }, `${WMP.formatHM(times[0])}〜${WMP.formatHM(times[1])}`) : null
                 ),
                 el("li", { class: `wmp-home-slot${state}`, style: { gridColumn: String(p) }, "aria-hidden": "true" })
@@ -130,7 +130,7 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
                         el(
                             "span",
                             { class: "wmp-home-class-period" },
-                            `${slot.from === slot.to ? `${slot.from}限` : `${slot.from}〜${slot.to}限`} ${WMP.formatHM(WMP.PERIODS[slot.from][0])}〜${WMP.formatHM(WMP.PERIODS[slot.to][1])}`
+                            `${slot.from === slot.to ? WMP.t("{p}限", { p: slot.from }) : WMP.t("{from}〜{to}限", { from: slot.from, to: slot.to })} ${WMP.formatHM(WMP.PERIODS[slot.from][0])}〜${WMP.formatHM(WMP.PERIODS[slot.to][1])}`
                         ),
                         el("span", { class: "wmp-home-class-name" }, WMP.courseName(settings, course)),
                         el("span", { class: "wmp-home-class-room" }, slot.classroom || "")
@@ -149,15 +149,15 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
         const start = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
         const cols = [];
         const overdue = list.filter((e) => e.timesort * 1000 < now.getTime() && e.timesort * 1000 > now.getTime() - 7 * WMP.DAY);
-        if (overdue.length > 0) cols.push({ key: "overdue", label: "超過", sub: "", items: overdue, overdue: true });
+        if (overdue.length > 0) cols.push({ key: "overdue", label: WMP.t("超過"), sub: "", items: overdue, overdue: true });
         for (let i = 0; i < 7; i++) {
             const from = start + i * WMP.DAY;
             const to = from + WMP.DAY;
             const date = new Date(from);
             cols.push({
                 key: String(from),
-                label: i === 0 ? "今日" : i === 1 ? "明日" : `${date.getMonth() + 1}/${date.getDate()}`,
-                sub: new Intl.DateTimeFormat("ja-JP", { weekday: "short" }).format(date),
+                label: i === 0 ? WMP.t("今日") : i === 1 ? WMP.t("明日") : `${date.getMonth() + 1}/${date.getDate()}`,
+                sub: WMP.dateTimeFormat({ weekday: "short" }).format(date),
                 items: list.filter((e) => {
                     const t = e.timesort * 1000;
                     return t >= Math.max(from, now.getTime()) && t < to;
@@ -188,7 +188,7 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
                         class: `wmp-home-week-col${col.overdue ? " is-overdue" : ""}${col.today ? " is-today" : ""}${col.weekend ? " is-weekend" : ""}${openColumn === col.key ? " is-open" : ""}`,
                         disabled: col.items.length === 0,
                         "aria-expanded": col.items.length ? String(openColumn === col.key) : null,
-                        title: col.items.length ? `${col.label}の締切 ${col.items.length}件を表示` : `${col.label}の締切はありません`,
+                        title: col.items.length ? WMP.t("{day}の締切 {count}件を表示", { day: col.label, count: col.items.length }) : WMP.t("{day}の締切はありません", { day: col.label }),
                         onclick: () => {
                             openColumn = openColumn === col.key ? null : col.key;
                             renderWeek();
@@ -209,9 +209,9 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
                                     el("span", { class: "wmp-home-week-name" }, e.activityname ?? e.name)
                                 )
                             ),
-                        col.items.length > MAX_ITEMS ? el("span", { class: "wmp-home-week-more" }, `ほか${col.items.length - MAX_ITEMS}件`) : null
+                        col.items.length > MAX_ITEMS ? el("span", { class: "wmp-home-week-more" }, WMP.t("ほか{count}件", { count: col.items.length - MAX_ITEMS })) : null
                     ),
-                    el("span", { class: "wmp-home-week-count" }, col.items.length ? `${col.items.length}件` : "なし")
+                    el("span", { class: "wmp-home-week-count" }, col.items.length ? WMP.t("{count}件", { count: col.items.length }) : WMP.t("なし"))
                 )
             )
         );
@@ -221,8 +221,8 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
             el(
                 "header",
                 { class: "wmp-home-week-head" },
-                el("h2", {}, "締切"),
-                el("span", { class: "wmp-home-week-total" }, courses === null ? "" : total ? `これから7日間で${total}件` : "これから7日間はありません"),
+                el("h2", {}, WMP.t("締切")),
+                el("span", { class: "wmp-home-week-total" }, courses === null ? "" : total ? WMP.t("これから7日間で{count}件", { count: total }) : WMP.t("これから7日間はありません")),
                 el(
                     "button",
                     {
@@ -230,7 +230,7 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
                         class: "wmp-btn is-small",
                         onclick: () => document.querySelector(".wmp-dash-timeline")?.scrollIntoView({ behavior: "smooth", block: "start" }),
                     },
-                    "すべての締切"
+                    WMP.t("すべての締切")
                 )
             ),
             strip,
@@ -262,7 +262,7 @@ globalThis.WMP.initNewHome = async function initNewHome(initialSettings) {
         });
         const apply = (show) => {
             document.body.classList.toggle("wmp-hide-original", !show);
-            button.replaceChildren(icon(show ? "eyeOff" : "eye", { size: 16 }), show ? "Moodle の元のブロックを隠す" : "Moodle の元のブロックを表示");
+            button.replaceChildren(icon(show ? "eyeOff" : "eye", { size: 16 }), show ? WMP.t("Moodle の元のブロックを隠す") : WMP.t("Moodle の元のブロックを表示"));
             button.setAttribute("aria-expanded", String(show));
         };
         region.append(el("div", { class: "wmp-scope wmp-home-original" }, button));

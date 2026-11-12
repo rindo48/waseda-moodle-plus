@@ -54,6 +54,8 @@
             ],
             "js": [
                 "lib/defaults.js",
+                "lib/i18n.js",
+                "lib/i18n-en.js",
                 "lib/util.js",
                 "lib/timeline-view.js",
                 "content/features.js",
@@ -79,6 +81,8 @@
             ],
             "js": [
                 "lib/defaults.js",
+                "lib/i18n.js",
+                "lib/i18n-en.js",
                 "lib/util.js",
                 "lib/syllabus-info.js",
                 "content/syllabus-page.js"
@@ -94,6 +98,8 @@
             ],
             "js": [
                 "lib/defaults.js",
+                "lib/i18n.js",
+                "lib/i18n-en.js",
                 "content/video-url.js"
             ],
             "all_frames": true,
@@ -105,6 +111,8 @@
             ],
             "js": [
                 "lib/defaults.js",
+                "lib/i18n.js",
+                "lib/i18n-en.js",
                 "content/login-checkbox.js"
             ],
             "run_at": "document_end"

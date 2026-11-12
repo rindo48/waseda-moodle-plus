@@ -3,6 +3,7 @@
     const WMP = globalThis.WMP;
     const { el } = WMP;
     WMP.applyUiTheme(await WMP.getSettings());
+    WMP.translateDom();
 
     // 失敗してログインページに戻され続けるのを防ぐ（1分以内に3回目なら止める）
     const ATTEMPTS_KEY = "wmpAutoLoginAttempts";
@@ -13,19 +14,19 @@
 
     const showManual = (reason) => {
         document.getElementById("card").replaceChildren(
-            el("h1", {}, "自動ログインできませんでした"),
+            el("h1", {}, WMP.t("自動ログインできませんでした")),
             el("p", {}, reason),
             el(
                 "div",
                 { class: "row" },
-                el("a", { class: "wmp-btn is-primary", href: WMP.SAML_LOGIN_URL }, "手動でログイン"),
-                el("button", { class: "wmp-btn", onclick: () => chrome.runtime.openOptionsPage() }, "設定を開く")
+                el("a", { class: "wmp-btn is-primary", href: WMP.SAML_LOGIN_URL }, WMP.t("手動でログイン")),
+                el("button", { class: "wmp-btn", onclick: () => chrome.runtime.openOptionsPage() }, WMP.t("設定を開く"))
             )
         );
     };
 
     if (attempts.length >= 3) {
-        showManual("短時間に何度もログインし直しているため、自動ログインを止めました。ID・パスワードが正しいか確認してください。");
+        showManual(WMP.t("短時間に何度もログインし直しているため、自動ログインを止めました。ID・パスワードが正しいか確認してください。"));
         return;
     }
 

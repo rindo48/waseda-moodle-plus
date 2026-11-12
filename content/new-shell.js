@@ -139,7 +139,7 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
 
     const deadlineCount = el("span", { class: "wmp-rail-count", hidden: true });
     const deadlineButton = railItem({
-        label: "締切",
+        label: WMP.t("締切"),
         icon: "deadline",
         onclick: () => togglePanel(),
         extra: deadlineCount,
@@ -148,7 +148,7 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     deadlineButton.setAttribute("aria-controls", "wmp-rail-panel");
 
     const courseList = el("ul", { class: "wmp-rail-courses" });
-    const courseHeading = el("div", { class: "wmp-rail-heading" }, "今学期の科目");
+    const courseHeading = el("div", { class: "wmp-rail-heading" }, WMP.t("今学期の科目"));
 
     const collapseButton = el("button", {
         type: "button",
@@ -158,13 +158,13 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
 
     const rail = el(
         "aside",
-        { class: "wmp-scope wmp-rail", id: "wmp-rail", "aria-label": "メニュー" },
-        el("nav", { class: "wmp-rail-nav", "aria-label": "ページ" }, navItems.map((item) => railItem(item)), deadlineButton),
+        { class: "wmp-scope wmp-rail", id: "wmp-rail", "aria-label": WMP.t("メニュー") },
+        el("nav", { class: "wmp-rail-nav", "aria-label": WMP.t("ページ") }, navItems.map((item) => railItem(item)), deadlineButton),
         el("div", { class: "wmp-rail-section" }, courseHeading, courseList),
         el(
             "div",
             { class: "wmp-rail-foot" },
-            railItem({ label: "拡張機能の設定", icon: "settings", onclick: () => WMP.send("openOptions").catch(() => {}) }),
+            railItem({ label: WMP.t("拡張機能の設定"), icon: "settings", onclick: () => WMP.send("openOptions").catch(() => {}) }),
             collapseButton
         )
     );
@@ -174,9 +174,9 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
         localStorage.setItem("wmpRailCollapsed", collapsed ? "1" : "");
         collapseButton.replaceChildren(
             icon(collapsed ? "expand" : "collapse", { size: 20 }),
-            el("span", { class: "wmp-rail-label" }, collapsed ? "広げる" : "たたむ")
+            el("span", { class: "wmp-rail-label" }, collapsed ? WMP.t("広げる") : WMP.t("たたむ"))
         );
-        collapseButton.title = collapsed ? "メニューを広げる" : "メニューをたたむ";
+        collapseButton.title = collapsed ? WMP.t("メニューを広げる") : WMP.t("メニューをたたむ");
         collapseButton.setAttribute("aria-expanded", String(!collapsed));
     }
 
@@ -201,7 +201,7 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
                         {
                             class: `wmp-rail-course${active ? " is-active" : ""}`,
                             href: c.url,
-                            title: count > 0 ? `${name}（締切前の課題など ${count}件）` : name,
+                            title: count > 0 ? WMP.t("{name}（締切前の課題など {count}件）", { name, count }) : name,
                             "aria-current": active ? "page" : null,
                         },
                         courseMark(c),
@@ -226,7 +226,7 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
         const soon = pendingEvents().filter((e) => e.timesort * 1000 < now + settings.badgeDeadlineRangeDays * WMP.DAY).length;
         deadlineCount.hidden = soon === 0;
         deadlineCount.textContent = String(soon);
-        deadlineCount.title = `${settings.badgeDeadlineRangeDays}日以内の締切 ${soon}件`;
+        deadlineCount.title = WMP.t("{days}日以内の締切 {count}件", { days: settings.badgeDeadlineRangeDays, count: soon });
     }
 
     // ===== 締切の引き出し =====
@@ -234,17 +234,17 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     const panelBody = el("div", { class: "wmp-rail-panel-body" });
     const panel = el(
         "section",
-        { class: "wmp-scope wmp-rail-panel", id: "wmp-rail-panel", hidden: true, "aria-label": "締切" },
+        { class: "wmp-scope wmp-rail-panel", id: "wmp-rail-panel", hidden: true, "aria-label": WMP.t("締切") },
         el(
             "header",
             { class: "wmp-rail-panel-header" },
-            el("h2", {}, "締切"),
+            el("h2", {}, WMP.t("締切")),
             el(
                 "button",
-                { type: "button", class: "wmp-icon-btn", title: "最新の情報に更新", "aria-label": "更新", onclick: () => refresh() },
+                { type: "button", class: "wmp-icon-btn", title: WMP.t("最新の情報に更新"), "aria-label": WMP.t("更新"), onclick: () => refresh() },
                 icon("refresh")
             ),
-            el("button", { type: "button", class: "wmp-icon-btn", title: "閉じる", "aria-label": "閉じる", onclick: () => togglePanel(false) }, icon("close"))
+            el("button", { type: "button", class: "wmp-icon-btn", title: WMP.t("閉じる"), "aria-label": WMP.t("閉じる"), onclick: () => togglePanel(false) }, icon("close"))
         ),
         panelBody
     );
@@ -285,15 +285,15 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     // ===== まとめて探す（Ctrl+K） =====
 
     const LINKS = [
-        { label: "成績（Moodle）", href: "/grade/report/overview/index.php", icon: "grades" },
-        { label: "プロフィール", href: "/user/profile.php", icon: "user" },
-        { label: "メッセージ", href: "/message/index.php", icon: "mail" },
+        { label: WMP.t("成績（Moodle）"), href: "/grade/report/overview/index.php", icon: "grades" },
+        { label: WMP.t("プロフィール"), href: "/user/profile.php", icon: "user" },
+        { label: WMP.t("メッセージ"), href: "/message/index.php", icon: "mail" },
         { label: "MyWaseda", launch: "my_waseda", icon: "external" },
-        { label: "成績照会", launch: "grade_inquiry", icon: "external" },
-        { label: "科目登録", launch: "course_registration", icon: "external" },
-        { label: "Waseda メール", launch: "waseda_email", icon: "external" },
-        { label: "シラバス検索", href: "https://www.wsl.waseda.jp/syllabus/JAA101.php", icon: "external", newTab: true },
-        { label: "拡張機能の設定", action: () => WMP.send("openOptions"), icon: "settings" },
+        { label: WMP.t("成績照会"), launch: "grade_inquiry", icon: "external" },
+        { label: WMP.t("科目登録"), launch: "course_registration", icon: "external" },
+        { label: WMP.t("Waseda メール"), launch: "waseda_email", icon: "external" },
+        { label: WMP.t("シラバス検索"), href: "https://www.wsl.waseda.jp/syllabus/JAA101.php", icon: "external", newTab: true },
+        { label: WMP.t("拡張機能の設定"), action: () => WMP.send("openOptions"), icon: "settings" },
     ];
 
     const normalize = (s) => String(s ?? "").normalize("NFKC").toLowerCase();
@@ -301,8 +301,8 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     const paletteInput = el("input", {
         class: "wmp-palette-input",
         type: "search",
-        placeholder: "科目・締切・ページを探す",
-        "aria-label": "科目・締切・ページを探す",
+        placeholder: WMP.t("科目・締切・ページを探す"),
+        "aria-label": WMP.t("科目・締切・ページを探す"),
         autocomplete: "off",
         spellcheck: false,
         role: "combobox",
@@ -312,10 +312,10 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     const paletteList = el("div", { class: "wmp-palette-list", id: "wmp-palette-list", role: "listbox" });
     const palette = el(
         "dialog",
-        { class: "wmp-scope wmp-palette", "aria-label": "まとめて探す" },
+        { class: "wmp-scope wmp-palette", "aria-label": WMP.t("まとめて探す") },
         el("div", { class: "wmp-palette-field" }, icon("search", { size: 20 }), paletteInput),
         paletteList,
-        el("div", { class: "wmp-palette-help" }, "上下キーで選択、Enter で開く。Ctrl を押しながら Enter で新しいタブに開く。Esc で閉じる。")
+        el("div", { class: "wmp-palette-help" }, WMP.t("上下キーで選択、Enter で開く。Ctrl を押しながら Enter で新しいタブに開く。Esc で閉じる。"))
     );
     let paletteItems = [];
     let selected = 0;
@@ -329,18 +329,18 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
             ...navItems.map((n) => ({ label: n.label, href: n.href, icon: n.icon })),
             ...LINKS,
         ].filter((x) => match(x.label));
-        if (pages.length) groups.push({ title: "ページ", items: q ? pages : pages.slice(0, navItems.length + 2) });
+        if (pages.length) groups.push({ title: WMP.t("ページ"), items: q ? pages : pages.slice(0, navItems.length + 2) });
 
         const allCourses = courses ?? [];
         const courseItems = (q ? allCourses.filter((c) => match(WMP.courseName(settings, c), c.name)) : termCourses())
             .slice(0, q ? 12 : 8)
             .map((c) => ({
                 label: WMP.courseName(settings, c),
-                sub: c.year ? `${c.year}年度` : "",
+                sub: c.year ? WMP.t("{year}年度", { year: c.year }) : "",
                 href: c.url,
                 mark: c,
             }));
-        if (courseItems.length) groups.push({ title: q ? "科目" : "今学期の科目", items: courseItems });
+        if (courseItems.length) groups.push({ title: q ? WMP.t("科目") : WMP.t("今学期の科目"), items: courseItems });
 
         const now = Date.now();
         const deadlineItems = [...pendingEvents()]
@@ -358,7 +358,7 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
                     urgent: due - now < WMP.DAY,
                 };
             });
-        if (deadlineItems.length) groups.push({ title: "締切", items: deadlineItems });
+        if (deadlineItems.length) groups.push({ title: WMP.t("締切"), items: deadlineItems });
         return groups;
     }
 
@@ -369,7 +369,7 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
         let index = 0;
         paletteList.replaceChildren(
             ...(groups.length === 0
-                ? [el("div", { class: "wmp-palette-empty" }, "見つかりませんでした")]
+                ? [el("div", { class: "wmp-palette-empty" }, WMP.t("見つかりませんでした"))]
                 : groups.map((g) =>
                       el(
                           "div",
@@ -452,9 +452,9 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
 
     const trigger = el(
         "button",
-        { type: "button", class: "wmp-search-trigger", title: "科目・締切・ページを探す（Ctrl+K）", onclick: openPalette },
+        { type: "button", class: "wmp-search-trigger", title: WMP.t("科目・締切・ページを探す（Ctrl+K）"), onclick: openPalette },
         icon("search", { size: 18 }),
-        el("span", { class: "wmp-search-trigger-text" }, "科目・締切・ページを探す"),
+        el("span", { class: "wmp-search-trigger-text" }, WMP.t("科目・締切・ページを探す")),
         el("kbd", { class: "wmp-search-trigger-key" }, "Ctrl K")
     );
 
@@ -483,14 +483,14 @@ globalThis.WMP.initNewShell = function initNewShell(initialSettings) {
     const backdrop = el("div", { class: "wmp-rail-backdrop", onclick: () => setDrawer(false) });
     const drawerButton = el(
         "button",
-        { type: "button", class: "wmp-scope wmp-rail-toggle", title: "メニューを開く", "aria-label": "メニューを開く", "aria-controls": "wmp-rail", "aria-expanded": "false", onclick: () => setDrawer(!root.classList.contains("wmp-rail-drawer-open")) },
+        { type: "button", class: "wmp-scope wmp-rail-toggle", title: WMP.t("メニューを開く"), "aria-label": WMP.t("メニューを開く"), "aria-controls": "wmp-rail", "aria-expanded": "false", onclick: () => setDrawer(!root.classList.contains("wmp-rail-drawer-open")) },
         icon("list", { size: 22 })
     );
     function setDrawer(open) {
         open = open && narrow.matches;
         root.classList.toggle("wmp-rail-drawer-open", open);
         drawerButton.setAttribute("aria-expanded", String(open));
-        drawerButton.title = open ? "メニューを閉じる" : "メニューを開く";
+        drawerButton.title = open ? WMP.t("メニューを閉じる") : WMP.t("メニューを開く");
         if (open) rail.querySelector("a, button")?.focus({ preventScroll: true });
     }
     // 画面を広げたら引き出しは閉じる（広い画面ではいつも出ているので）

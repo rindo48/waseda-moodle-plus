@@ -27,8 +27,8 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
     const backBar = el(
         "div",
         { class: "wmp-scope wmp-back-bar", hidden: true },
-        el("span", {}, "Moodle の元の表示です。"),
-        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(false) }, "新デザインのカレンダーに戻す")
+        el("span", {}, WMP.t("Moodle の元の表示です。")),
+        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(false) }, WMP.t("新デザインのカレンダーに戻す"))
     );
     root.insertAdjacentElement("beforebegin", backBar);
     function showOriginal(show, { remember = true } = {}) {
@@ -68,12 +68,12 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
         el(
             "header",
             { class: "wmp-cal-head" },
-            el("button", { type: "button", class: "wmp-icon-btn", title: "前の月", "aria-label": "前の月", onclick: () => move(-1) }, icon("chevronLeft")),
+            el("button", { type: "button", class: "wmp-icon-btn", title: WMP.t("前の月"), "aria-label": WMP.t("前の月"), onclick: () => move(-1) }, icon("chevronLeft")),
             title,
-            el("button", { type: "button", class: "wmp-icon-btn", title: "次の月", "aria-label": "次の月", onclick: () => move(1) }, icon("chevronRight")),
-            el("button", { type: "button", class: "wmp-btn is-small", onclick: () => goToday() }, "今日"),
+            el("button", { type: "button", class: "wmp-icon-btn", title: WMP.t("次の月"), "aria-label": WMP.t("次の月"), onclick: () => move(1) }, icon("chevronRight")),
+            el("button", { type: "button", class: "wmp-btn is-small", onclick: () => goToday() }, WMP.t("今日")),
             el("span", { class: "wmp-cal-spacer" }),
-            el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(true) }, "Moodle の表示")
+            el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(true) }, WMP.t("Moodle の表示"))
         ),
         el("div", { class: "wmp-cal-layout" }, grid, agenda)
     );
@@ -84,7 +84,7 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
     async function load() {
         const key = `${year}-${month}`;
         const id = ++requestId;
-        title.textContent = `${year}年${month}月`;
+        title.textContent = WMP.dateTimeFormat({ year: "numeric", month: "long" }).format(new Date(year, month - 1, 1));
         error = null;
         if (cache.has(key)) {
             data = cache.get(key);
@@ -186,8 +186,8 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
                 el(
                     "div",
                     { class: "wmp-error" },
-                    `カレンダーを読み込めませんでした（${error}）。`,
-                    el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(true, { remember: false }) }, "Moodle の表示で見る")
+                    WMP.t("カレンダーを読み込めませんでした（{error}）。", { error }),
+                    el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(true, { remember: false }) }, WMP.t("Moodle の表示で見る"))
                 )
             );
             return;
@@ -227,14 +227,14 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
                             {
                                 type: "button",
                                 class: "wmp-cal-date",
-                                "aria-label": `${month}月${d.mday}日${d.events.length ? `、予定${d.events.length}件` : ""}`,
+                                "aria-label": WMP.dateTimeFormat({ month: "long", day: "numeric" }).format(new Date(year, month - 1, d.mday)) + (d.events.length ? WMP.t("、予定{count}件", { count: d.events.length }) : ""),
                                 onclick: () => {
                                     selectedKey = key;
                                     render();
                                 },
                             },
                             String(d.mday),
-                            hasClasses ? el("span", { class: "wmp-cal-class-mark", title: "授業がある日" }) : null
+                            hasClasses ? el("span", { class: "wmp-cal-class-mark", title: WMP.t("授業がある日") }) : null
                         ),
                         el(
                             "ul",
@@ -251,7 +251,7 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
                                     )
                                 )
                             ),
-                            d.events.length > MAX ? el("li", { class: "wmp-cal-more" }, `ほか${d.events.length - MAX}件`) : null
+                            d.events.length > MAX ? el("li", { class: "wmp-cal-more" }, WMP.t("ほか{count}件", { count: d.events.length - MAX })) : null
                         )
                     );
                 }),
@@ -275,10 +275,10 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
             el(
                 "h3",
                 { class: "wmp-cal-agenda-date" },
-                `${m}月${d}日`,
-                el("span", {}, new Intl.DateTimeFormat("ja-JP", { weekday: "long" }).format(date))
+                WMP.dateTimeFormat({ month: "long", day: "numeric" }).format(date),
+                el("span", {}, WMP.dateTimeFormat({ weekday: "long" }).format(date))
             ),
-            el("h4", { class: "wmp-cal-agenda-heading" }, "授業"),
+            el("h4", { class: "wmp-cal-agenda-heading" }, WMP.t("授業")),
             classes.length
                 ? el(
                       "ul",
@@ -287,7 +287,7 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
                           el(
                               "li",
                               { style: { "--wmp-course-color": WMP.courseColor(settings, c.id) } },
-                              el("span", { class: "wmp-cal-agenda-time" }, slot.from === slot.to ? `${slot.from}限` : `${slot.from}〜${slot.to}限`),
+                              el("span", { class: "wmp-cal-agenda-time" }, slot.from === slot.to ? WMP.t("{p}限", { p: slot.from }) : WMP.t("{from}〜{to}限", { from: slot.from, to: slot.to })),
                               el(
                                   "a",
                                   { href: c.url, class: "wmp-cal-agenda-name" },
@@ -298,8 +298,8 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
                           )
                       )
                   )
-                : el("p", { class: "wmp-muted wmp-cal-agenda-none" }, "時間割に登録した授業はありません"),
-            el("h4", { class: "wmp-cal-agenda-heading" }, "予定"),
+                : el("p", { class: "wmp-muted wmp-cal-agenda-none" }, WMP.t("時間割に登録した授業はありません")),
+            el("h4", { class: "wmp-cal-agenda-heading" }, WMP.t("予定")),
             events.length
                 ? el(
                       "ul",
@@ -314,11 +314,11 @@ globalThis.WMP.initNewCalendar = async function initNewCalendar(initialSettings)
                           )
                       )
                   )
-                : el("p", { class: "wmp-muted wmp-cal-agenda-none" }, loading ? "読み込んでいます" : "予定はありません"),
+                : el("p", { class: "wmp-muted wmp-cal-agenda-none" }, loading ? WMP.t("読み込んでいます") : WMP.t("予定はありません")),
             el(
                 "a",
                 { class: "wmp-btn is-small wmp-cal-day-link", href: `/calendar/view.php?view=day&time=${Math.floor(date.getTime() / 1000)}` },
-                "Moodle でこの日を開く"
+                WMP.t("Moodle でこの日を開く")
             )
         );
     }

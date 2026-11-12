@@ -37,19 +37,19 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
     const backBar = el(
         "div",
         { class: "wmp-scope wmp-back-bar", hidden: true },
-        el("span", {}, "Moodle の元の表示です。"),
-        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(false) }, "新デザインの一覧に戻す")
+        el("span", {}, WMP.t("Moodle の元の表示です。")),
+        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(false) }, WMP.t("新デザインの一覧に戻す"))
     );
     root.insertAdjacentElement("beforebegin", backBar);
 
     // ===== 部品 =====
 
-    const tabs = el("div", { class: "wmp-tabs", role: "tablist", "aria-label": "表示" });
+    const tabs = el("div", { class: "wmp-tabs", role: "tablist", "aria-label": WMP.t("表示") });
     const searchInput = el("input", {
         class: "wmp-input wmp-courses-search",
         type: "search",
-        placeholder: "科目名で絞り込み",
-        "aria-label": "科目名で絞り込み",
+        placeholder: WMP.t("科目名で絞り込み"),
+        "aria-label": WMP.t("科目名で絞り込み"),
         oninput: (e) => {
             query = e.target.value;
             renderBody();
@@ -63,7 +63,7 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
             { class: "wmp-courses-head" },
             tabs,
             searchInput,
-            el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(true) }, "Moodle の表示")
+            el("button", { type: "button", class: "wmp-btn is-small", onclick: () => showOriginal(true) }, WMP.t("Moodle の表示"))
         ),
         body
     );
@@ -87,7 +87,7 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
                 label
             );
         const year = WMP.getSchoolYear();
-        tabs.replaceChildren(tab("term", `今学期（${year}年度 ${WMP.TERMS[WMP.guessQuarter()]}）`), tab("all", "すべての年度"));
+        tabs.replaceChildren(tab("term", WMP.t("今学期（{year}年度 {term}）", { year, term: WMP.TERMS[WMP.guessQuarter()] })), tab("all", WMP.t("すべての年度")));
     }
 
     // ===== データ =====
@@ -128,8 +128,8 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
         const syllabusKey = settings.courseSyllabusKeys[c.id];
         const periodText = slot
             ? slot.day === "on_demand"
-                ? "オンデマンド"
-                : `${withDay ? WMP.DAY_LABELS[slot.day] : ""}${slot.from === slot.to ? `${slot.from}限` : `${slot.from}〜${slot.to}限`}`
+                ? WMP.t("オンデマンド")
+                : WMP.t(slot.from === slot.to ? "{day}{p}限" : "{day}{from}〜{to}限", { day: withDay ? WMP.DAY_LABELS[slot.day] : "", p: slot.from, from: slot.from, to: slot.to }).trim()
             : "";
         return el(
             "tr",
@@ -147,7 +147,7 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
                 name !== c.name ? el("span", { class: "wmp-courses-original" }, c.name) : null
             ),
             el("td", { class: "wmp-courses-room" }, slot?.classroom || ""),
-            el("td", { class: "wmp-courses-delivery" }, DELIVERY[settings.courseDeliveryMethods[c.id]] ?? ""),
+            el("td", { class: "wmp-courses-delivery" }, WMP.t(DELIVERY[settings.courseDeliveryMethods[c.id]] ?? "")),
             el(
                 "td",
                 { class: "wmp-courses-due" },
@@ -156,9 +156,9 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
                           "a",
                           { href: next.url, title: next.activityname ?? next.name, class: next.timesort * 1000 - Date.now() < WMP.DAY ? "is-urgent" : "" },
                           `${WMP.formatRemaining(next.timesort * 1000 - Date.now())}　${next.activityname ?? next.name}`,
-                          pending.length > 1 ? el("span", { class: "wmp-courses-due-more" }, `ほか${pending.length - 1}件`) : null
+                          pending.length > 1 ? el("span", { class: "wmp-courses-due-more" }, WMP.t("ほか{count}件", { count: pending.length - 1 })) : null
                       )
-                    : el("span", { class: "wmp-muted" }, "なし")
+                    : el("span", { class: "wmp-muted" }, WMP.t("なし"))
             ),
             el(
                 "td",
@@ -166,8 +166,8 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
                 syllabusKey
                     ? el(
                           "a",
-                          { href: `https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${syllabusKey}`, target: "_blank", rel: "noopener", title: "シラバスを開く" },
-                          "シラバス"
+                          { href: `https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${syllabusKey}`, target: "_blank", rel: "noopener", title: WMP.t("シラバスを開く") },
+                          WMP.t("シラバス")
                       )
                     : null
             )
@@ -184,12 +184,12 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
                 el(
                     "tr",
                     {},
-                    el("th", { scope: "col" }, "時限"),
-                    el("th", { scope: "col" }, "科目"),
-                    el("th", { scope: "col" }, "教室"),
-                    el("th", { scope: "col" }, "形式"),
-                    el("th", { scope: "col" }, "次の締切"),
-                    el("th", { scope: "col" }, el("span", { class: "wmp-visually-hidden" }, "リンク"))
+                    el("th", { scope: "col" }, WMP.t("時限")),
+                    el("th", { scope: "col" }, WMP.t("科目")),
+                    el("th", { scope: "col" }, WMP.t("教室")),
+                    el("th", { scope: "col" }, WMP.t("形式")),
+                    el("th", { scope: "col" }, WMP.t("次の締切")),
+                    el("th", { scope: "col" }, el("span", { class: "wmp-visually-hidden" }, WMP.t("リンク")))
                 )
             ),
             rowsOrGroups
@@ -228,24 +228,24 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
         const groups = [
             ...DAYS.map((d) =>
                 groupBody(
-                    `${WMP.DAY_LABELS[d]}曜日`,
+                    WMP.t("{day}曜日", { day: WMP.DAY_LABELS[d] }),
                     byDay[d].sort((a, b) => a.slot.from - b.slot.from).map(({ c, slot }) => courseRow(c, { slot })),
-                    { sub: d === todayKey ? "今日" : "" }
+                    { sub: d === todayKey ? WMP.t("今日") : "" }
                 )
             ),
             groupBody(
-                "オンデマンド",
+                WMP.t("オンデマンド"),
                 byDay.on_demand.map(({ c, slot }) => courseRow(c, { slot }))
             ),
             groupBody(
-                "曜日・時限が未設定",
+                WMP.t("曜日・時限が未設定"),
                 unscheduled.map((c) => courseRow(c)),
-                { sub: "ダッシュボードの時間割で「シラバスから取得」を押すと設定されます" }
+                { sub: WMP.t("ダッシュボードの時間割で「シラバスから取得」を押すと設定されます") }
             ),
         ].filter(Boolean);
 
         if (groups.length === 0) {
-            return el("div", { class: "wmp-empty" }, query ? "一致する科目はありません" : "今学期の科目が見つかりません。「すべての年度」で探せます。");
+            return el("div", { class: "wmp-empty" }, query ? WMP.t("一致する科目はありません") : WMP.t("今学期の科目が見つかりません。「すべての年度」で探せます。"));
         }
         return table(groups);
     }
@@ -260,11 +260,11 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
             byYear.get(key).push(c);
         }
         const years = [...byYear.keys()].sort((a, b) => b - a);
-        if (years.length === 0) return el("div", { class: "wmp-empty" }, "一致する科目はありません");
+        if (years.length === 0) return el("div", { class: "wmp-empty" }, WMP.t("一致する科目はありません"));
         return table(
             years.map((y) =>
                 groupBody(
-                    y ? `${y}年度` : "年度不明",
+                    y ? WMP.t("{year}年度", { year: y }) : WMP.t("年度不明"),
                     byYear
                         .get(y)
                         .sort((a, b) => WMP.courseName(settings, a).localeCompare(WMP.courseName(settings, b), "ja"))
@@ -272,7 +272,7 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
                             const slot = (settings.timetable[c.id] ?? []).find((s) => s.year === y);
                             return courseRow(c, { slot, withDay: true });
                         }),
-                    { sub: `${byYear.get(y).length}科目` }
+                    { sub: WMP.t("{count}科目", { count: byYear.get(y).length }) }
                 )
             )
         );
@@ -286,7 +286,7 @@ globalThis.WMP.initNewMyCourses = async function initNewMyCourses(initialSetting
         // replaceChildren は null を「null」という文字にしてしまうので、無いものは除く
         body.replaceChildren(
             ...[
-                error ? el("div", { class: "wmp-error" }, `科目一覧を最新にできませんでした（${error}）。前回の内容を表示しています。`) : null,
+                error ? el("div", { class: "wmp-error" }, WMP.t("科目一覧を最新にできませんでした（{error}）。前回の内容を表示しています。", { error })) : null,
                 view === "all" ? renderAll() : renderTerm(),
             ].filter(Boolean)
         );

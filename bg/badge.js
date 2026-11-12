@@ -2,7 +2,8 @@
 
 import { getTimeline } from "./moodle.js";
 
-const { getSettings, DAY } = globalThis.WMP;
+const WMP = globalThis.WMP;
+const { getSettings, DAY } = WMP;
 
 export const BADGE_ALARM = "badge-update";
 const NOTIFIED_KEY = "notifiedEventIds";
@@ -30,7 +31,7 @@ export async function updateBadge({ force = false } = {}) {
         await chrome.action.setBadgeBackgroundColor({ color: count > 0 ? "#e5484d" : "#6b7280" });
         await chrome.action.setBadgeTextColor({ color: "#ffffff" });
         await chrome.action.setTitle({
-            title: count > 0 ? `Waseda Moodle Plus — ${settings.badgeDeadlineRangeDays}日以内の締切: ${count}件` : "Waseda Moodle Plus",
+            title: count > 0 ? `Waseda Moodle Plus — ${WMP.t("{days}日以内の締切: {count}件", { days: settings.badgeDeadlineRangeDays, count })}` : "Waseda Moodle Plus",
         });
 
         await notifyUpcoming(settings, events);
@@ -53,11 +54,11 @@ async function notifyUpcoming(settings, events) {
     );
     for (const e of targets) {
         const minutes = Math.round((e.timesort * 1000 - now) / (60 * 1000));
-        const remaining = minutes < 60 ? `${Math.max(minutes, 1)}分` : `${Math.round(minutes / 60)}時間`;
+        const remaining = minutes < 60 ? WMP.t("{m}分", { m: Math.max(minutes, 1) }) : WMP.t("{h}時間", { h: Math.round(minutes / 60) });
         chrome.notifications.create(`event-${e.id}`, {
             type: "basic",
             iconUrl: chrome.runtime.getURL("icons/icon-128.png"),
-            title: `締切まであと約${remaining}`,
+            title: WMP.t("締切まであと約{remaining}", { remaining }),
             message: `${e.activityname ?? e.name}\n${e.course?.fullname ?? ""}`,
             priority: 1,
         });

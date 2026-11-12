@@ -39,7 +39,7 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
 
     const sections = sectionNodes.map((node, i) => {
         const number = node.dataset.number ?? node.id.match(/^section-(\d+)$/)?.[1] ?? String(i);
-        const title = titleOf(node) || (number === "0" ? "全般" : `セクション ${number}`);
+        const title = titleOf(node) || (number === "0" ? WMP.t("全般") : WMP.t("セクション {n}", { n: number }));
         const nth = title.match(/第\s*([0-9０-９]+)\s*回/);
         // 目次の左に出す短い番号。「第10回 …」なら 10、無ければ Moodle のセクション番号
         // 0番（全般・お知らせなど）は番号を付けず、名前だけ出す
@@ -51,14 +51,14 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
     // ===== 活動の種類 =====
 
     const GROUPS = [
-        { id: "new", label: "新着", test: (a) => a.isNew },
+        { id: "new", label: WMP.t("新着"), test: (a) => a.isNew },
         // 動画は種類名がいろいろ（millvi・外部ツール・URL など）なので、種類名・活動名・アイコン・リンク先で判定し、資料などより先に見る
-        { id: "video", label: "動画", test: (a) => isVideo(a) },
-        { id: "material", label: "資料", test: (a) => ["resource", "folder", "url", "page", "book", "imscp"].includes(a.type) },
-        { id: "assign", label: "課題", test: (a) => ["assign", "workshop"].includes(a.type) },
-        { id: "quiz", label: "小テスト", test: (a) => a.type === "quiz" },
-        { id: "forum", label: "フォーラム", test: (a) => ["forum", "hsuforum"].includes(a.type) },
-        { id: "other", label: "その他", test: (a) => a.type !== "label" },
+        { id: "video", label: WMP.t("動画"), test: (a) => isVideo(a) },
+        { id: "material", label: WMP.t("資料"), test: (a) => ["resource", "folder", "url", "page", "book", "imscp"].includes(a.type) },
+        { id: "assign", label: WMP.t("課題"), test: (a) => ["assign", "workshop"].includes(a.type) },
+        { id: "quiz", label: WMP.t("小テスト"), test: (a) => a.type === "quiz" },
+        { id: "forum", label: WMP.t("フォーラム"), test: (a) => ["forum", "hsuforum"].includes(a.type) },
+        { id: "other", label: WMP.t("その他"), test: (a) => a.type !== "label" },
     ];
     const VIDEO_TYPE = /millvi|video|movie|kaltura|panopto|stream|vimeo|youtube|mediasite|echo360/i;
     const VIDEO_NAME = /動画|ビデオ|映像|オンデマンド|録画|講義収録|video|movie|lecture recording/i;
@@ -109,7 +109,7 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
     for (const a of activities) {
         if (!a.isNew) continue;
         a.node.classList.add("wmp-activity-new");
-        const tag = el("span", { class: "wmp-scope wmp-new-tag" }, "新着");
+        const tag = el("span", { class: "wmp-scope wmp-new-tag" }, WMP.t("新着"));
         const name = a.node.querySelector(".activityname, .instancename");
         if (name) name.insertAdjacentElement("afterend", tag);
         else a.node.prepend(tag);
@@ -172,8 +172,8 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
         localStorage.setItem(LAYOUT_KEY, paged ? "paged" : "all");
         content.classList.toggle("wmp-paged", paged);
         applyOpen();
-        layoutToggle.replaceChildren(icon(paged ? "list" : "page", { size: 16 }), paged ? "全部を並べる" : "1回ずつ表示");
-        layoutToggle.title = paged ? "全部の回を縦に並べて表示します" : "選んだ回だけを表示します";
+        layoutToggle.replaceChildren(icon(paged ? "list" : "page", { size: 16 }), paged ? WMP.t("全部を並べる") : WMP.t("1回ずつ表示"));
+        layoutToggle.title = paged ? WMP.t("全部の回を縦に並べて表示します") : WMP.t("選んだ回だけを表示します");
         openAllBar.hidden = paged;
         renderPager();
         if (paged && shown) show(shown, { scroll: true });
@@ -233,14 +233,14 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
     const openAllBar = el(
         "div",
         { class: "wmp-course-index-bulk", hidden: true },
-        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => setAllOpen(true) }, icon("chevronDown", { size: 14 }), "すべて展開する"),
-        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => setAllOpen(false) }, icon("chevronRight", { size: 14 }), "すべて折りたたむ")
+        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => setAllOpen(true) }, icon("chevronDown", { size: 14 }), WMP.t("すべて展開する")),
+        el("button", { type: "button", class: "wmp-btn is-small", onclick: () => setAllOpen(false) }, icon("chevronRight", { size: 14 }), WMP.t("すべて折りたたむ"))
     );
     const layoutToggle = el("button", { type: "button", class: "wmp-btn is-small", onclick: () => setPaged(!paged) });
     const index = el(
         "nav",
-        { class: "wmp-scope wmp-course-index", "aria-label": "この科目の回" },
-        el("div", { class: "wmp-course-index-head" }, el("h2", {}, "目次"), layoutToggle),
+        { class: "wmp-scope wmp-course-index", "aria-label": WMP.t("この科目の回") },
+        el("div", { class: "wmp-course-index-head" }, el("h2", {}, WMP.t("目次")), layoutToggle),
         openAllBar,
         indexList
     );
@@ -319,11 +319,11 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
                         },
                         el("span", { class: "wmp-course-index-no" }, s.label),
                         el("span", { class: "wmp-course-index-title" }, s.number === "0" ? s.title : s.rest),
-                        s.current ? el("span", { class: "wmp-course-index-tag is-current" }, "今週") : null,
+                        s.current ? el("span", { class: "wmp-course-index-tag is-current" }, WMP.t("今週")) : null,
                         matches > 0
-                            ? el("span", { class: "wmp-course-index-tag is-match" }, `${matches}件`)
+                            ? el("span", { class: "wmp-course-index-tag is-match" }, WMP.t("{count}件", { count: matches }))
                             : fresh > 0
-                              ? el("span", { class: "wmp-course-index-tag is-new" }, `新着${fresh}`)
+                              ? el("span", { class: "wmp-course-index-tag is-new" }, WMP.t("新着{count}", { count: fresh }))
                               : null
                     )
                 );
@@ -393,7 +393,7 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
                       el(
                           "span",
                           {},
-                          el("small", {}, dir === "prev" ? "前の回" : "次の回"),
+                          el("small", {}, dir === "prev" ? WMP.t("前の回") : WMP.t("次の回")),
                           el("span", { class: "wmp-course-pager-title" }, s.title)
                       ),
                       dir === "next" ? icon("chevronRight") : null
@@ -469,7 +469,7 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
             if (first) show(first, { scroll: false });
         }
         applyOpen();
-        result.textContent = active ? `${matched}件` : "";
+        result.textContent = active ? WMP.t("{count}件", { count: matched }) : "";
         empty.hidden = !active || matched > 0;
         clearButton.hidden = !active;
         renderChips();
@@ -481,7 +481,7 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
         GROUPS.map((g) => [g.id, activities.filter((a) => (g.id === "new" ? a.isNew : a.kind === g.id)).length])
     );
 
-    const chips = el("div", { class: "wmp-segmented wmp-course-chips", role: "tablist", "aria-label": "種類で絞り込み" });
+    const chips = el("div", { class: "wmp-segmented wmp-course-chips", role: "tablist", "aria-label": WMP.t("種類で絞り込み") });
     function renderChips() {
         const chip = (id, label, count) =>
             el(
@@ -499,14 +499,14 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
                 label,
                 count !== undefined ? el("span", { class: "wmp-course-chip-count" }, String(count)) : null
             );
-        chips.replaceChildren(chip("", "すべて"), ...GROUPS.filter((g) => counts[g.id] > 0).map((g) => chip(g.id, g.label, counts[g.id])));
+        chips.replaceChildren(chip("", WMP.t("すべて")), ...GROUPS.filter((g) => counts[g.id] > 0).map((g) => chip(g.id, g.label, counts[g.id])));
     }
 
     const search = el("input", {
         class: "wmp-input wmp-course-search",
         type: "search",
-        placeholder: "この科目の資料・課題を検索（/ キー）",
-        "aria-label": "この科目の中を検索",
+        placeholder: WMP.t("この科目の資料・課題を検索（/ キー）"),
+        "aria-label": WMP.t("この科目の中を検索"),
         oninput: (e) => {
             query = e.target.value;
             apply();
@@ -516,8 +516,8 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
         },
     });
     const result = el("span", { class: "wmp-muted wmp-course-result", "aria-live": "polite" });
-    const clearButton = el("button", { type: "button", class: "wmp-btn is-small", hidden: true, onclick: () => clear() }, "解除");
-    const empty = el("div", { class: "wmp-empty wmp-course-empty", hidden: true }, "一致する資料・課題はありません");
+    const clearButton = el("button", { type: "button", class: "wmp-btn is-small", hidden: true, onclick: () => clear() }, WMP.t("解除"));
+    const empty = el("div", { class: "wmp-empty wmp-course-empty", hidden: true }, WMP.t("一致する資料・課題はありません"));
 
     function clear() {
         query = "";
@@ -571,7 +571,7 @@ globalThis.WMP.initNewCourse = async function initNewCourse(settings) {
                     el(
                         "section",
                         { class: "wmp-card" },
-                        el("header", { class: "wmp-card-header" }, el("h2", { class: "wmp-card-title" }, `この科目の締切（${mine.length}件）`)),
+                        el("header", { class: "wmp-card-header" }, el("h2", { class: "wmp-card-title" }, WMP.t("この科目の締切（{count}件）", { count: mine.length }))),
                         el("div", { class: "wmp-card-body" }, WMP.renderTimeline(mine, settings, { limit: 5 }))
                     )
                 );

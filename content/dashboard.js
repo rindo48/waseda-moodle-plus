@@ -103,15 +103,15 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
         const header = el(
             "header",
             { class: "wmp-card-header" },
-            el("h2", { class: "wmp-card-title" }, "時間割"),
+            el("h2", { class: "wmp-card-title" }, WMP.t("時間割")),
             el(
                 "select",
                 {
                     class: "wmp-select",
-                    "aria-label": "年度",
+                    "aria-label": WMP.t("年度"),
                     onchange: (e) => select({ year: Number(e.target.value) }),
                 },
-                availableYears().map((y) => el("option", { value: y, selected: y === year }, `${y}年度`))
+                availableYears().map((y) => el("option", { value: y, selected: y === year }, WMP.t("{year}年度", { year: y })))
             ),
             el(
                 "div",
@@ -129,16 +129,16 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 {
                     class: "wmp-btn is-small",
                     disabled: collecting,
-                    title: "受講中の科目のシラバスを検索して、曜日・時限・教室を自動で設定します",
+                    title: WMP.t("受講中の科目のシラバスを検索して、曜日・時限・教室を自動で設定します"),
                     onclick: () => collectSyllabus(year),
                 },
-                collecting ? "取得中…" : "シラバスから取得"
+                collecting ? WMP.t("取得中…") : WMP.t("シラバスから取得")
             ),
             el(
                 "button",
                 {
                     class: "wmp-icon-btn",
-                    title: showHidden ? "非表示の科目を隠す" : "非表示にした科目も表示",
+                    title: showHidden ? WMP.t("非表示の科目を隠す") : WMP.t("非表示にした科目も表示"),
                     "aria-pressed": String(showHidden),
                     onclick: () => {
                         showHidden = !showHidden;
@@ -149,14 +149,14 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
             ),
             el(
                 "button",
-                { class: "wmp-icon-btn", title: "科目一覧を再取得", "aria-label": "科目一覧を再取得", onclick: () => loadCourses(true) },
+                { class: "wmp-icon-btn", title: WMP.t("科目一覧を再取得"), "aria-label": WMP.t("科目一覧を再取得"), onclick: () => loadCourses(true) },
                 WMP.icon("refresh")
             )
         );
 
         const bodyChildren = [];
         if (collectMessage) bodyChildren.push(el("div", { class: "wmp-muted wmp-tt-message" }, collectMessage));
-        if (coursesError) bodyChildren.push(el("div", { class: "wmp-error" }, `科目一覧を取得できませんでした: ${coursesError}`));
+        if (coursesError) bodyChildren.push(el("div", { class: "wmp-error" }, WMP.t("科目一覧を取得できませんでした: {error}", { error: coursesError })));
 
         if (courses === null) {
             bodyChildren.push(el("div", { class: "wmp-empty" }, el("div", { class: "wmp-spinner", style: { margin: "0 auto" } })));
@@ -262,13 +262,13 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
 
         const odRow = String(maxPeriod + 2);
         grid.append(
-            el("div", { class: "wmp-tt-period wmp-tt-od-label", style: { gridColumn: "1", gridRow: odRow } }, "オンデマンド"),
+            el("div", { class: "wmp-tt-period wmp-tt-od-label", style: { gridColumn: "1", gridRow: odRow } }, WMP.t("オンデマンド")),
             el(
                 "div",
                 { class: "wmp-tt-cell wmp-tt-od-cell", style: { gridColumn: `2 / span ${days.length}`, gridRow: odRow } },
                 onDemand.length > 0
                     ? onDemand.map(({ course, slot }) => renderCourseBlock(course, slot))
-                    : el("span", { class: "wmp-muted wmp-tt-od-empty" }, "オンデマンドの科目はありません")
+                    : el("span", { class: "wmp-muted wmp-tt-od-empty" }, WMP.t("オンデマンドの科目はありません"))
             )
         );
 
@@ -289,20 +289,20 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
             },
             el(
                 "a",
-                { class: "wmp-tt-course-link", href: course.url, title: `${WMP.courseName(settings, course)}${note ? `\n\nメモ: ${note}` : ""}` },
+                { class: "wmp-tt-course-link", href: course.url, title: `${WMP.courseName(settings, course)}${note ? `\n\n${WMP.t("メモ")}: ${note}` : ""}` },
                 el("span", { class: "wmp-tt-course-name" }, WMP.courseName(settings, course)),
                 settings.showClassroom && slot.classroom ? el("span", { class: "wmp-tt-room" }, slot.classroom) : null,
-                method === "on_demand" && slot.day !== "on_demand" ? el("span", { class: "wmp-tt-tag" }, "オンデマンド") : null,
-                method === "realtime_streaming" ? el("span", { class: "wmp-tt-tag" }, "リアルタイム配信") : null
+                method === "on_demand" && slot.day !== "on_demand" ? el("span", { class: "wmp-tt-tag" }, WMP.t("オンデマンド")) : null,
+                method === "realtime_streaming" ? el("span", { class: "wmp-tt-tag" }, WMP.t("リアルタイム配信")) : null
             ),
-            count > 0 ? el("span", { class: "wmp-tt-badge", title: `未提出の課題など ${count}件` }, String(count)) : null,
+            count > 0 ? el("span", { class: "wmp-tt-badge", title: WMP.t("未提出の課題など {count}件", { count }) }, String(count)) : null,
             note ? el("span", { class: "wmp-tt-note", title: note }, WMP.icon("edit", { size: 12 })) : null,
             el(
                 "button",
                 {
                     class: "wmp-icon-btn wmp-tt-edit",
-                    title: "科目の設定",
-                    "aria-label": "科目の設定",
+                    title: WMP.t("科目の設定"),
+                    "aria-label": WMP.t("科目の設定"),
                     onclick: (e) => {
                         e.preventDefault();
                         openCourseDialog(course);
@@ -326,11 +326,11 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
         return el(
             "div",
             { class: "wmp-tt-unscheduled" },
-            el("h3", {}, `曜日・時限が未設定の科目（${list.length}）`),
+            el("h3", {}, WMP.t("曜日・時限が未設定の科目（{count}）", { count: list.length })),
             el(
                 "p",
                 { class: "wmp-muted" },
-                "「シラバスから取得」を押すか、⋯ から曜日・時限（またはオンデマンド）を設定すると時間割に表示されます。"
+                WMP.t("「シラバスから取得」を押すか、⋯ から曜日・時限（またはオンデマンド）を設定すると時間割に表示されます。")
             ),
             el(
                 "div",
@@ -341,7 +341,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                         { class: "wmp-tt-chip", style: { "--wmp-course-color": WMP.courseColor(settings, c.id) } },
                         el("a", { class: "wmp-link", href: c.url }, WMP.courseName(settings, c)),
                         pendingCount(c.id) > 0 ? el("span", { class: "wmp-tt-badge" }, String(pendingCount(c.id))) : null,
-                        el("button", { class: "wmp-icon-btn", title: "科目の設定", "aria-label": "科目の設定", onclick: () => openCourseDialog(c) }, WMP.icon("more"))
+                        el("button", { class: "wmp-icon-btn", title: WMP.t("科目の設定"), "aria-label": WMP.t("科目の設定"), onclick: () => openCourseDialog(c) }, WMP.icon("more"))
                     )
                 )
             )
@@ -351,7 +351,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
     async function collectSyllabus(year) {
         if (!WMP.confirmSyllabusOverwrite(settings, year)) return;
         collecting = true;
-        collectMessage = "シラバスを検索しています…";
+        collectMessage = WMP.t("シラバスを検索しています…");
         renderTimetable();
         try {
             await WMP.send("collectSyllabus", { year });
@@ -363,7 +363,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 if (!progress.running) break;
             }
         } catch (e) {
-            collectMessage = `エラー: ${e.message}`;
+            collectMessage = WMP.t("エラー: {message}", { message: e.message });
         } finally {
             collecting = false;
             renderTimetable();
@@ -396,14 +396,14 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                             type: "number",
                             value: slot.year,
                             style: { width: "76px" },
-                            "aria-label": "年度",
+                            "aria-label": WMP.t("年度"),
                             oninput: (e) => (slot.year = Number(e.target.value)),
                         }),
-                        selectEl(Object.entries(WMP.TERMS), slot.term, (v) => (slot.term = v), "学期"),
+                        selectEl(Object.entries(WMP.TERMS), slot.term, (v) => (slot.term = v), WMP.t("学期")),
                         selectEl(
                             [
                                 ...["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((d) => [d, WMP.DAY_LABELS[d]]),
-                                ["on_demand", "オンデマンド"],
+                                ["on_demand", WMP.t("オンデマンド")],
                             ],
                             slot.day,
                             (v) => {
@@ -414,17 +414,17 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                                 }
                                 renderSlots();
                             },
-                            "曜日"
+                            WMP.t("曜日")
                         ),
                         ...(slot.day === "on_demand"
                             ? []
                             : [
-                                  selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, `${n}限`]), slot.from, (v) => (slot.from = Number(v)), "開始時限"),
+                                  selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, WMP.t("{p}限", { p: n })]), slot.from, (v) => (slot.from = Number(v)), WMP.t("開始時限")),
                                   el("span", { class: "wmp-muted" }, "〜"),
-                                  selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, `${n}限`]), slot.to, (v) => (slot.to = Number(v)), "終了時限"),
+                                  selectEl([1, 2, 3, 4, 5, 6, 7].map((n) => [n, WMP.t("{p}限", { p: n })]), slot.to, (v) => (slot.to = Number(v)), WMP.t("終了時限")),
                                   el("input", {
                                       class: "wmp-input",
-                                      placeholder: "教室",
+                                      placeholder: WMP.t("教室"),
                                       value: slot.classroom ?? "",
                                       style: { width: "96px" },
                                       oninput: (e) => (slot.classroom = e.target.value),
@@ -434,7 +434,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                             "button",
                             {
                                 class: "wmp-icon-btn",
-                                title: "削除",
+                                title: WMP.t("削除"),
                                 onclick: () => {
                                     draft.slots.splice(i, 1);
                                     renderSlots();
@@ -453,7 +453,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                             renderSlots();
                         },
                     },
-                    "＋ 曜日・時限を追加"
+                    WMP.t("＋ 曜日・時限を追加")
                 )
             );
         };
@@ -476,7 +476,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 el("input", {
                     type: "color",
                     value: draft.color || WMP.courseColor(settings, course.id),
-                    title: "好きな色を選ぶ",
+                    title: WMP.t("好きな色を選ぶ"),
                     oninput: (e) => {
                         draft.color = e.target.value;
                     },
@@ -490,7 +490,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                             renderSwatches();
                         },
                     },
-                    "自動"
+                    WMP.t("自動")
                 )
             );
         renderSwatches();
@@ -504,7 +504,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 "div",
                 { class: "wmp-dialog-header" },
                 el("h2", {}, course.name),
-                el("button", { class: "wmp-icon-btn", "aria-label": "閉じる", onclick: () => dialog.close() }, WMP.icon("close"))
+                el("button", { class: "wmp-icon-btn", "aria-label": WMP.t("閉じる"), onclick: () => dialog.close() }, WMP.icon("close"))
             ),
             el(
                 "div",
@@ -512,38 +512,38 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                 el(
                     "label",
                     { class: "wmp-field" },
-                    el("span", {}, "表示名"),
+                    el("span", {}, WMP.t("表示名")),
                     el("input", { class: "wmp-input", placeholder: course.name, value: draft.name, oninput: (e) => (draft.name = e.target.value) })
                 ),
-                el("div", { class: "wmp-field" }, el("span", {}, "色"), swatches),
-                el("div", { class: "wmp-field" }, el("span", {}, "曜日・時限・教室"), slotList),
+                el("div", { class: "wmp-field" }, el("span", {}, WMP.t("色")), swatches),
+                el("div", { class: "wmp-field" }, el("span", {}, WMP.t("曜日・時限・教室")), slotList),
                 el(
                     "label",
                     { class: "wmp-field" },
-                    el("span", {}, "授業の形式"),
+                    el("span", {}, WMP.t("授業の形式")),
                     selectEl(
                         [
-                            ["", "未設定"],
-                            ["face_to_face", "対面"],
-                            ["realtime_streaming", "リアルタイム配信"],
-                            ["on_demand", "オンデマンド"],
+                            ["", WMP.t("未設定")],
+                            ["face_to_face", WMP.t("対面")],
+                            ["realtime_streaming", WMP.t("リアルタイム配信")],
+                            ["on_demand", WMP.t("オンデマンド")],
                         ],
                         draft.delivery,
                         (v) => (draft.delivery = v),
-                        "授業の形式"
+                        WMP.t("授業の形式")
                     )
                 ),
                 el(
                     "label",
                     { class: "wmp-field" },
-                    el("span", {}, "メモ"),
+                    el("span", {}, WMP.t("メモ")),
                     el("textarea", { class: "wmp-textarea", value: draft.note, oninput: (e) => (draft.note = e.target.value) })
                 ),
                 settings.assignmentFilenameEnabled
                     ? el(
                           "label",
                           { class: "wmp-field" },
-                          el("span", {}, "課題ファイル名の形式（この科目だけ）"),
+                          el("span", {}, WMP.t("課題ファイル名の形式（この科目だけ）")),
                           el("input", {
                               class: "wmp-input",
                               placeholder: settings.assignmentFilenameTemplate,
@@ -556,22 +556,22 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                     "label",
                     { class: "wmp-check" },
                     el("input", { type: "checkbox", checked: draft.hidden, onchange: (e) => (draft.hidden = e.target.checked) }),
-                    " 時間割に表示しない"
+                    WMP.t(" 時間割に表示しない")
                 ),
                 el(
                     "div",
                     { class: "wmp-muted" },
-                    course.url ? el("a", { class: "wmp-link", href: course.url }, "Moodle のコースページ") : null,
+                    course.url ? el("a", { class: "wmp-link", href: course.url }, WMP.t("Moodle のコースページ")) : null,
                     syllabusKey ? " ／ " : null,
                     syllabusKey
-                        ? el("a", { class: "wmp-link", href: `https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${syllabusKey}`, target: "_blank" }, "シラバス")
+                        ? el("a", { class: "wmp-link", href: `https://www.wsl.waseda.jp/syllabus/JAA104.php?pKey=${syllabusKey}`, target: "_blank" }, WMP.t("シラバス"))
                         : null
                 )
             ),
             el(
                 "div",
                 { class: "wmp-dialog-footer" },
-                el("button", { class: "wmp-btn", onclick: () => dialog.close() }, "キャンセル"),
+                el("button", { class: "wmp-btn", onclick: () => dialog.close() }, WMP.t("キャンセル")),
                 el(
                     "button",
                     {
@@ -581,7 +581,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                             dialog.close();
                         },
                     },
-                    "保存"
+                    WMP.t("保存")
                 )
             )
         );
@@ -636,8 +636,8 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
             el(
                 "header",
                 { class: "wmp-card-header" },
-                el("h2", { class: "wmp-card-title" }, "締切が近い課題"),
-                el("button", { class: "wmp-icon-btn", title: "更新", "aria-label": "更新", onclick: () => loadTimeline(true) }, WMP.icon("refresh"))
+                el("h2", { class: "wmp-card-title" }, WMP.t("締切が近い課題")),
+                el("button", { class: "wmp-icon-btn", title: WMP.t("更新"), "aria-label": WMP.t("更新"), onclick: () => loadTimeline(true) }, WMP.icon("refresh"))
             ),
             el(
                 "div",
@@ -653,7 +653,7 @@ globalThis.WMP.initDashboard = async function initDashboard(initialSettings) {
                                   renderTimeline();
                               },
                           },
-                          showAllEvents ? "少なく表示" : `すべて表示（${events.length}件）`
+                          showAllEvents ? WMP.t("少なく表示") : WMP.t("すべて表示（{count}件）", { count: events.length })
                       )
                     : null
             )

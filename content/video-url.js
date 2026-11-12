@@ -36,7 +36,7 @@
         if (/\.m3u8$/i.test(path)) return "HLS";
         if (/\.mpd$/i.test(path)) return "DASH";
         const ext = path.match(/\.([a-z0-9]+)$/i)?.[1];
-        return ext ? ext.toUpperCase() : "動画";
+        return ext ? ext.toUpperCase() : WMP.t("動画");
     }
 
     function add(raw, fromVideoElement = false) {
@@ -178,15 +178,15 @@
         panel.id = "panel";
         panel.hidden = true;
         panel.setAttribute("role", "dialog");
-        panel.setAttribute("aria-label", "動画のURL");
+        panel.setAttribute("aria-label", WMP.t("動画のURL"));
         const head = document.createElement("div");
         head.className = "head";
-        head.innerHTML = "<span>動画のURL</span><small>Waseda Moodle Plus</small>";
+        head.innerHTML = `<span>${WMP.t("動画のURL")}</span><small>Waseda Moodle Plus</small>`;
         listEl = document.createElement("ul");
         const note = document.createElement("div");
         note.className = "note";
         note.textContent =
-            "URL には期限付きの認証情報が含まれることがあり、時間がたつと開けなくなる場合があります。HLS（.m3u8）は VLC や ffmpeg などで開けます。";
+            WMP.t("URL には期限付きの認証情報が含まれることがあり、時間がたつと開けなくなる場合があります。HLS（.m3u8）は VLC や ffmpeg などで開けます。");
         panel.append(head, listEl, note);
 
         toggleBtn = document.createElement("button");
@@ -288,7 +288,7 @@
         const n = document.createElement("span");
         n.className = "n";
         n.textContent = String(found.size);
-        toggleBtn.replaceChildren("動画のURL", n);
+        toggleBtn.replaceChildren(WMP.t("動画のURL"), n);
 
         listEl.replaceChildren(
             ...[...found.values()].map((item) => {
@@ -305,13 +305,13 @@
                 actions.className = "actions";
                 const copyBtn = document.createElement("button");
                 copyBtn.type = "button";
-                copyBtn.textContent = "コピー";
+                copyBtn.textContent = WMP.t("コピー");
                 copyBtn.addEventListener("click", async () => {
                     const ok = await copy(item.url);
-                    copyBtn.textContent = ok ? "コピーしました" : "コピーできませんでした";
+                    copyBtn.textContent = ok ? WMP.t("コピーしました") : WMP.t("コピーできませんでした");
                     copyBtn.classList.toggle("done", ok);
                     setTimeout(() => {
-                        copyBtn.textContent = "コピー";
+                        copyBtn.textContent = WMP.t("コピー");
                         copyBtn.classList.remove("done");
                     }, 1600);
                 });
@@ -319,7 +319,7 @@
                 open.href = item.url;
                 open.target = "_blank";
                 open.rel = "noopener noreferrer";
-                open.textContent = "開く";
+                open.textContent = WMP.t("開く");
                 actions.append(copyBtn, open);
 
                 const url = document.createElement("div");

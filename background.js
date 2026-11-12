@@ -1,6 +1,9 @@
 // バックグラウンド（Service Worker）。各画面からのメッセージを受けて、Moodle との通信などを行う。
 // lib/defaults.js は globalThis.WMP を作るので、bg/* より先に読み込む必要がある。
 import "./lib/defaults.js";
+// 言語（WMP.t）。bg/* が WMP.getSettings を取り出す前に、言語を決める処理を足しておく
+import "./lib/i18n.js";
+import "./lib/i18n-en.js";
 import "./lib/syllabus-info.js";
 import { clearCaches, getCalendarMonth, getCourses, getSessionKey, getTimeline, setSessionKeyCache, touchSession } from "./bg/moodle.js";
 import { loginToMoodle, fetchSessionKeyFromPage, getLoginInfo } from "./bg/login.js";
@@ -23,7 +26,7 @@ const handlers = {
     openOptions: () => chrome.runtime.openOptionsPage(),
     /** MyWaseda などを、ログインを済ませるページ経由で開く */
     openLauncher: ({ target }) => {
-        if (!LAUNCH_TARGETS.includes(target)) throw new Error("開けないページです");
+        if (!LAUNCH_TARGETS.includes(target)) throw new Error(globalThis.WMP.t("開けないページです"));
         return chrome.tabs.create({ url: chrome.runtime.getURL(`pages/launcher.html?target=${target}`) });
     },
     setSessionKey: async ({ sessionKey }) => {
@@ -138,8 +141,17 @@ onSettingsChanged((_settings, changedKeys) => {
     if (changedKeys.includes("darkMode") || changedKeys.includes("darkModeMethod")) applyDarkModeToOpenTabs();
     if (changedKeys.some((k) => BADGE_KEYS.includes(k))) updateBadge();
     if (changedKeys.includes("updateCheckEnabled")) checkForUpdate(_settings);
+    if (changedKeys.includes("language")) relabel();
 });
+
+/** 言語が変わったら、右クリックメニューとアイコンの説明を作り直す */
+function relabel() {
+    createLauncherMenus();
+    updateBadge();
+}
 
 chrome.storage.onChanged.addListener((changes, area) => {
     if (area === "local" && changes[LOGIN_INFO_KEY]) syncFeatures();
+    // Moodle の言語設定を変えたとき（content が lib/i18n.js で覚える）
+    if (area === "local" && changes.moodleLang) relabel();
 });

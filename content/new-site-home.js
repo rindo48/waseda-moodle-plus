@@ -19,7 +19,7 @@ globalThis.WMP.initNewSiteHome = function initNewSiteHome() {
     if (posts.length === 0) return;
 
     const subjectOf = (post) =>
-        post.querySelector('[data-region-content="forum-post-core-subject"], .subject, h3, h4')?.textContent.replace(/\s+/g, " ").trim() || "（件名なし）";
+        post.querySelector('[data-region-content="forum-post-core-subject"], .subject, h3, h4')?.textContent.replace(/\s+/g, " ").trim() || WMP.t("（件名なし）");
 
     function dateOf(post) {
         const time = post.querySelector("time[datetime]");
@@ -29,18 +29,18 @@ globalThis.WMP.initNewSiteHome = function initNewSiteHome() {
         }
         return null;
     }
-    const format = new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "numeric", day: "numeric" });
+    const format = WMP.dateTimeFormat({ year: "numeric", month: "numeric", day: "numeric" });
 
     const board = el("section", { class: "wmp-scope wmp-board" });
     const toggleAll = el("button", { type: "button", class: "wmp-btn is-small" });
     board.append(
-        el("header", { class: "wmp-board-head" }, el("h2", {}, "お知らせ"), el("span", { class: "wmp-board-count" }, `${posts.length}件`), toggleAll)
+        el("header", { class: "wmp-board-head" }, el("h2", {}, WMP.t("お知らせ")), el("span", { class: "wmp-board-count" }, WMP.t("{count}件", { count: posts.length })), toggleAll)
     );
     posts[0].insertAdjacentElement("beforebegin", board);
 
     const updateToggleAll = () => {
         const allOpen = posts.every((p) => p.classList.contains("is-open"));
-        toggleAll.textContent = allOpen ? "すべて閉じる" : "すべて開く";
+        toggleAll.textContent = allOpen ? WMP.t("すべて閉じる") : WMP.t("すべて開く");
         toggleAll.onclick = () => posts.forEach((p) => setOpen(p, !allOpen));
     };
 
@@ -64,7 +64,7 @@ globalThis.WMP.initNewSiteHome = function initNewSiteHome() {
             },
             el("span", { class: "wmp-notice-date" }, date ? format.format(date) : ""),
             el("span", { class: "wmp-notice-subject" }, subjectOf(post)),
-            isNew ? el("span", { class: "wmp-notice-new" }, "新着") : null,
+            isNew ? el("span", { class: "wmp-notice-new" }, WMP.t("新着")) : null,
             icon("chevronDown", { size: 18 })
         );
         post.prepend(summary);

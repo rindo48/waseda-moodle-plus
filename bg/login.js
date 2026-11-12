@@ -11,7 +11,7 @@ const MOODLE_ACS_URL = "https://wsdmoodle.waseda.jp/auth/saml2/sp/saml2-acs.php/
 
 export class LoginRequiredError extends Error {
     constructor() {
-        super("ログイン情報が設定されていません。設定画面で自動ログインを設定してください。");
+        super(globalThis.WMP.t("ログイン情報が設定されていません。設定画面で自動ログインを設定してください。"));
         this.name = "LoginRequiredError";
     }
 }
@@ -91,7 +91,7 @@ export async function walkSSO(startUrl, spAcsUrl) {
         if (page.msConfig && !page.forms.some((f) => f.action === WASEDA_IDP_URL)) {
             // まだ Microsoft の画面にいる = パスワード違いや多要素認証など
             throw new Error(
-                "Microsoft のサインインを自動で通過できませんでした。ID・パスワードを確認するか、手動でログインしてください。"
+                globalThis.WMP.t("Microsoft のサインインを自動で通過できませんでした。ID・パスワードを確認するか、手動でログインしてください。")
             );
         }
     }
@@ -133,7 +133,7 @@ async function doLogin({ skipCheck = false, skipFinalRedirect = false } = {}) {
         // ログイン済みだと、SAML のログイン URL はフォームを出さずに Moodle のトップへ戻る
         const key = await fetchSessionKeyFromPage();
         if (key) return key;
-        throw new Error("Moodle のログインフォームが見つかりませんでした（ログイン手順が変わった可能性があります）");
+        throw new Error(globalThis.WMP.t("Moodle のログインフォームが見つかりませんでした（ログイン手順が変わった可能性があります）"));
     }
 
     await postForm(MOODLE_ACS_URL, spForm.hidden, { redirect: "manual" });
@@ -142,7 +142,7 @@ async function doLogin({ skipCheck = false, skipFinalRedirect = false } = {}) {
     }
 
     const key = await fetchSessionKeyFromPage();
-    if (!key && !skipFinalRedirect) throw new Error("ログインしましたがセッションキーを取得できませんでした");
+    if (!key && !skipFinalRedirect) throw new Error(globalThis.WMP.t("ログインしましたがセッションキーを取得できませんでした"));
     return key;
 }
 

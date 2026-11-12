@@ -23,7 +23,7 @@
     container.prepend(box);
 
     if (parsed.slots.length === 0) {
-        box.append(el("span", { class: "wmp-muted" }, "Waseda Moodle Plus: この科目には曜日・時限がないため、時間割には「未設定の科目」として表示されます。"));
+        box.append(el("span", { class: "wmp-muted" }, WMP.t("Waseda Moodle Plus: この科目には曜日・時限がないため、時間割には「未設定の科目」として表示されます。")));
         return;
     }
 
@@ -31,7 +31,7 @@
     try {
         courses = (await WMP.send("getCourses")).value;
     } catch {
-        box.append(el("span", { class: "wmp-muted" }, "Waseda Moodle Plus: Moodle にログインすると、この科目を時間割に追加できます。"));
+        box.append(el("span", { class: "wmp-muted" }, WMP.t("Waseda Moodle Plus: Moodle にログインすると、この科目を時間割に追加できます。")));
         return;
     }
 
@@ -41,15 +41,15 @@
 
     const select = el(
         "select",
-        { class: "wmp-select", "aria-label": "追加先の Moodle の科目" },
+        { class: "wmp-select", "aria-label": WMP.t("追加先の Moodle の科目") },
         candidates.map((c) => el("option", { value: c.id }, c.name))
     );
     const status = el("span", { class: "wmp-muted" });
     const slotText = parsed.slots
         .map((s) =>
             s.day === "on_demand"
-                ? "オンデマンド"
-                : `${WMP.DAY_LABELS[s.day]}${s.from}${s.to !== s.from ? `-${s.to}` : ""}限${s.classroom ? `（${s.classroom}）` : ""}`
+                ? WMP.t("オンデマンド")
+                : `${WMP.t(s.to !== s.from ? "{day}{from}〜{to}限" : "{day}{p}限", { day: WMP.DAY_LABELS[s.day], p: s.from, from: s.from, to: s.to })}${s.classroom ? `（${s.classroom}）` : ""}`
         )
         .join("、");
 
@@ -72,10 +72,10 @@
                             ? { ...latest.courseDeliveryMethods, [courseId]: parsed.deliveryMethod }
                             : latest.courseDeliveryMethods,
                     });
-                    status.textContent = "時間割に追加しました";
+                    status.textContent = WMP.t("時間割に追加しました");
                 },
             },
-            "時間割に追加"
+            WMP.t("時間割に追加")
         ),
         status
     );

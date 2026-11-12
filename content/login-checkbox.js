@@ -18,7 +18,7 @@
         checkbox.id = CHECKBOX_ID;
         const label = document.createElement("label");
         label.htmlFor = CHECKBOX_ID;
-        label.textContent = "Waseda Moodle Plus で自動ログインを有効にする";
+        label.textContent = WMP.t("Waseda Moodle Plus で自動ログインを有効にする");
         label.style.cssText = "margin-left:.5em;font-size:.85em;line-height:1";
         const row = document.createElement("div");
         row.style.cssText = "display:flex;align-items:center;margin:.75em 0";

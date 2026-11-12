@@ -8,6 +8,7 @@ import { collectSyllabusInformation, getCollectProgress } from "./bg/syllabus.js
 import { applyDarkModeToOpenTabs, syncFeatures } from "./bg/features.js";
 import { BADGE_ALARM, handleNotificationClick, updateBadge } from "./bg/badge.js";
 import { createLauncherMenus, handleLauncherClick, prepareLaunch } from "./bg/launcher.js";
+import { UPDATE_ALARM, checkForUpdate, handleUpdateNotificationClick } from "./bg/update-check.js";
 
 const { onSettingsChanged, LOGIN_INFO_KEY, MOODLE_ORIGIN } = globalThis.WMP;
 
@@ -100,6 +101,10 @@ chrome.webRequest.onBeforeRedirect.addListener(
 chrome.alarms.get(BADGE_ALARM).then((alarm) => {
     if (!alarm) chrome.alarms.create(BADGE_ALARM, { periodInMinutes: 30 });
 });
+// 新しいバージョンの確認は1日1回（最初は起動の1分後）
+chrome.alarms.get(UPDATE_ALARM).then((alarm) => {
+    if (!alarm) chrome.alarms.create(UPDATE_ALARM, { delayInMinutes: 1, periodInMinutes: 24 * 60 });
+});
 
 chrome.runtime.onInstalled.addListener(async (details) => {
     await createLauncherMenus();
@@ -116,21 +121,25 @@ chrome.runtime.onStartup.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener(handleLauncherClick);
-chrome.notifications.onClicked.addListener(handleNotificationClick);
+chrome.notifications.onClicked.addListener(async (id) => {
+    if (!(await handleUpdateNotificationClick(id))) handleNotificationClick(id);
+});
 
 chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === BADGE_ALARM) updateBadge({ force: true });
+    if (alarm.name === UPDATE_ALARM) globalThis.WMP.getSettings().then(checkForUpdate);
 });
 
 const BADGE_KEYS = [
     "timelineEnabled", "badgeEnabled", "badgeDeadlineRangeDays", "timelineHiddenEventIds",
-    "timelineHiddenCourses", "timelineHiddenModuleNames", "timelineForwardDays",
+    "timelineHiddenCourses", "timelineHiddenModuleNames", "timelineForwardDays", "timelineHideExpectCompletion",
 ];
 
 onSettingsChanged((_settings, changedKeys) => {
     syncFeatures();
     if (changedKeys.includes("darkMode") || changedKeys.includes("darkModeMethod")) applyDarkModeToOpenTabs();
     if (changedKeys.some((k) => BADGE_KEYS.includes(k))) updateBadge();
+    if (changedKeys.includes("updateCheckEnabled")) checkForUpdate(_settings);
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {

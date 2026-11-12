@@ -17,6 +17,15 @@
     let lastError = null;
 
     document.getElementById("open-settings").addEventListener("click", () => chrome.runtime.openOptionsPage());
+
+    // 新しいバージョンがあるとき（bg/update-check.js が保存した結果）だけ、ヘッダーの下に案内を出す
+    chrome.storage.local.get("updateInfo").then(({ updateInfo }) => {
+        if (!updateInfo?.version) return;
+        const notice = document.getElementById("update-notice");
+        notice.href = updateInfo.url;
+        notice.textContent = `新しいバージョン ${updateInfo.version} が出ています（今は ${chrome.runtime.getManifest().version}）。ダウンロード →`;
+        notice.hidden = false;
+    });
     document.querySelectorAll("[data-launch]").forEach((a) =>
         a.addEventListener("click", (e) => {
             e.preventDefault();

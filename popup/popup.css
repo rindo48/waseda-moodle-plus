@@ -91,3 +91,22 @@ body {
 .pp-stale {
     margin-bottom: 10px;
 }
+
+/* 新しいバージョンの案内（bg/update-check.js） */
+.pp-update {
+    display: block;
+    padding: 7px 14px;
+    border-bottom: 1px solid var(--wmp-border);
+    border-left: 3px solid var(--wmp-accent);
+    background: var(--wmp-surface);
+    color: var(--wmp-text);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+.pp-update:hover {
+    text-decoration: underline;
+}
+.pp-update[hidden] {
+    display: none;
+}

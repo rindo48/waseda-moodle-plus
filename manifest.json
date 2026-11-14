@@ -66,6 +66,7 @@
                 "content/new-mycourses.js",
                 "content/new-calendar.js",
                 "content/new-course.js",
+                "content/new-category.js",
                 "content/main.js",
                 "content/a11y-bridge.js",
                 "content/fab-stack.js"

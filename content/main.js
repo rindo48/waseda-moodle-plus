@@ -35,6 +35,9 @@
     if (path === "/my/courses.php") WMP.initNewMyCourses(settings);
     if (path === "/calendar/view.php") WMP.initNewCalendar(settings);
     if (path === "/course/view.php") WMP.initNewCourse(settings);
+    // パンくずのカテゴリーは押しても空のページに行くだけなので文字にし、カテゴリーのページには案内を出す
+    WMP.initNewCategoryLinks();
+    if (path === "/course/index.php") WMP.initNewCategory(settings);
     // パンくずなどから1回分のページ（section.php）を開いたときは、目次・検索・絞り込みのあるコースのページの
     // その回へ移る（section.php には新デザインの目次などを付けていないため）。編集モードの先生には何もしない
     if (path === "/course/section.php" && !document.body.classList.contains("editing")) {

@@ -2126,3 +2126,80 @@ html.wmp-new #topofscroll {
     min-width: 0;
     max-width: 100%;
 }
+
+/* ===== 科目のカテゴリー（content/new-category.js） ===== */
+/* パンくずの中で、リンクを外したカテゴリー */
+html.wmp-new .breadcrumb .wmp-crumb-text {
+    color: var(--wmpn-ink-2);
+}
+.wmp-category-empty {
+    margin-top: 16px;
+    padding: 20px 22px;
+}
+.wmp-category-intro h2 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    font-weight: 700;
+}
+.wmp-category-intro p {
+    max-width: 62ch;
+    margin: 0 0 14px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.wmp-category-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.wmp-category-actions .wmp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.wmp-category-list-title {
+    margin: 22px 0 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--wmp-border);
+    font-size: 14px;
+    font-weight: 700;
+}
+.wmp-category-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.wmp-category-course {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--wmp-border);
+    color: var(--wmp-text) !important;
+    text-decoration: none !important;
+}
+.wmp-category-course:hover .wmp-category-name {
+    text-decoration: underline;
+}
+.wmp-category-mark {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    background: var(--wmp-course-color);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+}
+.wmp-category-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+}

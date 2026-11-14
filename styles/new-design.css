@@ -2203,3 +2203,8 @@ html.wmp-new .breadcrumb .wmp-crumb-text {
     white-space: nowrap;
     font-size: 13px;
 }
+
+/* 早稲田のテーマが隠しているカテゴリーの中身（科目の一覧）を、案内のボタンで出したとき */
+html.wmp-new.wmp-show-category-list #region-main {
+    display: block !important;
+}

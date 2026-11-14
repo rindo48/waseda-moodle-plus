@@ -158,7 +158,40 @@ async function fetchActionEvents(timesortfrom) {
         events.push(...data.events);
         if (data.events.length < LIMIT) break;
     }
-    return events.map(slimEvent);
+    return dropCompleted(events.map(slimEvent));
+}
+
+/**
+ * アンケート・フィードバック・投票は、回答した後も「閲覧」の操作つきで締切に残り続けることがあるので、
+ * 活動完了が「完了」になっているものは外す。
+ * 課題・小テストは対象にしない（「見たら完了」の設定だと、提出前に消えてしまうため。提出すれば Moodle が外す）。
+ * 完了状態は、コースのページと同じ core_courseformat_get_state で科目ごとに読む。読めなければそのまま残す。
+ */
+const COMPLETION_MODULES = ["questionnaire", "feedback", "choice"];
+
+async function dropCompleted(events) {
+    const cmidOf = (e) => {
+        try {
+            return new URL(e.url).searchParams.get("id");
+        } catch {
+            return null;
+        }
+    };
+    const targets = events.filter((e) => COMPLETION_MODULES.includes(e.modulename) && e.course?.id && cmidOf(e));
+    if (targets.length === 0) return events;
+    const done = new Set();
+    for (const courseid of new Set(targets.map((e) => e.course.id))) {
+        try {
+            const state = JSON.parse(await callMoodleAPI("core_courseformat_get_state", { courseid }));
+            for (const cm of state.cm ?? []) {
+                // completionstate: 1 = 完了, 2 = 合格, 3 = 不合格（いずれも取り組み済み）。isoverallcomplete は Moodle 4.3 以降
+                if (cm.isoverallcomplete === true || cm.completionstate > 0) done.add(String(cm.id));
+            }
+        } catch {
+            // その科目の完了状態が読めなければ、外さずに残す
+        }
+    }
+    return events.filter((e) => !(COMPLETION_MODULES.includes(e.modulename) && done.has(cmidOf(e))));
 }
 
 /** 保存容量を抑えるため、使う項目だけ残す */

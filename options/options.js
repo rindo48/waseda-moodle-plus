@@ -112,6 +112,9 @@
                 autocomplete: info.hasPassword ? "new-password" : "current-password",
             });
             const status = el("span", { class: "wmp-muted" });
+            if (info.passwordLost) {
+                status.textContent = WMP.t("保存したパスワードを読み出せませんでした。設定画面で ID・パスワードを入れ直してください。");
+            }
             box.replaceChildren(
                 el(
                     "div",

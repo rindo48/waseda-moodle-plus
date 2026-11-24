@@ -2,7 +2,7 @@
 // 流れは better-waseda-moodle の login.ts と同じ。
 
 import { parseHTML } from "./parse.js";
-import { getLoginInfoSummary, readLoginInfo } from "./credentials.js";
+import { readLoginInfo } from "./credentials.js";
 
 const { SAML_LOGIN_URL, MOODLE_ORIGIN } = globalThis.WMP;
 
@@ -11,18 +11,19 @@ const WASEDA_IDP_URL = "https://iaidp.ia.waseda.jp/idp/profile/Authn/SAML2/POST/
 const MOODLE_ACS_URL = "https://wsdmoodle.waseda.jp/auth/saml2/sp/saml2-acs.php/wsdmoodle.waseda.jp";
 
 export class LoginRequiredError extends Error {
-    constructor() {
-        super(globalThis.WMP.t("ログイン情報が設定されていません。設定画面で自動ログインを設定してください。"));
+    constructor(message) {
+        super(message ?? globalThis.WMP.t("ログイン情報が設定されていません。設定画面で自動ログインを設定してください。"));
         this.name = "LoginRequiredError";
     }
 }
 
 export async function getLoginInfo() {
     const info = await readLoginInfo();
-    if (info) return info;
-    if ((await getLoginInfoSummary()).hasPassword) {
-        // 暗号化の鍵が消えた（拡張機能のデータを消した など）ので、保存したパスワードを元に戻せない
-        throw new Error(globalThis.WMP.t("保存したパスワードを読み出せませんでした。設定画面で ID・パスワードを入れ直してください。"));
+    if (info?.password) return info;
+    if (info?.lost) {
+        // 暗号化の鍵が消えた（拡張機能のデータを消した など）ので、保存したパスワードを元に戻せない。
+        // ログイン情報が無いときと同じ扱いにする（呼び出し側は LoginRequiredError を「未設定」として扱う）
+        throw new LoginRequiredError(globalThis.WMP.t("保存したパスワードを読み出せませんでした。設定画面で ID・パスワードを入れ直してください。"));
     }
     throw new LoginRequiredError();
 }

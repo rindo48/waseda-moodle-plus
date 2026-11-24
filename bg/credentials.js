@@ -33,26 +33,41 @@ function idb(db, mode, fn) {
     });
 }
 
-let keyPromise = null;
+async function withDb(fn) {
+    const db = await openDb();
+    try {
+        return await fn(db);
+    } finally {
+        db.close();
+    }
+}
+
+// 同時に呼ばれても、読み出し・作成はそれぞれ1回にまとめる
+let loadPromise = null;
+let createPromise = null;
+
+function loadKey() {
+    loadPromise ??= withDb((db) => idb(db, "readonly", (s) => s.get(KEY_ID))).finally(() => (loadPromise = null));
+    return loadPromise;
+}
+
+function createKey() {
+    createPromise ??= withDb(async (db) => {
+        // 待っている間に別の呼び出しが作っていたら、そちらを使う
+        const existing = await idb(db, "readonly", (s) => s.get(KEY_ID));
+        if (existing) return existing;
+        const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+        await idb(db, "readwrite", (s) => s.put(key, KEY_ID));
+        return key;
+    }).finally(() => (createPromise = null));
+    return createPromise;
+}
 
 /** 鍵を読み出す。無ければ create のときだけ作る（作らないときは null） */
-function getKey({ create }) {
-    if (!keyPromise) {
-        keyPromise = (async () => {
-            const db = await openDb();
-            try {
-                const stored = await idb(db, "readonly", (s) => s.get(KEY_ID));
-                if (stored) return stored;
-                if (!create) return null;
-                const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
-                await idb(db, "readwrite", (s) => s.put(key, KEY_ID));
-                return key;
-            } finally {
-                db.close();
-            }
-        })().finally(() => (keyPromise = null));
-    }
-    return keyPromise;
+async function getKey({ create }) {
+    const key = await loadKey();
+    if (key || !create) return key ?? null;
+    return createKey();
 }
 
 const toBase64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
@@ -91,7 +106,7 @@ export async function saveLoginInfo({ userId, password }) {
     let encPassword;
     if (password) {
         encPassword = await encrypt(password);
-    } else if (current?.encPassword) {
+    } else if (current?.encPassword && (await decrypt(current.encPassword)) !== null) {
         encPassword = current.encPassword;
     } else if (current?.password) {
         encPassword = await encrypt(current.password);
@@ -101,27 +116,46 @@ export async function saveLoginInfo({ userId, password }) {
     await chrome.storage.local.set({ [LOGIN_INFO_KEY]: { userId, encPassword } });
 }
 
-/** 保存されたログイン情報を復号して返す。無い・読めないときは null */
+/**
+ * 保存されたログイン情報を復号して返す。
+ * @returns {Promise<{ userId, password? , lost? } | null>}
+ *   ID も無ければ null。パスワードが無ければ password なし。
+ *   保存されていたが復号できなかった（鍵が消えた など）ときは lost: true（入れ直すまで続く）
+ */
 export async function readLoginInfo() {
     const { [LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(LOGIN_INFO_KEY);
-    if (!hasStoredLoginInfo(info)) return null;
+    if (!info?.userId) return null;
+    if (!hasStoredLoginInfo(info)) return { userId: info.userId, lost: Boolean(info.passwordLost) };
     if (info.password) {
-        // 以前の版で暗号化せずに保存したもの。読むついでに暗号化した形に置き換える
-        await saveLoginInfo(info);
+        // 以前の版で暗号化せずに保存したもの。置き換えに失敗しても、読めたパスワードで続ける
+        await migratePlainPassword().catch((e) => console.error("migratePlainPassword failed", e));
         return { userId: info.userId, password: info.password };
     }
     const password = await decrypt(info.encPassword);
-    return password ? { userId: info.userId, password } : null;
+    if (password) return { userId: info.userId, password };
+    // 元に戻せないパスワードを持ち続けても使えないので捨てる（ID は入れ直しやすいように残す）。
+    // これで「保存済み」の表示や自動ログインのルールも、保存されていない状態にそろう
+    const { [LOGIN_INFO_KEY]: latest } = await chrome.storage.local.get(LOGIN_INFO_KEY);
+    // 確かめている間に新しいパスワードが保存されていたら、そちらは消さない
+    if (latest?.encPassword?.data === info.encPassword.data) {
+        await chrome.storage.local.set({ [LOGIN_INFO_KEY]: { userId: info.userId, passwordLost: true } });
+    }
+    return { userId: info.userId, lost: true };
 }
 
-/** 設定画面用: パスワードは返さず、ID と保存済みかどうかだけ返す */
+/** 設定画面・ポップアップ用: パスワードは返さず、ID と、使えるパスワードが保存済みかどうかだけ返す */
 export async function getLoginInfoSummary() {
-    const { [LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(LOGIN_INFO_KEY);
-    return { userId: info?.userId ?? "", hasPassword: hasStoredLoginInfo(info) };
+    const info = await readLoginInfo();
+    return { userId: info?.userId ?? "", hasPassword: Boolean(info?.password), passwordLost: Boolean(info?.lost) };
 }
 
-/** 以前の版で暗号化せずに保存したパスワードがあれば、暗号化した形に置き換える */
-export async function migratePlainPassword() {
-    const { [LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(LOGIN_INFO_KEY);
-    if (info?.userId && info.password) await saveLoginInfo(info);
+let migratePromise = null;
+
+/** 以前の版で暗号化せずに保存したパスワードがあれば、暗号化した形に置き換える（同時に呼ばれたら1回にまとめる） */
+export function migratePlainPassword() {
+    migratePromise ??= (async () => {
+        const { [LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(LOGIN_INFO_KEY);
+        if (info?.userId && info.password) await saveLoginInfo(info);
+    })().finally(() => (migratePromise = null));
+    return migratePromise;
 }

@@ -34,7 +34,8 @@
             const password = passwordInput.value;
             if (!userId || !password) return;
             // 暗号化はバックグラウンドで行う（パスワードをそのままストレージに書かない）
-            chrome.runtime.sendMessage({ type: "saveLoginInfo", payload: { userId, password } });
+            // サインインでページが移動して応答を受け取れなくても、保存はバックグラウンドで続く
+            chrome.runtime.sendMessage({ type: "saveLoginInfo", payload: { userId, password } }).catch(() => {});
         };
         signIn.addEventListener("click", save, true);
         passwordInput.addEventListener("keydown", (e) => e.key === "Enter" && save(), true);

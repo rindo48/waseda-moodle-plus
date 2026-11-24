@@ -102,9 +102,15 @@
     function loginInfoItem() {
         const box = el("div", { class: "op-item is-block" });
         (async () => {
-            const { [WMP.LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(WMP.LOGIN_INFO_KEY);
-            const userId = el("input", { class: "wmp-input", placeholder: WMP.t("例: xxxxx@akane.waseda.jp"), value: info?.userId ?? "", autocomplete: "username" });
-            const password = el("input", { class: "wmp-input", type: "password", placeholder: WMP.t("パスワード"), value: info?.password ?? "", autocomplete: "current-password" });
+            // パスワードそのものは画面に出さない（保存済みかどうかだけ受け取る）
+            const info = await WMP.send("getLoginInfoSummary");
+            const userId = el("input", { class: "wmp-input", placeholder: WMP.t("例: xxxxx@akane.waseda.jp"), value: info.userId, autocomplete: "username" });
+            const password = el("input", {
+                class: "wmp-input",
+                type: "password",
+                placeholder: info.hasPassword ? WMP.t("保存済み（変えるときだけ入力）") : WMP.t("パスワード"),
+                autocomplete: info.hasPassword ? "new-password" : "current-password",
+            });
             const status = el("span", { class: "wmp-muted" });
             box.replaceChildren(
                 el(
@@ -116,7 +122,7 @@
                 el(
                     "div",
                     { class: "op-note" },
-                    WMP.t("パスワードはこのパソコンの Chrome の中（拡張機能のストレージ）に暗号化されずに保存されます。共用のパソコンでは使わないでください。多要素認証（MFA）が必要な場合は自動ログインできません。")
+                    WMP.t("パスワードは暗号化して、このパソコンのブラウザの中にだけ保存します。ただし、暗号化の鍵も同じパソコンの中にあるため、パソコンを自由に操作できる人やウイルスからは守れません。共用のパソコンでは使わないでください。多要素認証（MFA）が必要な場合は自動ログインできません。")
                 ),
                 el("div", { class: "op-row" }, userId, password),
                 el(
@@ -127,11 +133,16 @@
                         {
                             class: "wmp-btn is-primary",
                             onclick: async () => {
-                                if (!userId.value || !password.value) {
+                                if (!userId.value.trim() || (!password.value && !info.hasPassword)) {
                                     status.textContent = WMP.t("ID とパスワードを入力してください");
                                     return;
                                 }
-                                await chrome.storage.local.set({ [WMP.LOGIN_INFO_KEY]: { userId: userId.value.trim(), password: password.value } });
+                                try {
+                                    await WMP.send("saveLoginInfo", { userId: userId.value, password: password.value });
+                                } catch (e) {
+                                    status.textContent = WMP.t("失敗: {message}", { message: e.message });
+                                    return;
+                                }
                                 await save({ autoLoginEnabled: true });
                             },
                         },

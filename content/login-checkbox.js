@@ -33,8 +33,8 @@
                 document.querySelector("#displayName")?.textContent?.trim();
             const password = passwordInput.value;
             if (!userId || !password) return;
-            chrome.storage.local.set({ [WMP.LOGIN_INFO_KEY]: { userId, password } });
-            WMP.setSettings({ autoLoginEnabled: true });
+            // 暗号化はバックグラウンドで行う（パスワードをそのままストレージに書かない）
+            chrome.runtime.sendMessage({ type: "saveLoginInfo", payload: { userId, password } });
         };
         signIn.addEventListener("click", save, true);
         passwordInput.addEventListener("keydown", (e) => e.key === "Enter" && save(), true);

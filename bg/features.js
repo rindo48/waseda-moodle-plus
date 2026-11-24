@@ -1,5 +1,7 @@
 // 設定に合わせて、ネットワークルール（declarativeNetRequest）と動的コンテンツスクリプトを切り替える。
 
+import { hasStoredLoginInfo } from "./credentials.js";
+
 const { getSettings, LOGIN_INFO_KEY } = globalThis.WMP;
 
 const MOODLE = "https://wsdmoodle.waseda.jp/*";
@@ -144,7 +146,7 @@ export function syncFeatures() {
 async function doSync() {
     const settings = await getSettings();
     const { [LOGIN_INFO_KEY]: loginInfo } = await chrome.storage.local.get(LOGIN_INFO_KEY);
-    const hasLoginInfo = Boolean(loginInfo?.userId && loginInfo?.password);
+    const hasLoginInfo = hasStoredLoginInfo(loginInfo);
 
     // --- 静的ルールセット ---
     const wanted = enabledRulesets(settings, hasLoginInfo);

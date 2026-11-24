@@ -7,6 +7,7 @@ import "./lib/i18n-en.js";
 import "./lib/syllabus-info.js";
 import { clearCaches, getCalendarMonth, getCourses, getSessionKey, getTimeline, setSessionKeyCache, touchSession } from "./bg/moodle.js";
 import { loginToMoodle, fetchSessionKeyFromPage, getLoginInfo } from "./bg/login.js";
+import { getLoginInfoSummary, migratePlainPassword, saveLoginInfo } from "./bg/credentials.js";
 import { collectSyllabusInformation, getCollectProgress } from "./bg/syllabus.js";
 import { applyDarkModeToOpenTabs, syncFeatures } from "./bg/features.js";
 import { BADGE_ALARM, handleNotificationClick, updateBadge } from "./bg/badge.js";
@@ -59,11 +60,18 @@ const handlers = {
         return key ? "ok" : "failed";
     },
     getLoginStatus: async () => {
-        const { [LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(LOGIN_INFO_KEY);
+        const { hasPassword } = await getLoginInfoSummary();
         const key = await fetchSessionKeyFromPage().catch(() => null);
         if (key) await setSessionKeyCache(key);
-        return { hasLoginInfo: Boolean(info?.userId && info?.password), loggedIn: Boolean(key) };
+        return { hasLoginInfo: hasPassword, loggedIn: Boolean(key) };
     },
+    /** 設定画面・Microsoft のサインイン画面用: ログイン情報を暗号化して保存し、自動ログインを有効にする */
+    saveLoginInfo: async ({ userId, password }) => {
+        await saveLoginInfo({ userId, password });
+        await globalThis.WMP.setSettings({ autoLoginEnabled: true });
+    },
+    /** 設定画面用: 保存した ID と、パスワードが保存済みかどうか（パスワードそのものは返さない） */
+    getLoginInfoSummary: () => getLoginInfoSummary(),
     collectSyllabus: (p) => {
         // 時間がかかるので待たずに返し、進捗は getCollectProgress で確認してもらう
         collectSyllabusInformation(p ?? {}).catch((e) => console.error(e));
@@ -108,6 +116,9 @@ chrome.alarms.get(BADGE_ALARM).then((alarm) => {
 chrome.alarms.get(UPDATE_ALARM).then((alarm) => {
     if (!alarm) chrome.alarms.create(UPDATE_ALARM, { delayInMinutes: 1, periodInMinutes: 24 * 60 });
 });
+
+// 以前の版で暗号化せずに保存したパスワードを、暗号化した形に置き換える
+migratePlainPassword().catch((e) => console.error("migratePlainPassword failed", e));
 
 chrome.runtime.onInstalled.addListener(async (details) => {
     await createLauncherMenus();

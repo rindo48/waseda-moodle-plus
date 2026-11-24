@@ -2,8 +2,9 @@
 // 流れは better-waseda-moodle の login.ts と同じ。
 
 import { parseHTML } from "./parse.js";
+import { getLoginInfoSummary, readLoginInfo } from "./credentials.js";
 
-const { LOGIN_INFO_KEY, SAML_LOGIN_URL, MOODLE_ORIGIN } = globalThis.WMP;
+const { SAML_LOGIN_URL, MOODLE_ORIGIN } = globalThis.WMP;
 
 const MS_LOGIN_URL = "https://login.microsoftonline.com/b3865172-9887-4b3a-89ff-95a35b92f4c3/login";
 const WASEDA_IDP_URL = "https://iaidp.ia.waseda.jp/idp/profile/Authn/SAML2/POST/SSO";
@@ -17,9 +18,13 @@ export class LoginRequiredError extends Error {
 }
 
 export async function getLoginInfo() {
-    const { [LOGIN_INFO_KEY]: info } = await chrome.storage.local.get(LOGIN_INFO_KEY);
-    if (!info?.userId || !info?.password) throw new LoginRequiredError();
-    return info;
+    const info = await readLoginInfo();
+    if (info) return info;
+    if ((await getLoginInfoSummary()).hasPassword) {
+        // 暗号化の鍵が消えた（拡張機能のデータを消した など）ので、保存したパスワードを元に戻せない
+        throw new Error(globalThis.WMP.t("保存したパスワードを読み出せませんでした。設定画面で ID・パスワードを入れ直してください。"));
+    }
+    throw new LoginRequiredError();
 }
 
 function fetchWithCredentials(url, init = {}) {
